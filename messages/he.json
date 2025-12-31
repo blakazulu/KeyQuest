@@ -148,6 +148,31 @@
     "description": "כאן תוכל לתרגל את כישורי ההקלדה שלך עם משוב בזמן אמת.",
     "backToLevels": "חזרה לשלבים"
   },
+  "keyboard": {
+    "visualKeyboard": "מקלדת ויזואלית המציגה מיקום אצבעות",
+    "compactKeyboard": "מקלדת ויזואלית קומפקטית",
+    "fingerGuide": "מדריך מיקום אצבעות",
+    "useFinger": "השתמש ב{finger}",
+    "showKeyboard": "הצג מקלדת",
+    "hideKeyboard": "הסתר מקלדת",
+    "showFingerGuide": "הצג מדריך אצבעות",
+    "hideFingerGuide": "הסתר מדריך אצבעות",
+    "fingers": {
+      "leftPinky": "זרת שמאל",
+      "leftRing": "קמיצה שמאל",
+      "leftMiddle": "אמה שמאל",
+      "leftIndex": "אצבע שמאל",
+      "rightIndex": "אצבע ימין",
+      "rightMiddle": "אמה ימין",
+      "rightRing": "קמיצה ימין",
+      "rightPinky": "זרת ימין",
+      "thumb": "אגודל"
+    },
+    "hands": {
+      "left": "שמאל",
+      "right": "ימין"
+    }
+  },
   "dashboard": {
     "title": "לוח הבקרה שלך",
     "subtitle": "עקוב אחר מסע ההקלדה שלך",

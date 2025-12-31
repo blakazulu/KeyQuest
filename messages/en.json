@@ -148,6 +148,31 @@
     "description": "This is where you'll practice your typing skills with real-time feedback.",
     "backToLevels": "Back to Levels"
   },
+  "keyboard": {
+    "visualKeyboard": "Visual keyboard showing finger placement",
+    "compactKeyboard": "Compact visual keyboard",
+    "fingerGuide": "Finger placement guide",
+    "useFinger": "Use your {finger}",
+    "showKeyboard": "Show Keyboard",
+    "hideKeyboard": "Hide Keyboard",
+    "showFingerGuide": "Show Finger Guide",
+    "hideFingerGuide": "Hide Finger Guide",
+    "fingers": {
+      "leftPinky": "Left Pinky",
+      "leftRing": "Left Ring",
+      "leftMiddle": "Left Middle",
+      "leftIndex": "Left Index",
+      "rightIndex": "Right Index",
+      "rightMiddle": "Right Middle",
+      "rightRing": "Right Ring",
+      "rightPinky": "Right Pinky",
+      "thumb": "Thumb"
+    },
+    "hands": {
+      "left": "Left",
+      "right": "Right"
+    }
+  },
   "dashboard": {
     "title": "Your Dashboard",
     "subtitle": "Track your typing journey",

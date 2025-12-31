@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { TextDisplay } from './TextDisplay';
 import { Stats } from './Stats';
+import { Keyboard, CompactKeyboard } from '@/components/keyboard/Keyboard';
+import { FingerGuide, FingerIndicator } from '@/components/keyboard/FingerGuide';
 import { useTypingEngine, type TypingStats } from '@/hooks/useTypingEngine';
 import { useKeyboardInput } from '@/hooks/useKeyboardInput';
+import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { calculateProgress } from '@/lib/typing-utils';
 
 interface TypingAreaProps {
@@ -19,6 +23,14 @@ interface TypingAreaProps {
   showStats?: boolean;
   /** Whether to allow backspace corrections */
   allowBackspace?: boolean;
+  /** Whether to show the visual keyboard (overrides settings) */
+  showKeyboard?: boolean;
+  /** Whether to show the finger guide (overrides settings) */
+  showFingerGuide?: boolean;
+  /** Use compact keyboard for smaller displays */
+  compactKeyboard?: boolean;
+  /** Locale for finger guide labels */
+  locale?: 'en' | 'he';
   /** Additional CSS classes */
   className?: string;
 }
@@ -42,10 +54,41 @@ export function TypingArea({
   onError,
   showStats = true,
   allowBackspace = false,
+  showKeyboard: showKeyboardProp,
+  showFingerGuide: showFingerGuideProp,
+  compactKeyboard = false,
+  locale = 'en',
   className = '',
 }: TypingAreaProps) {
   const t = useTranslations('practice');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Get keyboard visibility settings (props override store settings)
+  const {
+    showKeyboard: showKeyboardSetting,
+    showFingerGuide: showFingerGuideSetting
+  } = useSettingsStore();
+
+  const shouldShowKeyboard = showKeyboardProp ?? showKeyboardSetting;
+  const shouldShowFingerGuide = showFingerGuideProp ?? showFingerGuideSetting;
+
+  // Refs for flash functions to break circular dependency
+  const flashCorrectRef = useRef<(key: string) => void>(() => {});
+  const flashWrongRef = useRef<(key: string) => void>(() => {});
+
+  // Handler for character typed - triggers keyboard flash effects via refs
+  const handleCharacterTyped = useCallback((char: string, isCorrect: boolean) => {
+    if (isCorrect) {
+      flashCorrectRef.current(char);
+    } else {
+      flashWrongRef.current(char);
+    }
+  }, []);
+
+  // Handler for errors - calls the prop callback
+  const handleError = useCallback((char: string, expected: string) => {
+    onError?.(char, expected);
+  }, [onError]);
 
   const {
     status,
@@ -58,9 +101,29 @@ export function TypingArea({
     setTargetText,
   } = useTypingEngine({
     onComplete,
-    onError,
+    onError: handleError,
+    onCharacterTyped: handleCharacterTyped,
     allowBackspace,
   });
+
+  // Keyboard highlighting
+  const {
+    highlightedKey,
+    activeFinger,
+    pressedKeys,
+    correctKey,
+    wrongKey,
+    flashCorrect,
+    flashWrong,
+  } = useKeyboardHighlight({
+    targetText: text,
+    currentPosition: cursorPosition,
+    trackPressedKeys: status === 'running',
+  });
+
+  // Update refs after hooks are called
+  flashCorrectRef.current = flashCorrect;
+  flashWrongRef.current = flashWrong;
 
   // Set target text on mount or when text prop changes
   useEffect(() => {
@@ -168,6 +231,55 @@ export function TypingArea({
           errors={stats.errorCount}
           status={status}
         />
+      )}
+
+      {/* Visual keyboard and finger guide */}
+      {shouldShowKeyboard && (
+        <div className="mt-6 space-y-4">
+          {/* Finger indicator (compact) */}
+          {shouldShowFingerGuide && (
+            <div className="flex justify-center">
+              <FingerIndicator
+                activeFinger={activeFinger}
+                locale={locale}
+              />
+            </div>
+          )}
+
+          {/* Keyboard display */}
+          <div className="flex justify-center">
+            {compactKeyboard ? (
+              <CompactKeyboard
+                highlightedKey={highlightedKey}
+                pressedKeys={pressedKeys}
+                correctKey={correctKey}
+                wrongKey={wrongKey}
+                showFingerColors={true}
+                baseSize={36}
+              />
+            ) : (
+              <Keyboard
+                highlightedKey={highlightedKey}
+                pressedKeys={pressedKeys}
+                correctKey={correctKey}
+                wrongKey={wrongKey}
+                showFingerColors={true}
+                showHomeRow={true}
+                baseSize={44}
+              />
+            )}
+          </div>
+
+          {/* Full finger guide (for learning mode) */}
+          {shouldShowFingerGuide && status === 'idle' && (
+            <FingerGuide
+              activeFinger={activeFinger}
+              locale={locale}
+              size="md"
+              className="mx-auto"
+            />
+          )}
+        </div>
       )}
 
       {/* Screen reader announcements */}

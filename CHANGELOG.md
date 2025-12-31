@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 3: Visual Keyboard** - Interactive keyboard display with finger guidance
+  - QWERTY keyboard layout data structure with finger assignments (`src/data/keyboard-layout.ts`)
+  - `Key` component with 5 states (default, highlighted, pressed, correct, wrong)
+  - `Keyboard` component displaying full QWERTY layout
+  - `CompactKeyboard` component for smaller displays (letters only)
+  - `FingerGuide` component showing stylized hands with active finger highlighted
+  - `FingerIndicator` component for compact finger name display
+  - `useKeyboardHighlight` hook managing keyboard state during typing
+  - Finger color coding system (9 distinct colors per finger)
+  - Key press animations (flash effects for correct/wrong keys)
+  - Home row indicators on F and J keys
+  - Keyboard integrated into TypingArea with settings-based visibility
+  - Keyboard translations in both English and Hebrew
+  - 34 new unit tests for keyboard layout and highlighting hook
 - **Phase 2: Core Typing Engine** - Fully functional typing practice system
   - `useKeyboardInput` hook for capturing keyboard events
   - `useTypingEngine` hook orchestrating typing sessions with stats

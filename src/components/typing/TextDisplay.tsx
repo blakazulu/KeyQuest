@@ -40,6 +40,7 @@ export const TextDisplay = memo(function TextDisplay({
   return (
     <div
       className={`typing-text select-none ${className}`}
+      dir="ltr"
       role="textbox"
       aria-label="Type the text shown"
       aria-readonly="true"
