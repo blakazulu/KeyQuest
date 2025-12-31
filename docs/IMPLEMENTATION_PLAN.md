@@ -378,22 +378,22 @@ typing-learning/
 ### Phase 2: Core Typing Engine
 
 **Goal**: Character-by-character typing with real-time feedback
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #    | Task                           | Status | Description                                                               |
 | ---- | ------------------------------ | ------ | ------------------------------------------------------------------------- |
-| 2.1  | Create `useKeyboardInput` hook | [ ]    | Capture keystrokes, handle special keys (backspace, etc.)                 |
-| 2.2  | Create `useTypingEngine` hook  | [ ]    | Core logic: compare input to target, track position, errors               |
-| 2.3  | Build `TextDisplay` component  | [ ]    | Show target text with character-level styling (correct/incorrect/current) |
-| 2.4  | Build `TypingArea` component   | [ ]    | Invisible input that captures keystrokes                                  |
-| 2.5  | Build `Cursor` component       | [ ]    | Blinking cursor at current position (respect `prefers-reduced-motion`)    |
-| 2.6  | Create `useTypingStore`        | [ ]    | Store current session state (input, errors, position)                     |
-| 2.7  | Implement WPM calculation      | [ ]    | Real-time words-per-minute tracking                                       |
-| 2.8  | Implement accuracy calculation | [ ]    | Percentage of correct keystrokes                                          |
-| 2.9  | Build `Stats` component        | [ ]    | Display live WPM and accuracy                                             |
-| 2.10 | Add ARIA live regions          | [ ]    | Announce errors, stats updates to screen readers                          |
-| 2.11 | Add keyboard shortcuts         | [ ]    | `Enter` to start, `Escape` to pause                                       |
-| 2.12 | Integration test               | [ ]    | Combine all into working typing experience                                |
+| 2.1  | Create `useKeyboardInput` hook | [x]    | Capture keystrokes, handle special keys (backspace, etc.)                 |
+| 2.2  | Create `useTypingEngine` hook  | [x]    | Core logic: compare input to target, track position, errors               |
+| 2.3  | Build `TextDisplay` component  | [x]    | Show target text with character-level styling (correct/incorrect/current) |
+| 2.4  | Build `TypingArea` component   | [x]    | Invisible input that captures keystrokes                                  |
+| 2.5  | Build `Cursor` component       | [x]    | Blinking cursor at current position (respect `prefers-reduced-motion`)    |
+| 2.6  | Create `useTypingStore`        | [x]    | Store current session state (input, errors, position)                     |
+| 2.7  | Implement WPM calculation      | [x]    | Real-time words-per-minute tracking                                       |
+| 2.8  | Implement accuracy calculation | [x]    | Percentage of correct keystrokes                                          |
+| 2.9  | Build `Stats` component        | [x]    | Display live WPM and accuracy                                             |
+| 2.10 | Add ARIA live regions          | [x]    | Announce errors, stats updates to screen readers                          |
+| 2.11 | Add keyboard shortcuts         | [x]    | `Enter` to start, `Escape` to pause                                       |
+| 2.12 | Integration test               | [x]    | Combine all into working typing experience + 71 unit tests                |
 
 **Accessibility requirements for this phase**:
 
