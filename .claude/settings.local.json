@@ -15,7 +15,9 @@
       "mcp__netlify__netlify-project-services-updater",
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__query-docs",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Skill(frontend-design)",
+      "Bash(npm run test:run:*)"
     ]
   }
 }
