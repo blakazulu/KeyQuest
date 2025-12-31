@@ -25,222 +25,204 @@ const fingerColors: Record<Finger, string> = {
   'thumb': '#94A3B8',
 };
 
+// Map finger types to part names
+type FingerPart = 'pinky' | 'ring' | 'middle' | 'index' | 'thumb';
+
+const fingerToPartMap: Record<Finger, FingerPart> = {
+  'left-pinky': 'pinky',
+  'left-ring': 'ring',
+  'left-middle': 'middle',
+  'left-index': 'index',
+  'right-pinky': 'pinky',
+  'right-ring': 'ring',
+  'right-middle': 'middle',
+  'right-index': 'index',
+  'thumb': 'thumb',
+};
+
+// Professional hand path (palm facing up, thumb on right for right hand)
+const HAND_PATH = "m323.53 65.156c-8.0951-0.06253-16.241 7.976-18.812 30.438l-3.8438 48.875-2.7812 43.281 0.34375 52c-2.297 11.259-8.4753 10.924-15.375 8.375-29.131-36.268-32.562-92.352-52.344-134.72-18.143-27.991-32.124-17.064-37 6.9688 3.0974 19.957 6.7861 32.721 10.812 41.531l7.35 27.59c3.6068 17.106 7.2057 35.402 10.812 45.375l7.3438 30 9.75 48.875c1.58 12.161 2.4705 24.085-4.1875 33.5 0 0-41.145-3.4859-40.844-9.0625-14.389-18.581-31.12-31.514-46.344-41.656-24.237-16.147-47.831-10.358-49.844 0.65625-0.94095 5.1493 5.0091 9.3001 11.375 15.531 6.9188 2.9357 11.238 12.264 17.344 19.281 6.6825 7.6801 11.123 17.456 19.625 23.938 10.243 7.8085 15.254 20.987 22.719 30.406 11.76 28.443 25.19 52.447 43.625 65.969 34.385 29.203 43.563 58.28 56.219 88.656 2.2444 6.9 4.5722 13.051 6.125 19.031l134.16-0.01c-4.3533-26.298-8.1065-56.359-9.75-100 1.2178-6.0191 1.2384-11.428 5.9375-19.188 10.65-22.858 15.984-48.39 19.531-81 2.3133-21.268 9.0155-29.613 12.562-37.688 0.42485 1.0217 23.156-26.071 42.438-53.5 11.928-16.967 24.73-32.958 26.344-34.469 5.9857-5.6043 13.216-24.733 11.875-24.062 8.0301-16.64-0.3213-18.797-16.406-15.031-10.177 6.2584-18.111 15.888-26.531 24.781-20.605 20.747-38.856 41.89-64.594 61.781-13.637 2.9548-16.384-0.77158-16.75-15.344l8.75-33.5 5.9062-25.125c2.3415-35.021 10.017-55.887 15.031-83.781 1.8104-36.113-27.722-31.926-33.875-13.969l-11.156 48.875-5.5938 24.062-17.438 54.469c-6.6212 6.6662-14.82 19.175-14.312 0l2.77-29.66c-1.3883-13.733-2.4275-29.406-2.0938-44-2.3554-27.065-1.8224-50.652 0-71.562 1.837-13.397-8.467-26.857-18.875-26.938z";
+
+// Right hand overlay positions (thumb LEFT, pinky RIGHT)
+const RIGHT_FINGER_OVERLAYS = {
+  thumb: { cx: 135, cy: 320, rx: 45, ry: 55, rotate: -35 },
+  index: { cx: 220, cy: 170, rx: 24, ry: 75, rotate: -15 },
+  middle: { cx: 320, cy: 140, rx: 24, ry: 80, rotate: 0 },
+  ring: { cx: 400, cy: 160, rx: 22, ry: 70, rotate: 10 },
+  pinky: { cx: 490, cy: 230, rx: 20, ry: 60, rotate: 35 },
+};
+
+// Left hand overlay positions (adjusted to match mirrored SVG)
+const LEFT_FINGER_OVERLAYS = {
+  pinky: { cx: 125, cy: 230, rx: 20, ry: 60, rotate: -35 },
+  ring: { cx: 210, cy: 160, rx: 22, ry: 70, rotate: -10 },
+  middle: { cx: 290, cy: 140, rx: 24, ry: 80, rotate: 0 },
+  index: { cx: 385, cy: 170, rx: 24, ry: 75, rotate: 15 },
+  thumb: { cx: 470, cy: 320, rx: 45, ry: 55, rotate: 35 },
+};
+
+interface FingerOverlayProps {
+  overlay: { cx: number; cy: number; rx: number; ry: number; rotate: number };
+  activeColor: string;
+}
+
+const FingerOverlay = memo(function FingerOverlay({ overlay, activeColor }: FingerOverlayProps) {
+  return (
+    <ellipse
+      cx={overlay.cx}
+      cy={overlay.cy}
+      rx={overlay.rx}
+      ry={overlay.ry}
+      fill={activeColor}
+      opacity="0.55"
+      transform={overlay.rotate !== 0 ? `rotate(${overlay.rotate} ${overlay.cx} ${overlay.cy})` : undefined}
+      style={{
+        filter: `drop-shadow(0 0 12px ${activeColor})`,
+      }}
+    />
+  );
+});
+
 /**
- * Left hand SVG component - realistic hand shape
+ * Left hand SVG component with individual finger highlighting
  */
 export const LeftHand = memo(function LeftHand({
   activeFinger,
   locale = 'en',
   className = '',
 }: HandGuideProps) {
-  const isActive = (finger: Finger) => activeFinger === finger;
+  const isLeftHand = activeFinger?.startsWith('left');
+  const isThumb = activeFinger === 'thumb';
+  const activePart = activeFinger ? fingerToPartMap[activeFinger] : undefined;
+  const activeColor = activeFinger ? fingerColors[activeFinger] : undefined;
 
-  const getFingerFill = (finger: Finger) =>
-    isActive(finger) ? fingerColors[finger] : '#E8ECF0';
+  const showOverlay = (isLeftHand || isThumb) && activePart && activeColor;
 
-  const getFingerStroke = (finger: Finger) =>
-    isActive(finger) ? fingerColors[finger] : '#C8D0D8';
-
-  const getGlow = (finger: Finger) =>
-    isActive(finger) ? `drop-shadow(0 0 12px ${fingerColors[finger]})` : 'none';
+  // DEBUG: Show all fingers at once for positioning
+  const DEBUG_MODE = false;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <svg
-        viewBox="0 0 140 200"
-        className="w-32 h-44"
+        viewBox="0 0 610 610"
+        className="w-40 h-52"
         aria-label={activeFinger && activeFinger.startsWith('left')
           ? `Use your ${fingerNames[activeFinger][locale]}`
-          : 'Left hand'}
+          : locale === 'he' ? 'יד שמאל' : 'Left hand'}
       >
-        {/* Palm base */}
-        <path
-          d="M30 140 Q20 120 25 100 L35 95 L105 95 Q115 100 115 120 L110 160 Q100 180 70 185 Q40 180 30 160 Z"
-          fill="#F5F7FA"
-          stroke="#D8DEE6"
-          strokeWidth="1.5"
-        />
+        {/* Professional hand base (mirrored for left hand) */}
+        <g transform="translate(610, 0) scale(-1, 1)">
+          <path
+            d={HAND_PATH}
+            fill="#E8ECF0"
+            stroke="#C8D0D8"
+            strokeWidth="6"
+          />
+        </g>
 
-        {/* Wrist */}
-        <path
-          d="M45 180 Q70 190 95 180 L95 200 L45 200 Z"
-          fill="#F5F7FA"
-          stroke="#D8DEE6"
-          strokeWidth="1.5"
-        />
-
-        {/* Pinky finger */}
-        <path
-          d="M25 100 Q20 95 20 85 L20 55 Q20 42 28 42 Q36 42 36 55 L36 95 Z"
-          fill={getFingerFill('left-pinky')}
-          stroke={getFingerStroke('left-pinky')}
-          strokeWidth="2"
-          style={{ filter: getGlow('left-pinky'), transition: 'all 0.2s ease' }}
-        />
-        {/* Pinky nail */}
-        <rect x="22" y="44" width="10" height="8" rx="2" fill="#FFF" opacity="0.6" />
-
-        {/* Ring finger */}
-        <path
-          d="M40 95 Q36 90 36 80 L36 35 Q36 20 47 20 Q58 20 58 35 L58 90 Q58 95 55 95 Z"
-          fill={getFingerFill('left-ring')}
-          stroke={getFingerStroke('left-ring')}
-          strokeWidth="2"
-          style={{ filter: getGlow('left-ring'), transition: 'all 0.2s ease' }}
-        />
-        {/* Ring nail */}
-        <rect x="40" y="22" width="12" height="10" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Middle finger */}
-        <path
-          d="M60 95 Q56 90 56 80 L56 25 Q56 8 70 8 Q84 8 84 25 L84 85 Q84 95 80 95 Z"
-          fill={getFingerFill('left-middle')}
-          stroke={getFingerStroke('left-middle')}
-          strokeWidth="2"
-          style={{ filter: getGlow('left-middle'), transition: 'all 0.2s ease' }}
-        />
-        {/* Middle nail */}
-        <rect x="61" y="10" width="14" height="11" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Index finger */}
-        <path
-          d="M85 95 Q82 90 82 80 L82 40 Q82 25 94 25 Q106 25 106 40 L106 90 Q106 95 102 95 Z"
-          fill={getFingerFill('left-index')}
-          stroke={getFingerStroke('left-index')}
-          strokeWidth="2"
-          style={{ filter: getGlow('left-index'), transition: 'all 0.2s ease' }}
-        />
-        {/* Index nail */}
-        <rect x="86" y="27" width="12" height="10" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Thumb */}
-        <path
-          d="M108 95 Q115 90 120 95 L130 115 Q138 130 130 140 Q122 150 112 145 L105 135 Q100 125 105 110 Z"
-          fill={getFingerFill('thumb')}
-          stroke={getFingerStroke('thumb')}
-          strokeWidth="2"
-          style={{ filter: getGlow('thumb'), transition: 'all 0.2s ease' }}
-        />
-        {/* Thumb nail */}
-        <ellipse cx="128" cy="122" rx="6" ry="5" fill="#FFF" opacity="0.6" />
-
-        {/* Palm lines for realism */}
-        <path d="M45 120 Q60 130 90 115" stroke="#D8DEE6" strokeWidth="1" fill="none" opacity="0.5" />
-        <path d="M40 140 Q60 145 85 135" stroke="#D8DEE6" strokeWidth="1" fill="none" opacity="0.5" />
+        {/* DEBUG: Show all finger overlays */}
+        {DEBUG_MODE ? (
+          <>
+            <FingerOverlay overlay={LEFT_FINGER_OVERLAYS.pinky} activeColor={fingerColors['left-pinky']} />
+            <FingerOverlay overlay={LEFT_FINGER_OVERLAYS.ring} activeColor={fingerColors['left-ring']} />
+            <FingerOverlay overlay={LEFT_FINGER_OVERLAYS.middle} activeColor={fingerColors['left-middle']} />
+            <FingerOverlay overlay={LEFT_FINGER_OVERLAYS.index} activeColor={fingerColors['left-index']} />
+            <FingerOverlay overlay={LEFT_FINGER_OVERLAYS.thumb} activeColor={fingerColors['thumb']} />
+          </>
+        ) : (
+          showOverlay && (
+            <FingerOverlay
+              overlay={LEFT_FINGER_OVERLAYS[activePart]}
+              activeColor={activeColor}
+            />
+          )
+        )}
       </svg>
-      <span className="text-sm text-muted font-medium">
+      <span className="text-sm text-muted font-medium mt-1">
         {locale === 'he' ? 'שמאל' : 'Left'}
       </span>
+      {showOverlay && activeFinger && (
+        <span
+          className="text-xs font-semibold mt-1 px-2 py-0.5 rounded-full"
+          style={{
+            backgroundColor: `${activeColor}20`,
+            color: activeColor,
+          }}
+        >
+          {fingerNames[activeFinger][locale]}
+        </span>
+      )}
     </div>
   );
 });
 
 /**
- * Right hand SVG component - realistic hand shape (mirrored)
+ * Right hand SVG component with individual finger highlighting
  */
 export const RightHand = memo(function RightHand({
   activeFinger,
   locale = 'en',
   className = '',
 }: HandGuideProps) {
-  const isActive = (finger: Finger) => activeFinger === finger;
+  const isRightHand = activeFinger?.startsWith('right');
+  const isThumb = activeFinger === 'thumb';
+  const activePart = activeFinger ? fingerToPartMap[activeFinger] : undefined;
+  const activeColor = activeFinger ? fingerColors[activeFinger] : undefined;
 
-  const getFingerFill = (finger: Finger) =>
-    isActive(finger) ? fingerColors[finger] : '#E8ECF0';
+  const showOverlay = (isRightHand || isThumb) && activePart && activeColor;
 
-  const getFingerStroke = (finger: Finger) =>
-    isActive(finger) ? fingerColors[finger] : '#C8D0D8';
-
-  const getGlow = (finger: Finger) =>
-    isActive(finger) ? `drop-shadow(0 0 12px ${fingerColors[finger]})` : 'none';
+  // DEBUG: Show all fingers at once for positioning
+  const DEBUG_MODE = false;
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <svg
-        viewBox="0 0 140 200"
-        className="w-32 h-44"
+        viewBox="0 0 610 610"
+        className="w-40 h-52"
         aria-label={activeFinger && activeFinger.startsWith('right')
           ? `Use your ${fingerNames[activeFinger][locale]}`
-          : 'Right hand'}
+          : locale === 'he' ? 'יד ימין' : 'Right hand'}
       >
-        {/* Palm base */}
+        {/* Professional hand base */}
         <path
-          d="M110 140 Q120 120 115 100 L105 95 L35 95 Q25 100 25 120 L30 160 Q40 180 70 185 Q100 180 110 160 Z"
-          fill="#F5F7FA"
-          stroke="#D8DEE6"
-          strokeWidth="1.5"
+          d={HAND_PATH}
+          fill="#E8ECF0"
+          stroke="#C8D0D8"
+          strokeWidth="6"
         />
 
-        {/* Wrist */}
-        <path
-          d="M95 180 Q70 190 45 180 L45 200 L95 200 Z"
-          fill="#F5F7FA"
-          stroke="#D8DEE6"
-          strokeWidth="1.5"
-        />
-
-        {/* Thumb */}
-        <path
-          d="M32 95 Q25 90 20 95 L10 115 Q2 130 10 140 Q18 150 28 145 L35 135 Q40 125 35 110 Z"
-          fill={getFingerFill('thumb')}
-          stroke={getFingerStroke('thumb')}
-          strokeWidth="2"
-          style={{ filter: getGlow('thumb'), transition: 'all 0.2s ease' }}
-        />
-        {/* Thumb nail */}
-        <ellipse cx="12" cy="122" rx="6" ry="5" fill="#FFF" opacity="0.6" />
-
-        {/* Index finger */}
-        <path
-          d="M55 95 Q58 90 58 80 L58 40 Q58 25 46 25 Q34 25 34 40 L34 90 Q34 95 38 95 Z"
-          fill={getFingerFill('right-index')}
-          stroke={getFingerStroke('right-index')}
-          strokeWidth="2"
-          style={{ filter: getGlow('right-index'), transition: 'all 0.2s ease' }}
-        />
-        {/* Index nail */}
-        <rect x="38" y="27" width="12" height="10" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Middle finger */}
-        <path
-          d="M80 95 Q84 90 84 80 L84 25 Q84 8 70 8 Q56 8 56 25 L56 85 Q56 95 60 95 Z"
-          fill={getFingerFill('right-middle')}
-          stroke={getFingerStroke('right-middle')}
-          strokeWidth="2"
-          style={{ filter: getGlow('right-middle'), transition: 'all 0.2s ease' }}
-        />
-        {/* Middle nail */}
-        <rect x="61" y="10" width="14" height="11" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Ring finger */}
-        <path
-          d="M100 95 Q104 90 104 80 L104 35 Q104 20 93 20 Q82 20 82 35 L82 90 Q82 95 85 95 Z"
-          fill={getFingerFill('right-ring')}
-          stroke={getFingerStroke('right-ring')}
-          strokeWidth="2"
-          style={{ filter: getGlow('right-ring'), transition: 'all 0.2s ease' }}
-        />
-        {/* Ring nail */}
-        <rect x="86" y="22" width="12" height="10" rx="3" fill="#FFF" opacity="0.6" />
-
-        {/* Pinky finger */}
-        <path
-          d="M115 100 Q120 95 120 85 L120 55 Q120 42 112 42 Q104 42 104 55 L104 95 Z"
-          fill={getFingerFill('right-pinky')}
-          stroke={getFingerStroke('right-pinky')}
-          strokeWidth="2"
-          style={{ filter: getGlow('right-pinky'), transition: 'all 0.2s ease' }}
-        />
-        {/* Pinky nail */}
-        <rect x="106" y="44" width="10" height="8" rx="2" fill="#FFF" opacity="0.6" />
-
-        {/* Palm lines for realism */}
-        <path d="M95 120 Q80 130 50 115" stroke="#D8DEE6" strokeWidth="1" fill="none" opacity="0.5" />
-        <path d="M100 140 Q80 145 55 135" stroke="#D8DEE6" strokeWidth="1" fill="none" opacity="0.5" />
+        {/* DEBUG: Show all finger overlays */}
+        {DEBUG_MODE ? (
+          <>
+            <FingerOverlay overlay={RIGHT_FINGER_OVERLAYS.pinky} activeColor={fingerColors['right-pinky']} />
+            <FingerOverlay overlay={RIGHT_FINGER_OVERLAYS.ring} activeColor={fingerColors['right-ring']} />
+            <FingerOverlay overlay={RIGHT_FINGER_OVERLAYS.middle} activeColor={fingerColors['right-middle']} />
+            <FingerOverlay overlay={RIGHT_FINGER_OVERLAYS.index} activeColor={fingerColors['right-index']} />
+            <FingerOverlay overlay={RIGHT_FINGER_OVERLAYS.thumb} activeColor={fingerColors['thumb']} />
+          </>
+        ) : (
+          showOverlay && (
+            <FingerOverlay
+              overlay={RIGHT_FINGER_OVERLAYS[activePart]}
+              activeColor={activeColor}
+            />
+          )
+        )}
       </svg>
-      <span className="text-sm text-muted font-medium">
+      <span className="text-sm text-muted font-medium mt-1">
         {locale === 'he' ? 'ימין' : 'Right'}
       </span>
+      {showOverlay && activeFinger && (
+        <span
+          className="text-xs font-semibold mt-1 px-2 py-0.5 rounded-full"
+          style={{
+            backgroundColor: `${activeColor}20`,
+            color: activeColor,
+          }}
+        >
+          {fingerNames[activeFinger][locale]}
+        </span>
+      )}
     </div>
   );
 });
@@ -255,7 +237,7 @@ export const HandsWithKeyboard = memo(function HandsWithKeyboard({
   className = '',
 }: HandGuideProps & { children: React.ReactNode }) {
   return (
-    <div className={`flex items-center justify-center gap-4 ${className}`}>
+    <div className={`flex items-start justify-center gap-6 ${className}`}>
       <LeftHand activeFinger={activeFinger} locale={locale} />
       <div className="flex-shrink-0">{children}</div>
       <RightHand activeFinger={activeFinger} locale={locale} />
