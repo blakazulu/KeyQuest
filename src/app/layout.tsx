@@ -120,7 +120,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${baloo2.variable} ${nunito.variable} ${varelaRound.variable} ${heebo.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-zinc-50 font-body antialiased dark:bg-zinc-950">
+      <body className="min-h-screen bg-bg font-body antialiased">
         {children}
       </body>
     </html>
