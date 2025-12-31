@@ -15,7 +15,7 @@ export default function LevelsPage() {
 
   return (
     <div className="py-8">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+      <h1 className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">
         {t('title')}
       </h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -47,7 +47,7 @@ export default function LevelsPage() {
                   {stage.id}
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  <h3 className="font-display text-lg font-semibold text-zinc-900 dark:text-zinc-100">
                     {t(`stages.${stage.id}.name`)}
                   </h3>
                   <p className="text-sm text-zinc-500">{t(`stages.${stage.id}.description`)}</p>

@@ -8,7 +8,7 @@ export default function DashboardPage() {
 
   return (
     <div className="py-8">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+      <h1 className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">
         {t('title')}
       </h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -18,7 +18,7 @@ export default function DashboardPage() {
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900">
           <p className="text-sm font-medium text-zinc-500">{t('stats.currentLevel')}</p>
-          <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{t('stats.stage')} 1</p>
+          <p className="font-display mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">{t('stats.stage')} 1</p>
         </div>
 
         <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-900">

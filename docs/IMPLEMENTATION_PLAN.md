@@ -259,49 +259,55 @@ typing-learning/
 ### Phase 1.6: Typography, Metadata & SEO/AEO/GEO Foundation
 
 **Goal**: Establish font system, metadata, and full search engine optimization (SEO, AEO, GEO)
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #      | Task                               | Status | Description                                                 |
 | ------ | ---------------------------------- | ------ | ----------------------------------------------------------- |
-| 1.6.1  | Install Google Fonts               | [ ]    | Add Baloo 2 (fun layer) and Nunito (UI layer) via next/font |
-| 1.6.2  | Configure font CSS variables       | [ ]    | Setup `--font-display` (Baloo 2) and `--font-body` (Nunito) |
-| 1.6.3  | Create typography utility classes  | [ ]    | `.font-display`, `.font-body` with appropriate weights      |
-| 1.6.4  | Apply fonts to existing components | [ ]    | Logo/titles use Baloo 2, body/buttons use Nunito            |
-| 1.6.5  | Setup metadata configuration       | [ ]    | Title templates, Open Graph, Twitter cards per page         |
-| 1.6.6  | Add structured data (JSON-LD)      | [ ]    | Organization, WebSite, and educational content schemas      |
-| 1.6.7  | Create robots.txt                  | [ ]    | Allow crawling, point to sitemap                            |
-| 1.6.8  | Generate sitemap.xml               | [ ]    | Dynamic sitemap with all locale routes                      |
-| 1.6.9  | Add favicon set                    | [ ]    | Multiple sizes, apple-touch-icon, manifest.json             |
-| 1.6.10 | Setup canonical URLs               | [ ]    | Prevent duplicate content across locales                    |
-| 1.6.11 | Add FAQ schema (AEO)               | [ ]    | Structured FAQ data for voice assistants and AI             |
-| 1.6.12 | Add speakable schema (AEO)         | [ ]    | Mark content suitable for text-to-speech                    |
-| 1.6.13 | Question-based headings (AEO)      | [ ]    | Use "How to...", "What is..." format for key content        |
-| 1.6.14 | Content structure for GEO          | [ ]    | Clear, scannable, citation-friendly content layout          |
-| 1.6.15 | Entity definitions (GEO)           | [ ]    | Clear definitions of typing terms and concepts              |
+| 1.6.1  | Install Google Fonts               | [x]    | Add Baloo 2 (fun layer) and Nunito (UI layer) via next/font |
+| 1.6.2  | Configure font CSS variables       | [x]    | Setup `--font-display` (Baloo 2) and `--font-body` (Nunito) |
+| 1.6.3  | Create typography utility classes  | [x]    | `.font-display`, `.font-body` with appropriate weights      |
+| 1.6.4  | Apply fonts to existing components | [x]    | Logo/titles use Baloo 2, body/buttons use Nunito            |
+| 1.6.5  | Setup metadata configuration       | [x]    | Title templates, Open Graph, Twitter cards per page         |
+| 1.6.6  | Add structured data (JSON-LD)      | [x]    | Organization, WebSite, and educational content schemas      |
+| 1.6.7  | Create robots.txt                  | [x]    | Allow crawling, point to sitemap                            |
+| 1.6.8  | Generate sitemap.xml               | [x]    | Dynamic sitemap with all locale routes                      |
+| 1.6.9  | Add favicon set                    | [x]    | Multiple sizes, apple-touch-icon, manifest.json             |
+| 1.6.10 | Setup canonical URLs               | [x]    | Prevent duplicate content across locales                    |
+| 1.6.11 | Add FAQ schema (AEO)               | [x]    | Structured FAQ data for voice assistants and AI             |
+| 1.6.12 | Add speakable schema (AEO)         | [x]    | Mark content suitable for text-to-speech                    |
+| 1.6.13 | Question-based headings (AEO)      | [x]    | Use "How to...", "What is..." format for key content        |
+| 1.6.14 | Content structure for GEO          | [x]    | Clear, scannable, citation-friendly content layout          |
+| 1.6.15 | Entity definitions (GEO)           | [x]    | Clear definitions of typing terms and concepts              |
 
-**Font Roles (Clear Separation)**:
+**Final Font System**:
 
-| Font        | Role              | Usage                                                                | Weights                                     |
-| ----------- | ----------------- | -------------------------------------------------------------------- | ------------------------------------------- |
-| **Baloo 2** | Fun + Game Layer  | Logo, level titles, game modes, achievements, scores, streaks        | SemiBold (600), Bold (700)                  |
-| **Nunito**  | Core UI + Reading | Body text, instructions, buttons, menus, stats, settings, dashboards | Regular (400), Medium (500), SemiBold (600) |
+| Language    | Role              | Font                 | Usage                                          | Weights                       |
+| ----------- | ----------------- | -------------------- | ---------------------------------------------- | ----------------------------- |
+| **English** | Fun + Game Layer  | Baloo 2              | Logo, level titles, game modes, achievements   | SemiBold (600), Bold (700)    |
+| **English** | Core UI + Reading | Nunito               | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500), SemiBold (600) |
+| **Hebrew**  | Fun + Game Layer  | Varela Round         | Logo, level titles, game modes, achievements   | Regular (400)                 |
+| **Hebrew**  | Core UI + Reading | Heebo                | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500)   |
 
 **Typography Guidelines**:
 
-- Keep Baloo 2 usage under 20-25% of visible text
-- Both fonts are rounded, creating visual harmony
-- Baloo 2 adds character without becoming childish
-- Nunito keeps the app calm and usable for adults
+- Keep display fonts (Baloo 2 / Varela Round) usage under 20-25% of visible text
+- Both English fonts (Baloo 2 + Nunito) are rounded, creating visual harmony
+- Both Hebrew fonts (Varela Round + Heebo) match this rounded aesthetic
+- **Never mix playful + serious fonts in the same sentence**
+- Display fonts are for standalone elements (titles, badges, scores)
+- Body fonts are for readable content (paragraphs, buttons, labels)
 - Works well across desktop, tablet, and mobile
-- Scales nicely for Hebrew and other languages
 
-**Example Hierarchy**:
+**UI Element Mapping**:
 
-- App Name / Level Title: Baloo 2 Bold
-- Section Headings: Nunito SemiBold
-- Body Text: Nunito Regular
-- Buttons: Nunito SemiBold
-- Achievement Text: Baloo 2 SemiBold
+| UI Element   | English          | Hebrew       |
+| ------------ | ---------------- | ------------ |
+| Logo         | Baloo 2 Bold     | Varela Round |
+| Level Title  | Baloo 2          | Varela Round |
+| Body Text    | Nunito Regular   | Heebo Regular |
+| Buttons      | Nunito SemiBold  | Heebo Medium |
+| Stats        | Nunito           | Heebo        |
+| Achievements | Baloo 2 SemiBold | Varela Round |
 
 **SEO Files to Create**:
 

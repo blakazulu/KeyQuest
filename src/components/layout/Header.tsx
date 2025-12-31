@@ -22,7 +22,7 @@ export function Header() {
         aria-label="Main navigation"
       >
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          <span className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             KeyQuest
           </span>
         </Link>

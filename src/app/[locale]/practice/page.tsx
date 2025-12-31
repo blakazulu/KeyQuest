@@ -10,7 +10,7 @@ export default function PracticePage() {
 
   return (
     <div className="flex flex-col items-center py-8">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+      <h1 className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">
         {t('title')}
       </h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
@@ -31,15 +31,15 @@ export default function PracticePage() {
 
         <div className="mt-8 flex justify-center gap-8 text-center" aria-live="polite">
           <div>
-            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">0</p>
+            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">0</p>
             <p className="text-sm text-zinc-500">WPM</p>
           </div>
           <div>
-            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">100%</p>
+            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">100%</p>
             <p className="text-sm text-zinc-500">Accuracy</p>
           </div>
           <div>
-            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">0:00</p>
+            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">0:00</p>
             <p className="text-sm text-zinc-500">Time</p>
           </div>
         </div>
