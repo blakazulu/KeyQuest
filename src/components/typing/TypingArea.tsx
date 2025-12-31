@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { TextDisplay } from './TextDisplay';
 import { Stats } from './Stats';
 import { Keyboard, CompactKeyboard } from '@/components/keyboard/Keyboard';
-import { FingerGuide, FingerIndicator } from '@/components/keyboard/FingerGuide';
+import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useTypingEngine, type TypingStats } from '@/hooks/useTypingEngine';
 import { useKeyboardInput } from '@/hooks/useKeyboardInput';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
@@ -233,21 +233,10 @@ export function TypingArea({
         />
       )}
 
-      {/* Visual keyboard and finger guide */}
+      {/* Visual keyboard with hands on sides */}
       {shouldShowKeyboard && (
-        <div className="mt-6 space-y-4">
-          {/* Finger indicator (compact) */}
-          {shouldShowFingerGuide && (
-            <div className="flex justify-center">
-              <FingerIndicator
-                activeFinger={activeFinger}
-                locale={locale}
-              />
-            </div>
-          )}
-
-          {/* Keyboard display */}
-          <div className="flex justify-center">
+        <div className="mt-6">
+          <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
             {compactKeyboard ? (
               <CompactKeyboard
                 highlightedKey={highlightedKey}
@@ -268,17 +257,7 @@ export function TypingArea({
                 baseSize={44}
               />
             )}
-          </div>
-
-          {/* Full finger guide (for learning mode) */}
-          {shouldShowFingerGuide && status === 'idle' && (
-            <FingerGuide
-              activeFinger={activeFinger}
-              locale={locale}
-              size="md"
-              className="mx-auto"
-            />
-          )}
+          </HandsWithKeyboard>
         </div>
       )}
 

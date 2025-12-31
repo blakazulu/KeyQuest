@@ -593,7 +593,6 @@ body {
 
 .card-raised:hover {
   box-shadow: var(--shadow-xl);
-  transform: translateY(-2px);
 }
 
 /* Feature card - for the home page features */
