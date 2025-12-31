@@ -25,6 +25,52 @@
 
 ---
 
+## Design System
+
+> **IMPORTANT**: All UI development MUST follow the design system documented in [`docs/DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md).
+
+### Design System Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Use CSS tokens** | Always use `var(--color-*)`, `var(--space-*)`, `var(--radius-*)` etc. instead of hardcoded values |
+| **Use component classes** | Prefer `.btn-primary`, `.card`, `.progress-bar` etc. over inline Tailwind for common patterns |
+| **Follow color system** | Use semantic colors (`--color-primary`, `--color-success`, `--color-error`) not raw colors |
+| **Respect dark mode** | All components must work in both light and dark modes |
+| **Animation classes** | Use `.animate-shake`, `.animate-pop`, `.animate-pulse-glow` for consistent motion |
+| **Keyboard styling** | Use `.keyboard-key`, `.finger-*` classes for visual keyboard |
+| **Gamification UI** | Use `.streak-badge`, `.achievement-badge`, `.xp-ring`, `.rank-*` for game elements |
+
+### Migration Note
+
+Existing UI components (Header, Landing Page) were built before the design system. These should be migrated to use design tokens when touched or during Phase 10 (Landing Page) and Phase 13 (Polish). New components MUST use the design system from the start.
+
+### Quick Reference
+
+```css
+/* Colors */
+--color-primary, --color-success, --color-error, --color-warning
+--color-bg, --color-surface, --color-surface-raised
+--color-text, --color-text-muted, --color-border
+--color-xp, --color-streak, --color-achievement
+
+/* Spacing (4px base) */
+--space-1 through --space-20
+
+/* Typography */
+.text-display-xl, .text-display-lg, .text-display-md, .text-display-sm
+.text-body-lg, .text-body-md, .text-body-sm, .text-caption
+.font-display, .font-body, .font-mono
+
+/* Components */
+.btn-primary, .btn-secondary, .btn-ghost, .btn-game
+.card, .card-raised
+.progress-bar, .progress-bar-fill, .progress-bar-primary
+.keyboard-key, .keyboard-key-highlighted, .keyboard-key-correct
+```
+
+---
+
 ## Compliance Requirements
 
 ### WCAG 2.2 (Accessibility)

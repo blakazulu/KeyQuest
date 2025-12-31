@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 1. **Bilingual Content**: Website is in English and Hebrew - always add text in BOTH languages
 2. **Accessibility First**: WCAG 2.2 Level AA compliance required - all components must have ARIA labels, roles, and full keyboard navigation
 3. **SEO/AEO/GEO Compliance**: All pages must be optimized for search engines, answer engines, and generative engines
-4. **Never Push to Git**: Always ask before pushing - only commit when explicitly approved
-5. **Update Changelog**: Add notable changes to `CHANGELOG.md` under `[Unreleased]` section (follows [Keep a Changelog](https://keepachangelog.com) format)
+4. **Use Design System**: All new UI MUST use design tokens from `/docs/DESIGN_SYSTEM.md` - no hardcoded colors, use CSS variables
+5. **Never Push to Git**: Always ask before pushing - only commit when explicitly approved
+6. **Update Changelog**: Add notable changes to `CHANGELOG.md` under `[Unreleased]` section (follows [Keep a Changelog](https://keepachangelog.com) format)
 
 ## Project Overview
 
@@ -61,10 +62,16 @@ Three stores with clear separation of concerns:
 - **useSettingsStore** - User preferences (theme, sound, font) - persisted to `keyquest-settings`
 
 ### Styling Conventions
-- Tailwind utility classes with `dark:` prefix for dark mode
-- Zinc color palette as the primary neutral
-- Custom CSS variables in `globals.css` for theming
-- Custom classes: `.typing-text` (monospace), `.cursor-blink`
+
+> **See `/docs/DESIGN_SYSTEM.md` for full design specifications.**
+
+- **Use CSS tokens**: `var(--color-primary)`, `var(--space-4)`, `var(--radius-lg)` - NOT hardcoded values
+- **Use component classes**: `.btn-primary`, `.card`, `.keyboard-key` for common patterns
+- **Colors**: Primary (Indigo), Success (Green), Error (Rose), XP (Purple), Streak (Orange)
+- **Dark mode**: Use `var(--color-*)` tokens which auto-adapt, or `.dark:` prefix for overrides
+- **Typography**: `.font-display` (Baloo 2/Varela Round), `.font-body` (Nunito/Heebo), `.font-mono`
+- **Animations**: `.animate-shake`, `.animate-pop`, `.animate-pulse-glow`, `.cursor-blink`
+- **Keyboard**: `.keyboard-key`, `.finger-lpinky` through `.finger-thumb` for finger colors
 
 ### Path Alias
 Use `@/` for imports from `src/`:
@@ -75,10 +82,16 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 1.5** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 1.6 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
-**Completed**: Project foundation, navigation, placeholder pages, Zustand stores, dark mode, i18n (English/Hebrew with RTL)
+**Completed**:
+- Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
+- Phase 1.5: i18n (English/Hebrew with RTL)
+- Phase 1.6: Typography, Metadata, SEO/AEO/GEO, Design System
+
 **Next**: Phase 2 (Core Typing Engine), Phase 3 (Visual Keyboard)
+
+**Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
 
 ## Key Requirements
 
