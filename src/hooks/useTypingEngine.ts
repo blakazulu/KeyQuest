@@ -39,6 +39,8 @@ export interface UseTypingEngineOptions {
   onError?: (char: string, expected: string) => void;
   /** Whether to allow backspace corrections */
   allowBackspace?: boolean;
+  /** Whether typing is case-sensitive (default: false for easier levels) */
+  caseSensitive?: boolean;
 }
 
 export interface UseTypingEngineReturn {
@@ -79,6 +81,7 @@ export function useTypingEngine({
   onComplete,
   onError,
   allowBackspace = false,
+  caseSensitive = false,
 }: UseTypingEngineOptions = {}): UseTypingEngineReturn {
   const {
     targetText,
@@ -156,9 +159,11 @@ export function useTypingEngine({
     if (isComplete || isPaused) return;
 
     const expected = targetText[currentPosition];
-    const isCorrect = key === expected;
+    const isCorrect = caseSensitive
+      ? key === expected
+      : key.toLowerCase() === expected.toLowerCase();
 
-    storeHandleKeyPress(key);
+    storeHandleKeyPress(key, isCorrect);
     onCharacterTyped?.(key, isCorrect);
 
     if (!isCorrect) {
@@ -185,7 +190,7 @@ export function useTypingEngine({
         });
       }, 0);
     }
-  }, [isComplete, isPaused, targetText, currentPosition, storeHandleKeyPress, onCharacterTyped, onError, onComplete]);
+  }, [isComplete, isPaused, targetText, currentPosition, storeHandleKeyPress, onCharacterTyped, onError, onComplete, caseSensitive]);
 
   // Handle backspace
   const handleBackspace = useCallback(() => {

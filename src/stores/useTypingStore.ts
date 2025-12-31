@@ -18,7 +18,7 @@ interface TypingState {
 
   // Actions
   setTargetText: (text: string) => void;
-  handleKeyPress: (key: string) => void;
+  handleKeyPress: (key: string, isCorrectOverride?: boolean) => void;
   handleBackspace: () => void;
   start: () => void;
   pause: () => void;
@@ -50,7 +50,7 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     isPaused: false,
   }),
 
-  handleKeyPress: (key) => {
+  handleKeyPress: (key, isCorrectOverride) => {
     const { targetText, currentPosition, errors, startTime, isComplete, isPaused } = get();
 
     // Don't process if complete or paused
@@ -60,7 +60,8 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     // Start timer on first keypress if not already started
     const newStartTime = startTime ?? Date.now();
     const expectedChar = targetText[currentPosition];
-    const isCorrect = key === expectedChar;
+    // Use override if provided, otherwise use case-sensitive comparison
+    const isCorrect = isCorrectOverride ?? (key === expectedChar);
     const newPosition = currentPosition + 1;
     const nowComplete = newPosition >= targetText.length;
 
