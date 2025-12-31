@@ -61,7 +61,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <div lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
       <NextIntlClientProvider messages={messages}>
         <Header />
-        <main className="mx-auto max-w-5xl px-4 py-8">
+        <main className="mx-auto max-w-7xl px-4 py-8 pt-0">
           {children}
         </main>
       </NextIntlClientProvider>

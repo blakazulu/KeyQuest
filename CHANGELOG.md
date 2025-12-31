@@ -8,19 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Playful Kid-Friendly Visual Redesign** - Complete visual transformation for young learners
-  - New warm, vibrant color palette with orange primary (#FF6B35), purple accents, bright success colors
-  - Playful animations: bounce-pop, wiggle, sparkle, float, confetti, slide-in-bounce
-  - Rounder, bouncier buttons with gradient backgrounds and hover effects
-  - Cards with colorful left borders, shadows, and lift animations
-  - LevelCard with stage themes and icons (🏠 Home Row Haven, 🌊 Letter Lagoon, etc.)
-  - Stage numbers with gradient backgrounds and playful hover rotations
-  - Star ratings for completed levels (★★★)
-  - Home page with floating emoji decorations, gradient hero text, game-style CTAs
-  - Dashboard with colorful stat cards, achievement preview section
-  - Brighter keyboard finger colors optimized for kids
-  - Warmer backgrounds (#FFFBF7) and peachy surface tints
-  - Dark mode updated with warm purple tones
+- **Soft, Modern Visual Redesign** - Clean, dreamy aesthetic matching professional mockup
+  - New soft pastel color palette with blue tones (#F0F4FF background, soft accent colors)
+  - Orange primary (#FF7B4A) for CTAs maintaining visual pop
+  - Gradient background with subtle cloud decorations
+  - Header redesigned with pill-shaped navigation container
+  - Home page hero with stylized keyboard visualization
+  - New headline "Level Up Your Typing Skills" with refined typography
+  - Three feature cards: Track Progress, Game Modes, Certificate
+  - FAQ section with collapsible accordion design
+  - Dashboard with clean stat cards and SVG icons
+  - Softer shadows with blue-gray tints
+  - Fully rounded (pill) buttons for modern feel
+  - Removed emoji decorations for cleaner professional look
 - **Design System Implementation** - Full UI component library with consistent design tokens
   - Tailwind theme extension with all CSS custom properties (colors, spacing, typography, shadows)
   - UI component library in `src/components/ui/`:

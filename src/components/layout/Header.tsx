@@ -10,43 +10,44 @@ export function Header() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/' as const, label: t('home') },
     { href: '/levels' as const, label: t('levels') },
     { href: '/practice' as const, label: t('practice') },
     { href: '/dashboard' as const, label: t('dashboard') },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-surface/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full bg-transparent">
       <nav
-        className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4"
+        className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6"
         aria-label="Main navigation"
       >
-        <Link href="/" className="flex items-center gap-2 group">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 group">
           <Image
             src="/images/logo-64.png"
             alt=""
-            width={40}
-            height={40}
-            className="transition-transform group-hover:scale-110 group-hover:rotate-6"
+            width={36}
+            height={36}
+            className="transition-transform group-hover:scale-105"
             priority
           />
-          <span className="font-display text-2xl font-bold text-foreground">
+          <span className="font-display text-xl font-bold text-foreground">
             KeyQuest
           </span>
         </Link>
 
-        <div className="flex items-center gap-1">
+        {/* Nav items in pill container */}
+        <div className="flex items-center gap-1 bg-surface rounded-full px-2 py-1.5 shadow-sm border border-border">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-surface-raised text-foreground'
-                    : 'text-muted hover:bg-surface-raised hover:text-foreground'
+                    ? 'bg-surface-raised text-foreground shadow-sm'
+                    : 'text-muted hover:text-foreground'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -54,10 +55,11 @@ export function Header() {
               </Link>
             );
           })}
+        </div>
 
-          <div className="ms-2 border-s border-border ps-2">
-            <LanguageSwitcher />
-          </div>
+        {/* Right side - Language switcher */}
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
         </div>
       </nav>
     </header>

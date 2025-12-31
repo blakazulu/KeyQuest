@@ -10,23 +10,21 @@
     "dashboard": "Dashboard"
   },
   "home": {
-    "welcome": "Welcome to KeyQuest",
-    "tagline": "Your Typing Adventure",
-    "description": "A fun, game-driven way to learn touch typing from the ground up. Master the keyboard through engaging lessons and games.",
-    "startPracticing": "Start Practicing",
-    "viewLessons": "View Lessons",
+    "headline": "Level Up Your Typing Skills",
+    "subtitle": "Embark on an epic journey to master touch-typing through interactive games, personalized lessons, and rewarding challenges. Play, learn, and conquer the keyboard.",
+    "startQuest": "Start Your Quest",
     "features": {
-      "learnStepByStep": {
-        "title": "Learn Step by Step",
-        "description": "Progressive lessons from home row to full fluency."
+      "trackProgress": {
+        "title": "Track Progress",
+        "description": "Monitor your typing speed and accuracy over time with detailed performance analytics and achievement badges."
       },
-      "trackSpeed": {
-        "title": "Track Your Speed",
-        "description": "Watch your WPM improve with real-time stats."
+      "gameModes": {
+        "title": "Game Modes",
+        "description": "Explore a variety of engaging game modes, from arcade-style challenges to story-driven adventures, designed to make learning fun."
       },
-      "shortSessions": {
-        "title": "Short Sessions",
-        "description": "5-10 minute lessons that fit your schedule."
+      "certificate": {
+        "title": "Certificate",
+        "description": "Earn official certificates upon completing course milestones and share your achievements with friends and potential employers."
       }
     },
     "whyLearn": {
