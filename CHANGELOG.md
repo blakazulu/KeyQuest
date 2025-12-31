@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Internationalization (i18n) with next-intl supporting English and Hebrew
+- RTL (right-to-left) layout support for Hebrew language
+- Language switcher component in header
+- Locale-based routing (/en and /he URL prefixes)
+- Complete UI translations for all pages
+
 ## [0.1.0] - 2025-01-01
 
 ### Added

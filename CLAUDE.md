@@ -37,9 +37,11 @@ No testing framework is set up yet (planned for Phase 13 with Vitest).
 ### Directory Structure
 ```
 src/
-├── app/           # Next.js App Router pages
+├── app/
+│   └── [locale]/  # Locale-based routing (en/he)
+├── i18n/          # Internationalization config
 ├── components/    # React components grouped by feature
-│   ├── layout/    # Header, navigation
+│   ├── layout/    # Header, LanguageSwitcher
 │   ├── typing/    # Typing engine components (Phase 2)
 │   ├── keyboard/  # Visual keyboard (Phase 3)
 │   ├── games/     # Game modes (Phase 12)
@@ -49,6 +51,7 @@ src/
 ├── lib/           # Utility functions
 ├── data/          # Static content (lessons, etc.)
 └── types/         # TypeScript type definitions
+messages/          # Translation files (en.json, he.json)
 ```
 
 ### State Management (Zustand)
@@ -72,10 +75,10 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 1** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 1.5** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
-**Completed**: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
-**Next**: Phase 1.5 (i18n), Phase 2 (Core Typing Engine), Phase 3 (Visual Keyboard)
+**Completed**: Project foundation, navigation, placeholder pages, Zustand stores, dark mode, i18n (English/Hebrew with RTL)
+**Next**: Phase 2 (Core Typing Engine), Phase 3 (Visual Keyboard)
 
 ## Key Requirements
 

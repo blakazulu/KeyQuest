@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "title": "KeyQuest - Learn Touch Typing the Fun Way",
+    "description": "KeyQuest is a fun, game-driven way to learn touch typing from the ground up. Master typing through engaging lessons and games."
+  },
+  "nav": {
+    "home": "Home",
+    "levels": "Levels",
+    "practice": "Practice",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "welcome": "Welcome to KeyQuest",
+    "tagline": "Your Typing Adventure",
+    "description": "A fun, game-driven way to learn touch typing from the ground up. Master the keyboard through engaging lessons and games.",
+    "startPracticing": "Start Practicing",
+    "viewLessons": "View Lessons",
+    "features": {
+      "learnStepByStep": {
+        "title": "Learn Step by Step",
+        "description": "Progressive lessons from home row to full fluency."
+      },
+      "trackSpeed": {
+        "title": "Track Your Speed",
+        "description": "Watch your WPM improve with real-time stats."
+      },
+      "shortSessions": {
+        "title": "Short Sessions",
+        "description": "5-10 minute lessons that fit your schedule."
+      }
+    }
+  },
+  "levels": {
+    "title": "Learning Path",
+    "subtitle": "Master touch typing step by step",
+    "stages": {
+      "1": {
+        "name": "Keyboard Familiarity",
+        "description": "Get comfortable with key positions"
+      },
+      "2": {
+        "name": "Home Row Mastery",
+        "description": "Master ASDF and JKL; - your foundation"
+      },
+      "3": {
+        "name": "Letter Expansion",
+        "description": "Add more letters to your skills"
+      },
+      "4": {
+        "name": "Words & Vocabulary",
+        "description": "Start typing real words"
+      },
+      "5": {
+        "name": "Sentences & Flow",
+        "description": "Build speed with complete sentences"
+      },
+      "6": {
+        "name": "Fluency & Speed",
+        "description": "Achieve typing mastery"
+      }
+    },
+    "lessons": "lessons",
+    "status": {
+      "locked": "Locked",
+      "available": "Available",
+      "completed": "Completed"
+    }
+  },
+  "practice": {
+    "title": "Practice",
+    "subtitle": "Sharpen your typing skills",
+    "comingSoon": "Typing practice coming soon!",
+    "description": "This is where you'll practice your typing skills with real-time feedback.",
+    "backToLevels": "Back to Levels"
+  },
+  "dashboard": {
+    "title": "Your Dashboard",
+    "subtitle": "Track your typing journey",
+    "stats": {
+      "currentLevel": "Current Level",
+      "stage": "Stage",
+      "averageAccuracy": "Average Accuracy",
+      "averageWpm": "Average WPM",
+      "practiceStreak": "Practice Streak",
+      "days": "days"
+    },
+    "startPractice": "Start Practice"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again"
+  },
+  "language": {
+    "switch": "Switch language",
+    "en": "English",
+    "he": "Hebrew"
+  }
+}
