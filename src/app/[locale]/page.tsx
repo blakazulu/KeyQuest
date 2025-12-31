@@ -53,19 +53,19 @@ export default function Home() {
       <div className="flex flex-col items-center">
         {/* Hero Section */}
         <section className="w-full max-w-5xl text-center pb-16 px-4">
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
+          <h1 className="relative z-10 font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
             {t('headline')}
           </h1>
 
           <p
             id="hero-description"
-            className="mt-2 max-w-3xl mx-auto text-lg text-muted leading-snug"
+            className="relative z-10 mt-2 max-w-3xl mx-auto text-lg text-muted leading-snug"
           >
             {t('subtitle')}
           </p>
 
           {/* Hero Keyboard Illustration */}
-          <div className="mx-4 sm:-mx-8 lg:-mx-16 relative">
+          <div className="mx-4 sm:-mx-8 lg:-mx-16 relative z-0">
             <Image
               src="/images/hero.webp"
               alt="Colorful 3D keyboard with cute characters - a knight, wizard, and adventurer on a floating keyboard in the clouds"
@@ -108,7 +108,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="w-full max-w-5xl px-4 pb-20" aria-label="Features">
+        <section className="relative z-10 w-full max-w-5xl px-4 pb-20" aria-label="Features">
           <div className="grid gap-6 sm:grid-cols-3">
             {/* Track Progress */}
             <div
@@ -187,7 +187,7 @@ export default function Home() {
         </section>
 
         {/* FAQ Section - Collapsed for cleaner look */}
-        <section className="w-full max-w-3xl px-4 pb-20" aria-labelledby="faq-title">
+        <section className="relative z-10 w-full max-w-3xl px-4 pb-20" aria-labelledby="faq-title">
           <h2
             id="faq-title"
             className="font-display text-2xl font-bold text-foreground text-center mb-8"

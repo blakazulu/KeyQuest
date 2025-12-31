@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
 import { Header } from '@/components/layout/Header';
+import { Clouds } from '@/components/layout/Clouds';
 
 type Props = {
   children: React.ReactNode;
@@ -58,10 +59,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   const isRTL = locale === 'he';
 
   return (
-    <div lang={locale} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div lang={locale} dir={isRTL ? 'rtl' : 'ltr'} className="relative">
+      <Clouds />
       <NextIntlClientProvider messages={messages}>
         <Header />
-        <main className="mx-auto max-w-7xl px-4 py-8 pt-0">
+        <main className="relative mx-auto max-w-7xl px-4 py-8 pt-0">
           {children}
         </main>
       </NextIntlClientProvider>
