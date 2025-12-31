@@ -1,37 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KeyQuest
 
-## Getting Started
+A fun, game-driven way to learn touch typing from the ground up.
 
-First, run the development server:
+## What is KeyQuest?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+KeyQuest is an interactive typing tutor that takes you from absolute beginner to fluent typist. Whether you've never touched a keyboard or want to improve your speed, KeyQuest guides you through a structured learning path with engaging lessons and games.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Learn Step by Step** - Start with the home row and progressively master the entire keyboard
+- **Track Your Progress** - Real-time WPM and accuracy tracking to see your improvement
+- **Fun & Engaging** - Game-based learning that makes practice enjoyable
+- **Visual Keyboard** - On-screen keyboard with finger guides to build proper technique
+- **Short Sessions** - 5-10 minute lessons that fit any schedule
+- **For All Ages** - Designed for kids, teens, and adults alike
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Learning Path
 
-## Learn More
+1. **Keyboard Familiarity** - Get comfortable with key positions
+2. **Home Row Mastery** - Build your foundation with ASDF JKL;
+3. **Letter Expansion** - Gradually add more keys
+4. **Words & Vocabulary** - Type real words and common patterns
+5. **Sentences & Flow** - Build speed with complete sentences
+6. **Fluency & Speed** - Achieve typing mastery
 
-To learn more about Next.js, take a look at the following resources:
+## Accessibility
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+KeyQuest is built with accessibility as a priority, following WCAG 2.2 guidelines to ensure everyone can learn to type.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-"# KeyQuest" 
+[View Changelog](CHANGELOG.md)

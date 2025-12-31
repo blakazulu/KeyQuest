@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. **Accessibility First**: WCAG 2.2 Level AA compliance required - all components must have ARIA labels, roles, and full keyboard navigation
 3. **SEO/AEO/GEO Compliance**: All pages must be optimized for search engines, answer engines, and generative engines
 4. **Never Push to Git**: Always ask before pushing - only commit when explicitly approved
+5. **Update Changelog**: Add notable changes to `CHANGELOG.md` under `[Unreleased]` section (follows [Keep a Changelog](https://keepachangelog.com) format)
 
 ## Project Overview
 

@@ -6,7 +6,13 @@
       "Bash(npm run build:*)",
       "Bash(cat:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "mcp__netlify__netlify-user-services-reader",
+      "mcp__netlify__netlify-team-services-reader",
+      "Bash(netlify:*)",
+      "mcp__netlify__netlify-project-services-reader",
+      "mcp__netlify__netlify-project-services-updater"
     ]
   }
 }
