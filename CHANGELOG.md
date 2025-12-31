@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Comprehensive design system documentation (`docs/DESIGN_SYSTEM.md`)
+- Extended CSS custom properties with full design tokens:
+  - Complete color system (surfaces, semantic, gamification, finger colors)
+  - Spacing scale (4px base unit, 12 sizes)
+  - Typography scale (8 sizes from caption to display-xl)
+  - Border radius tokens (6 sizes)
+  - Shadow tokens (including glow effects for gamification)
+  - Animation timing and easing functions
+  - Container width tokens
+- Dark mode support via class toggle (`.dark`) in addition to `prefers-color-scheme`
+- Pre-built CSS component classes:
+  - Button variants (`.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.btn-game`)
+  - Card styles (`.card`, `.card-raised`)
+  - Progress bars with gradient fills
+  - Visual keyboard key styles with finger color coding
+  - Gamification elements (XP ring, streak badge, achievement badge, rank badges)
+- Animation utility classes:
+  - `.animate-shake` for gentle error feedback
+  - `.animate-pop` for correct keystroke celebration
+  - `.animate-pulse-glow` for active elements
+  - `.animate-flame` for streak fire effect
+  - `.animate-shine` for achievement unlock
+  - `.animate-count` for score changes
+- Reduced motion support (`prefers-reduced-motion`)
 - Internationalization (i18n) with next-intl supporting English and Hebrew
 - RTL (right-to-left) layout support for Hebrew language
 - Language switcher component in header
