@@ -117,6 +117,33 @@
   "practice": {
     "title": "Practice",
     "subtitle": "Sharpen your typing skills",
+    "typingArea": "Typing practice area",
+    "pressEnterToStart": "Press Enter to start typing",
+    "pressEnterToResume": "Press Enter to resume",
+    "paused": "Paused",
+    "completed": "Completed!",
+    "progress": "{percent}% complete",
+    "completedAnnouncement": "Practice completed! You typed at {wpm} words per minute with {accuracy}% accuracy.",
+    "stats": {
+      "statsPanel": "Typing statistics",
+      "wpm": "Speed",
+      "wpmUnit": "WPM",
+      "accuracy": "Accuracy",
+      "time": "Time",
+      "errors": "Errors"
+    },
+    "actions": {
+      "restart": "Restart",
+      "next": "Next Lesson",
+      "backToLevels": "Back to Levels"
+    },
+    "feedback": {
+      "excellent": "Excellent work!",
+      "great": "Great job!",
+      "good": "Good progress!",
+      "keepPracticing": "Keep practicing!",
+      "needsWork": "Let's try again"
+    },
     "comingSoon": "Typing practice coming soon!",
     "description": "This is where you'll practice your typing skills with real-time feedback.",
     "backToLevels": "Back to Levels"

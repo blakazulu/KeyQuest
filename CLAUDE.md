@@ -18,13 +18,14 @@ KeyQuest is a fun, game-driven touch typing learning application built with Next
 ## Commands
 
 ```bash
-npm run dev      # Start dev server at localhost:3000
-npm run build    # Production build
-npm run start    # Run production server
-npm run lint     # Run ESLint
+npm run dev          # Start dev server at localhost:3000
+npm run build        # Production build
+npm run start        # Run production server
+npm run lint         # Run ESLint
+npm test             # Run tests in watch mode
+npm run test:run     # Run tests once
+npm run test:coverage # Run tests with coverage report
 ```
-
-No testing framework is set up yet (planned for Phase 13 with Vitest).
 
 ## Architecture
 
@@ -82,14 +83,15 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 1.6 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 2 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
 **Completed**:
 - Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
 - Phase 1.5: i18n (English/Hebrew with RTL)
 - Phase 1.6: Typography, Metadata, SEO/AEO/GEO, Design System
+- Phase 2: Core Typing Engine (hooks, components, stats, keyboard input)
 
-**Next**: Phase 2 (Core Typing Engine), Phase 3 (Visual Keyboard)
+**Next**: Phase 3 (Visual Keyboard)
 
 **Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
 

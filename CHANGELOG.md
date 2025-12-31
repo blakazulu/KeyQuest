@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 2: Core Typing Engine** - Fully functional typing practice system
+  - `useKeyboardInput` hook for capturing keyboard events
+  - `useTypingEngine` hook orchestrating typing sessions with stats
+  - `TextDisplay` component with character-level styling (correct/incorrect/current/pending)
+  - `TypingArea` component combining text display, stats, and keyboard input
+  - `Stats` component showing live WPM, accuracy, time, and errors
+  - Typing utilities (`lib/typing-utils.ts`) for WPM, accuracy, and progress calculations
+  - Updated `useTypingStore` with pause/resume and backspace support
+  - Practice page with working typing interface and completion summary
+  - Full keyboard shortcut support (Enter to start/resume, Escape to pause)
+  - ARIA live regions for screen reader announcements
+  - Bilingual translations for all practice UI (English/Hebrew)
+- **Testing Infrastructure** - Vitest setup with React Testing Library
+  - Vitest configuration for Next.js/React environment
+  - 71 unit tests covering typing utilities, store, and keyboard input hook
+  - Test commands: `npm test`, `npm run test:run`, `npm run test:coverage`
 - Comprehensive design system documentation (`docs/DESIGN_SYSTEM.md`)
 - Extended CSS custom properties with full design tokens:
   - Complete color system (surfaces, semantic, gamification, finger colors)

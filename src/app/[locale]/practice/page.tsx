@@ -1,62 +1,124 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { TypingArea } from '@/components/typing';
+import type { TypingStats } from '@/hooks/useTypingEngine';
+
+// Sample practice texts - will be replaced with lesson content in Phase 4
+const PRACTICE_TEXTS = [
+  'The quick brown fox jumps over the lazy dog.',
+  'Pack my box with five dozen liquor jugs.',
+  'How vexingly quick daft zebras jump!',
+  'The five boxing wizards jump quickly.',
+  'Sphinx of black quartz, judge my vow.',
+];
 
 export default function PracticePage() {
   const t = useTranslations('practice');
-  const [text] = useState('The quick brown fox jumps over the lazy dog.');
+  const tFeedback = useTranslations('practice.feedback');
+  const tActions = useTranslations('practice.actions');
+
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [completedStats, setCompletedStats] = useState<TypingStats | null>(null);
+  const [key, setKey] = useState(0); // Used to force remount of TypingArea
+
+  const currentText = PRACTICE_TEXTS[currentTextIndex];
+
+  const handleComplete = useCallback((stats: TypingStats) => {
+    setCompletedStats(stats);
+  }, []);
+
+  const handleRestart = useCallback(() => {
+    setCompletedStats(null);
+    setKey((k) => k + 1); // Force remount to reset state
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setCompletedStats(null);
+    setCurrentTextIndex((i) => (i + 1) % PRACTICE_TEXTS.length);
+    setKey((k) => k + 1);
+  }, []);
+
+  // Determine feedback based on performance
+  const getFeedbackKey = (accuracy: number, wpm: number): string => {
+    if (accuracy >= 98 && wpm >= 40) return 'excellent';
+    if (accuracy >= 95 && wpm >= 30) return 'great';
+    if (accuracy >= 90) return 'good';
+    if (accuracy >= 80) return 'keepPracticing';
+    return 'needsWork';
+  };
 
   return (
     <div className="flex flex-col items-center py-8">
-      <h1 className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">
-        {t('title')}
-      </h1>
-      <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        {t('subtitle')}
-      </p>
+      <header className="text-center">
+        <h1 className="text-display-lg">{t('title')}</h1>
+        <p className="mt-2 text-body-md text-muted">{t('subtitle')}</p>
+      </header>
 
-      <div className="mt-12 w-full max-w-3xl">
-        <div
-          className="rounded-2xl bg-white p-8 shadow-sm dark:bg-zinc-900"
-          role="textbox"
-          aria-label={t('description')}
-          aria-readonly="true"
-        >
-          <p className="typing-text text-2xl leading-relaxed text-zinc-400">
-            {text}
-          </p>
-        </div>
+      <main className="mt-8 w-full max-w-3xl">
+        <TypingArea
+          key={key}
+          text={currentText}
+          onComplete={handleComplete}
+          showStats={true}
+          allowBackspace={false}
+        />
 
-        <div className="mt-8 flex justify-center gap-8 text-center" aria-live="polite">
-          <div>
-            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">0</p>
-            <p className="text-sm text-zinc-500">WPM</p>
+        {/* Completion Summary */}
+        {completedStats && (
+          <div className="mt-8 card-raised text-center">
+            <div className="text-display-md text-success mb-2">
+              {tFeedback(getFeedbackKey(completedStats.accuracy, completedStats.wpm))}
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 mt-6 mb-6">
+              <div>
+                <div className="score-display text-primary">{completedStats.wpm}</div>
+                <div className="text-caption text-muted">WPM</div>
+              </div>
+              <div>
+                <div className="score-display text-success">{completedStats.accuracy}%</div>
+                <div className="text-caption text-muted">{t('stats.accuracy')}</div>
+              </div>
+              <div>
+                <div className="score-display">
+                  {completedStats.errorCount}
+                </div>
+                <div className="text-caption text-muted">{t('stats.errors')}</div>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleRestart}
+                className="btn btn-secondary"
+                aria-label={tActions('restart')}
+              >
+                {tActions('restart')}
+              </button>
+              <button
+                onClick={handleNext}
+                className="btn btn-primary"
+                aria-label={tActions('next')}
+              >
+                {tActions('next')}
+              </button>
+            </div>
           </div>
-          <div>
-            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">100%</p>
-            <p className="text-sm text-zinc-500">Accuracy</p>
-          </div>
-          <div>
-            <p className="font-display text-3xl font-bold text-zinc-900 dark:text-zinc-100">0:00</p>
-            <p className="text-sm text-zinc-500">Time</p>
-          </div>
-        </div>
+        )}
 
-        <p className="mt-8 text-center text-sm text-zinc-500">
-          {t('comingSoon')}
-        </p>
-
-        <div className="mt-4 text-center">
+        {/* Navigation */}
+        <div className="mt-8 text-center">
           <Link
             href="/levels"
-            className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+            className="text-body-sm text-primary hover:underline"
           >
-            {t('backToLevels')}
+            {tActions('backToLevels')}
           </Link>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -117,6 +117,33 @@
   "practice": {
     "title": "תרגול",
     "subtitle": "שפר את כישורי ההקלדה שלך",
+    "typingArea": "אזור תרגול הקלדה",
+    "pressEnterToStart": "לחץ Enter כדי להתחיל להקליד",
+    "pressEnterToResume": "לחץ Enter כדי להמשיך",
+    "paused": "מושהה",
+    "completed": "הושלם!",
+    "progress": "{percent}% הושלם",
+    "completedAnnouncement": "התרגול הושלם! הקלדת ב-{wpm} מילים לדקה עם {accuracy}% דיוק.",
+    "stats": {
+      "statsPanel": "סטטיסטיקות הקלדה",
+      "wpm": "מהירות",
+      "wpmUnit": "מ״ל",
+      "accuracy": "דיוק",
+      "time": "זמן",
+      "errors": "שגיאות"
+    },
+    "actions": {
+      "restart": "התחל מחדש",
+      "next": "השיעור הבא",
+      "backToLevels": "חזרה לשלבים"
+    },
+    "feedback": {
+      "excellent": "עבודה מצוינת!",
+      "great": "כל הכבוד!",
+      "good": "התקדמות טובה!",
+      "keepPracticing": "המשך לתרגל!",
+      "needsWork": "בוא ננסה שוב"
+    },
     "comingSoon": "תרגול הקלדה בקרוב!",
     "description": "כאן תוכל לתרגל את כישורי ההקלדה שלך עם משוב בזמן אמת.",
     "backToLevels": "חזרה לשלבים"
