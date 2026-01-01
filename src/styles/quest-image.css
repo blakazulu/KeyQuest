@@ -138,7 +138,6 @@
 .qmi-hotspot:hover .qmi-label {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
 }
 
 .qmi-hotspot-locked {
@@ -202,9 +201,8 @@
 /* Floating label */
 .qmi-label {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
+  top: -140px;
+  left: calc(100% + 52px);
   min-width: 140px;
   padding: 10px 14px;
   background: linear-gradient(180deg, #FFF8E7 0%, #F5E6D3 100%);
@@ -225,22 +223,13 @@
 .qmi-hotspot:focus-within .qmi-label {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
 }
 
-/* Adjust label position for edge stages */
-.qmi-hotspot[style*="left: 82%"] .qmi-label,
-.qmi-hotspot[style*="left: 85%"] .qmi-label {
+/* Adjust label position for right-side stages (show label on left) */
+.qmi-hotspot[style*="left: 74"] .qmi-label,
+.qmi-hotspot[style*="left: 82%"] .qmi-label {
   left: auto;
-  right: 50%;
-  transform: translateX(50%) translateY(8px);
-}
-
-.qmi-hotspot[style*="left: 82%"]:hover .qmi-label,
-.qmi-hotspot[style*="left: 85%"]:hover .qmi-label,
-.qmi-hotspot-current[style*="left: 82%"] .qmi-label,
-.qmi-hotspot-current[style*="left: 85%"] .qmi-label {
-  transform: translateX(50%) translateY(0);
+  right: calc(100% + 52px);
 }
 
 .qmi-label-icon {
@@ -386,10 +375,6 @@
   z-index: 35;
 }
 
-/* Hide when label is shown */
-.qmi-hotspot-current:hover .qmi-here-indicator {
-  opacity: 0;
-}
 
 @keyframes qmi-here-bounce {
 

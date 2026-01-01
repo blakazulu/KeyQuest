@@ -22,8 +22,8 @@ interface QuestMapProps {
 // Stage positions mapped to landmarks on map.webp (percentage coordinates)
 // Path: Cottage → Volcano → Cave → Snowy(BR) → Castle → Treasure(TR)
 const stagePositions = [
-  { x: 18, y: 18 },  // 1: Cottage (top-left)
-  { x: 13, y: 52 },  // 2: Volcano (left-center)
+  { x: 22, y: 20 },  // 1: Cottage (top-left)
+  { x: 17.5, y: 50 },  // 2: Volcano (left-center)
   { x: 17, y: 92 },  // 3: Cave (bottom-left)
   { x: 82, y: 82 },  // 4: Snowy mountain (bottom-right)
   { x: 74.7, y: 58 },  // 5: Castle (middle-right)
