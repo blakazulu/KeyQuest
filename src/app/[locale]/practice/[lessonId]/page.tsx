@@ -111,6 +111,12 @@ export default function LessonPracticePage() {
     setFlowKey((k) => k + 1);
   }, []);
 
+  // Handle exit (back to map)
+  const handleExit = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    router.push(`/${locale}/levels`);
+  }, [router, locale]);
+
   // Show loading while redirecting or if lesson not found
   if (!lesson) {
     return (
@@ -137,6 +143,7 @@ export default function LessonPracticePage() {
           lesson={lesson}
           locale={locale}
           onComplete={handleComplete}
+          onExit={handleExit}
         />
       )}
 

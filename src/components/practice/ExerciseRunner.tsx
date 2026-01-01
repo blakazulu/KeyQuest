@@ -2,6 +2,7 @@
 
 import { memo, useState, useCallback, useRef } from 'react';
 import { TypingArea } from '@/components/typing';
+import { ExerciseCompleteModal } from './ExerciseCompleteModal';
 import type { Lesson, ExerciseResult } from '@/types/lesson';
 import type { TypingStats, LetterStats } from '@/hooks/useTypingEngine';
 
@@ -15,59 +16,41 @@ interface ExerciseRunnerProps {
     errors: number;
     letterAccuracy: Record<string, LetterStats>;
   }) => void;
+  onExit: () => void;
 }
 
-// Exercise result mini-display
-const ExerciseResultMini = memo(function ExerciseResultMini({
-  result,
-  locale,
-}: {
-  result: ExerciseResult;
-  locale: 'en' | 'he';
-}) {
-  const labels = {
-    wpm: 'WPM',
-    accuracy: locale === 'he' ? 'דיוק' : 'Accuracy',
-    continue: locale === 'he' ? 'ממשיך...' : 'Continuing...',
-  };
-
-  return (
-    <div className="flex items-center justify-center gap-6 py-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl animate-pulse">
-      <div className="text-center">
-        <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-          {result.wpm}
-        </span>
-        <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{labels.wpm}</span>
-      </div>
-      <div className="text-center">
-        <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-          {result.accuracy}%
-        </span>
-        <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{labels.accuracy}</span>
-      </div>
-      <div className="text-sm text-gray-500 dark:text-gray-400">
-        {labels.continue}
-      </div>
-    </div>
-  );
-});
+// XP per exercise (can be adjusted based on performance)
+const XP_PER_EXERCISE = 10;
 
 export const ExerciseRunner = memo(function ExerciseRunner({
   lesson,
   locale,
   onComplete,
+  onExit,
 }: ExerciseRunnerProps) {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [exerciseResults, setExerciseResults] = useState<ExerciseResult[]>([]);
   const [phase, setPhase] = useState<'typing' | 'result'>('typing');
   const [typingKey, setTypingKey] = useState(0);
   const [lastResult, setLastResult] = useState<ExerciseResult | null>(null);
+  const [pendingTotalStats, setPendingTotalStats] = useState<{
+    accuracy: number;
+    wpm: number;
+    timeSpent: number;
+    errors: number;
+    letterAccuracy: Record<string, LetterStats>;
+  } | null>(null);
 
   // Aggregate letter accuracy across all exercises
   const letterAccuracyRef = useRef<Record<string, LetterStats>>({});
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
   const isLastExercise = currentExerciseIndex === lesson.exercises.length - 1;
+
+  // Handle Ctrl+R to restart current exercise
+  const handleResetExercise = useCallback(() => {
+    setTypingKey((k) => k + 1);
+  }, []);
 
   // Handle exercise completion
   const handleExerciseComplete = useCallback((stats: TypingStats) => {
@@ -96,7 +79,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
     setPhase('result');
 
     if (isLastExercise) {
-      // Calculate total stats
+      // Calculate total stats for when user clicks continue
       const totalStats = newResults.reduce(
         (acc, r) => ({
           accuracy: acc.accuracy + r.accuracy,
@@ -116,20 +99,24 @@ export const ExerciseRunner = memo(function ExerciseRunner({
         letterAccuracy: { ...letterAccuracyRef.current },
       };
 
-      // Small delay before completing
-      setTimeout(() => {
-        onComplete(newResults, avgStats);
-      }, 1000);
-    } else {
-      // Move to next exercise after short delay
-      setTimeout(() => {
-        setCurrentExerciseIndex((i) => i + 1);
-        setPhase('typing');
-        setTypingKey((k) => k + 1);
-        setLastResult(null);
-      }, 1500);
+      // Store pending stats for when user clicks continue
+      setPendingTotalStats(avgStats);
     }
-  }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy, onComplete]);
+  }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy]);
+
+  // Handle modal continue button
+  const handleModalContinue = useCallback(() => {
+    if (isLastExercise && pendingTotalStats) {
+      // Final exercise - go to summary
+      onComplete(exerciseResults.concat(lastResult!), pendingTotalStats);
+    } else {
+      // Move to next exercise
+      setCurrentExerciseIndex((i) => i + 1);
+      setPhase('typing');
+      setTypingKey((k) => k + 1);
+      setLastResult(null);
+    }
+  }, [isLastExercise, pendingTotalStats, onComplete, exerciseResults, lastResult]);
 
   return (
     <div className="flex flex-col">
@@ -165,6 +152,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
               key={typingKey}
               text={currentExercise.content}
               onComplete={handleExerciseComplete}
+              onReset={handleResetExercise}
               showStats={true}
               allowBackspace={false}
               compactKeyboard={false}
@@ -173,16 +161,16 @@ export const ExerciseRunner = memo(function ExerciseRunner({
         )}
 
         {phase === 'result' && lastResult && (
-          <div className="flex-1 flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-md">
-              <ExerciseResultMini result={lastResult} locale={locale} />
-              {isLastExercise && (
-                <p className="text-center text-gray-500 dark:text-gray-400 mt-4 animate-pulse">
-                  {locale === 'he' ? 'מחשב תוצאות...' : 'Calculating results...'}
-                </p>
-              )}
-            </div>
-          </div>
+          <ExerciseCompleteModal
+            result={lastResult}
+            exerciseNumber={currentExerciseIndex + 1}
+            totalExercises={lesson.exercises.length}
+            xpEarned={XP_PER_EXERCISE}
+            locale={locale}
+            isLastExercise={isLastExercise}
+            onContinue={handleModalContinue}
+            onExit={onExit}
+          />
         )}
       </div>
     </div>

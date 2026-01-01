@@ -19,6 +19,8 @@ interface TypingAreaProps {
   onComplete?: (stats: TypingStats) => void;
   /** Called when an error occurs */
   onError?: (char: string, expected: string) => void;
+  /** Called when Ctrl+R is pressed to reset the exercise */
+  onReset?: () => void;
   /** Whether to show the stats panel */
   showStats?: boolean;
   /** Whether to allow backspace corrections */
@@ -52,6 +54,7 @@ export function TypingArea({
   text,
   onComplete,
   onError,
+  onReset,
   showStats = true,
   allowBackspace = false,
   showKeyboard: showKeyboardProp,
@@ -103,6 +106,7 @@ export function TypingArea({
     onComplete,
     onError: handleError,
     onCharacterTyped: handleCharacterTyped,
+    onReset,
     allowBackspace,
   });
 
@@ -200,6 +204,15 @@ export function TypingArea({
           aria-live="polite"
         >
           {t('paused')} - {t('pressEnterToResume')}
+        </div>
+      )}
+
+      {status === 'running' && (
+        <div
+          className="mb-4 text-center text-body-sm text-muted opacity-60"
+          role="status"
+        >
+          {t('pressRToReset')}
         </div>
       )}
 

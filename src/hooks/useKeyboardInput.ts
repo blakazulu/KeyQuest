@@ -9,6 +9,8 @@ interface UseKeyboardInputOptions {
   onEnter?: () => void;
   /** Called when Escape is pressed */
   onEscape?: () => void;
+  /** Called when R key is pressed (for reset functionality) */
+  onReset?: () => void;
   /** Whether to capture keyboard input */
   enabled?: boolean;
   /** Whether to allow backspace for corrections */
@@ -42,16 +44,17 @@ export function useKeyboardInput({
   onBackspace,
   onEnter,
   onEscape,
+  onReset,
   enabled = true,
   allowBackspace = false,
   targetRef,
 }: UseKeyboardInputOptions = {}): UseKeyboardInputReturn {
-  const callbacksRef = useRef({ onKeyPress, onBackspace, onEnter, onEscape });
+  const callbacksRef = useRef({ onKeyPress, onBackspace, onEnter, onEscape, onReset });
 
   // Keep callbacks ref updated to avoid stale closures
   useEffect(() => {
-    callbacksRef.current = { onKeyPress, onBackspace, onEnter, onEscape };
-  }, [onKeyPress, onBackspace, onEnter, onEscape]);
+    callbacksRef.current = { onKeyPress, onBackspace, onEnter, onEscape, onReset };
+  }, [onKeyPress, onBackspace, onEnter, onEscape, onReset]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Ignore if input is disabled
@@ -89,7 +92,14 @@ export function useKeyboardInput({
       return;
     }
 
-    // Ignore modifier key combinations (Ctrl+C, etc.)
+    // Handle Ctrl+R for reset (before ignoring other modifier combos)
+    if ((ctrlKey || metaKey) && (key === 'r' || key === 'R')) {
+      event.preventDefault();
+      callbacks.onReset?.();
+      return;
+    }
+
+    // Ignore other modifier key combinations (Ctrl+C, etc.)
     if (ctrlKey || altKey || metaKey) {
       return;
     }

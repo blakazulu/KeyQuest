@@ -44,6 +44,8 @@ export interface UseTypingEngineOptions {
   onComplete?: (stats: TypingStats) => void;
   /** Called when an error occurs */
   onError?: (char: string, expected: string) => void;
+  /** Called when Ctrl+R is pressed to reset */
+  onReset?: () => void;
   /** Whether to allow backspace corrections */
   allowBackspace?: boolean;
   /** Whether typing is case-sensitive (default: false for easier levels) */
@@ -87,6 +89,7 @@ export function useTypingEngine({
   onCharacterTyped,
   onComplete,
   onError,
+  onReset,
   allowBackspace = false,
   caseSensitive = false,
 }: UseTypingEngineOptions = {}): UseTypingEngineReturn {
@@ -227,6 +230,7 @@ export function useTypingEngine({
   useKeyboardInput({
     onKeyPress: handleKeyPress,
     onBackspace: handleBackspace,
+    onReset,
     enabled: isInputEnabled && targetText.length > 0,
     allowBackspace,
   });
