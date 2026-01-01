@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - "+X XP" popup that floats up and fades out
   - Positioned opposite the floating menu (top-right)
   - Hydration-safe with proper SSR handling
+- **Lesson Intro Enhancements** - All lessons now show keyboard and stage-specific explanations
+  - `LessonExplanation` component with 7 explanation types tailored to each stage
+  - Stage 1: Home row explanation with visual keys and finger placement tips
+  - Stage 2: Reach keys explanation showing which fingers reach to which keys
+  - Stage 3: Alphabet completion encouragement
+  - Stage 4: Word practice tips for building speed and flow
+  - Stage 5: Punctuation guidance for ?, ! with keyboard shortcuts
+  - Stage 6: Numbers and mastery tips with speed goals
+  - Keyboard always visible in lesson intro with relevant keys highlighted
+  - Practice keys highlighted when no new keys (limited to 15 for clarity)
 - **Phase 7: Dashboard** - Dynamic personal stats dashboard with real progress data
   - `LevelCard` - Current stage display with progress bar and XP badge
   - `StatCard` - Reusable stat card with trend indicators (up/down/same arrows)
