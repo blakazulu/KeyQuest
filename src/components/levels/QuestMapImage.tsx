@@ -588,6 +588,34 @@ export const QuestMapImage = memo(function QuestMapImage({
             ));
           })}
 
+          {/* Key character above current lesson */}
+          {stages.slice(0, -1).map((stage, index) => {
+            if (stage.status === 'locked') return null;
+            const markers = getLessonMarkers(
+              index,
+              index + 1,
+              stage.lessons,
+              stage.completedLessons || 0,
+              false
+            );
+            const currentMarker = markers.find(m => m.current);
+            if (!currentMarker || !stageKeyImages[index]) return null;
+
+            return (
+              <img
+                key={`key-lesson-${stage.id}`}
+                src={stageKeyImages[index]}
+                alt=""
+                className="qmi-lesson-key"
+                style={{
+                  left: `${currentMarker.x}%`,
+                  top: `${currentMarker.y}%`,
+                }}
+                draggable={false}
+              />
+            );
+          })}
+
           {/* Stage hotspots */}
           {stages.map((stage, index) => (
             <StageHotspot
@@ -602,22 +630,6 @@ export const QuestMapImage = memo(function QuestMapImage({
             />
           ))}
 
-          {/* Key character - shown only on current stage */}
-          {stages.map((stage, index) => (
-            stage.status === 'current' && stageKeyImages[index] && (
-              <img
-                key={`key-${index}`}
-                src={stageKeyImages[index]}
-                alt=""
-                className="qmi-key-character"
-                style={{
-                  left: `${stagePositions[index].x}%`,
-                  top: `${stagePositions[index].y}%`,
-                }}
-                draggable={false}
-              />
-            )
-          ))}
         </div>
       </div>
 
