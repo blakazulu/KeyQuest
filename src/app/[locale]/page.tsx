@@ -66,12 +66,35 @@ export default function Home() {
 
           {/* Hero Keyboard Illustration */}
           <div className="mx-4 sm:-mx-8 lg:-mx-16 relative z-0">
+            {/* SVG clip path for curvy edges */}
+            <svg width="0" height="0" className="absolute">
+              <defs>
+                <clipPath id="hero-curve" clipPathUnits="objectBoundingBox">
+                  <path d="
+                    M 0.06,0.02
+                    Q 0.03,0.02 0.03,0.05
+                    Q 0,0.18 0.02,0.38
+                    Q 0.04,0.55 0.01,0.72
+                    Q 0,0.88 0.03,0.95
+                    Q 0.03,0.98 0.06,0.98
+                    L 0.94,0.98
+                    Q 0.97,0.98 0.97,0.95
+                    Q 1,0.88 0.99,0.72
+                    Q 0.96,0.55 0.98,0.38
+                    Q 1,0.18 0.97,0.05
+                    Q 0.97,0.02 0.94,0.02
+                    Z
+                  " />
+                </clipPath>
+              </defs>
+            </svg>
             <Image
               src="/images/hero.webp"
               alt="Colorful 3D keyboard with cute characters - a knight, wizard, and adventurer on a floating keyboard in the clouds"
               width={1200}
               height={675}
-              className="w-full h-auto rounded-t-3xl"
+              className="w-full h-auto"
+              style={{ clipPath: 'url(#hero-curve)' }}
               priority
             />
             {/* CTA Button on image */}
