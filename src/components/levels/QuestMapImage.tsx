@@ -71,6 +71,16 @@ const stage3to4Overrides: Record<number, { x?: number; y?: number }> = {
   7: { y: 88.518519 },                    // Lesson 8
 };
 
+// Custom coordinate overrides for stage 5→6 path (Castle to Treasure)
+const stage5to6Overrides: Record<number, { x?: number; y?: number }> = {
+  0: { x: 67.938108, y: 62.412854 },      // Lesson 1
+  1: { x: 63.884411, y: 47.863447 },      // Lesson 2
+  2: { x: 63.674941, y: 36.703708 },      // Lesson 3
+  3: { x: 68.445731, y: 28.285565 },      // Lesson 4
+  4: { x: 74.332816, y: 25.960947 },      // Lesson 5
+  // Lesson 6 keeps calculated position
+};
+
 // Generate control points for a curvy path between two stages
 const getControlPoints = (from: { x: number; y: number }, to: { x: number; y: number }, index: number) => {
   const dx = to.x - from.x;
@@ -115,34 +125,66 @@ const getStage3to4Positions = () => {
   return positions;
 };
 
+const getStage5to6Positions = () => {
+  const from = stagePositions[4];
+  const to = stagePositions[5];
+  const { cp1, cp2 } = getControlPoints(from, to, 4);
+  const lessonCount = 6;
+
+  const positions = [];
+  for (let i = 0; i < lessonCount; i++) {
+    const t = (i + 1) / (lessonCount + 1);
+    const point = bezierPoint(from, cp1, cp2, to, t);
+
+    let x = point.x;
+    let y = point.y;
+    if (stage5to6Overrides[i]) {
+      const override = stage5to6Overrides[i];
+      if (override.x !== undefined) x = override.x;
+      if (override.y !== undefined) y = override.y;
+    }
+    positions.push({ x, y });
+  }
+  return positions;
+};
+
+// Generate custom path through lesson points
+const generateCustomPath = (from: { x: number; y: number }, to: { x: number; y: number }, points: { x: number; y: number }[]) => {
+  let path = `M ${from.x} ${from.y}`;
+
+  // Curve to first lesson
+  path += ` Q ${(from.x + points[0].x) / 2} ${(from.y + points[0].y) / 2}, ${points[0].x} ${points[0].y}`;
+
+  // Smooth curves through lesson points
+  for (let i = 0; i < points.length - 1; i++) {
+    const curr = points[i];
+    const next = points[i + 1];
+    const midX = (curr.x + next.x) / 2;
+    const midY = (curr.y + next.y) / 2;
+    path += ` Q ${curr.x} ${curr.y}, ${midX} ${midY}`;
+  }
+
+  // Final curve to last point and destination
+  const last = points[points.length - 1];
+  path += ` Q ${last.x} ${last.y}, ${to.x} ${to.y}`;
+
+  return path;
+};
+
 // Generate SVG path for a single segment (curvy)
 const generateSegmentPath = (fromIndex: number, toIndex: number) => {
   // Custom path for stage 3→4 that goes over the bridge
   if (fromIndex === 2 && toIndex === 3) {
     const from = stagePositions[fromIndex];
     const to = stagePositions[toIndex];
-    const points = getStage3to4Positions();
+    return generateCustomPath(from, to, getStage3to4Positions());
+  }
 
-    // Create smooth curve through all points using quadratic bezier segments
-    let path = `M ${from.x} ${from.y}`;
-
-    // Curve to first lesson
-    path += ` Q ${(from.x + points[0].x) / 2} ${from.y}, ${points[0].x} ${points[0].y}`;
-
-    // Smooth curves through lesson points
-    for (let i = 0; i < points.length - 1; i++) {
-      const curr = points[i];
-      const next = points[i + 1];
-      const midX = (curr.x + next.x) / 2;
-      const midY = (curr.y + next.y) / 2;
-      path += ` Q ${curr.x} ${curr.y}, ${midX} ${midY}`;
-    }
-
-    // Final curve to last point and stage 4
-    const last = points[points.length - 1];
-    path += ` Q ${last.x} ${last.y}, ${to.x} ${to.y}`;
-
-    return path;
+  // Custom path for stage 5→6 (Castle to Treasure)
+  if (fromIndex === 4 && toIndex === 5) {
+    const from = stagePositions[fromIndex];
+    const to = stagePositions[toIndex];
+    return generateCustomPath(from, to, getStage5to6Positions());
   }
 
   const from = stagePositions[fromIndex];
@@ -168,11 +210,16 @@ const getLessonMarkers = (
     const t = (i + 1) / (lessonCount + 1);
     const point = bezierPoint(from, cp1, cp2, to, t);
 
-    // Apply overrides for stage 3→4 path
+    // Apply overrides for custom paths
     let x = point.x;
     let y = point.y;
     if (fromIndex === 2 && toIndex === 3 && stage3to4Overrides[i]) {
       const override = stage3to4Overrides[i];
+      if (override.x !== undefined) x = override.x;
+      if (override.y !== undefined) y = override.y;
+    }
+    if (fromIndex === 4 && toIndex === 5 && stage5to6Overrides[i]) {
+      const override = stage5to6Overrides[i];
       if (override.x !== undefined) x = override.x;
       if (override.y !== undefined) y = override.y;
     }
