@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../styles/quest-image.css";
 
 /* ============================================
    KEYQUEST DESIGN SYSTEM
@@ -1519,4 +1520,883 @@ body {
   .cloud-3 { animation-delay: 4s; }
   .cloud-4 { animation-delay: 1s; }
   .cloud-5 { animation-delay: 3s; }
+}
+
+/* ============================================
+   QUEST MAP - Adventure Path
+   ============================================ */
+
+.quest-map {
+  position: relative;
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  margin-right: -1rem;
+  height: calc(100vh - 2rem);
+  min-height: 600px;
+  overflow: hidden;
+}
+
+.quest-map-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  z-index: 40;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure the map content has enough height for scrolling on small screens */
+.quest-map-fullscreen .quest-map-gradient,
+.quest-map-fullscreen .quest-map-decorations,
+.quest-map-fullscreen .quest-path-svg {
+  min-height: 800px;
+}
+
+/* Inner wrapper ensures proper scrolling */
+.quest-map-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+.quest-map-fullscreen .quest-map-inner {
+  min-height: max(100vh, 800px);
+  min-height: max(100dvh, 800px);
+}
+
+/* Make the map taller on small screens to accommodate all stages */
+@media (max-height: 700px) {
+  .quest-map-fullscreen .quest-map-inner {
+    min-height: 900px;
+  }
+}
+
+@media (max-height: 600px) {
+  .quest-map-fullscreen .quest-map-inner {
+    min-height: 1000px;
+  }
+}
+
+@media (min-width: 768px) {
+  .quest-map {
+    width: calc(100% + 4rem);
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .quest-map {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+}
+
+/* Gradient background */
+.quest-map-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Sky gradient at top */
+    linear-gradient(180deg,
+      #87CEEB 0%,
+      #B0E0E6 15%,
+      #E0F4FF 30%,
+      #F0F9FF 50%,
+      #F5FFF0 70%,
+      #E8F5E0 85%,
+      #C8E6C0 100%
+    );
+  z-index: 0;
+}
+
+.dark .quest-map-gradient {
+  background:
+    linear-gradient(180deg,
+      #1a1a2e 0%,
+      #16213e 30%,
+      #1a2f4a 50%,
+      #1e3a3a 70%,
+      #1a2e1a 100%
+    );
+}
+
+/* Ground/grass at bottom */
+.quest-map-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(180deg, transparent 0%, #90C67C 30%, #7CB868 100%);
+  z-index: 1;
+}
+
+.quest-ground-grass {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      #6BA858 8px,
+      #6BA858 10px
+    );
+  opacity: 0.5;
+}
+
+.dark .quest-map-ground {
+  background: linear-gradient(180deg, transparent 0%, #2d4a2d 30%, #1e3a1e 100%);
+}
+
+/* Decorations container */
+.quest-map-decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.quest-decor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  z-index: 2;
+}
+
+/* Decoration animations */
+.quest-decor-flutter {
+  animation: quest-flutter 3s ease-in-out infinite;
+}
+
+.quest-decor-drift {
+  animation: quest-drift 20s ease-in-out infinite;
+}
+
+.quest-decor-sparkle {
+  animation: quest-sparkle 2s ease-in-out infinite;
+}
+
+.quest-decor-swim {
+  animation: quest-swim 4s ease-in-out infinite;
+}
+
+.quest-decor-soar {
+  animation: quest-soar 8s ease-in-out infinite;
+}
+
+@keyframes quest-flutter {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-5deg); }
+  25% { transform: translate(-50%, -50%) translateY(-8px) rotate(5deg) translateX(5px); }
+  50% { transform: translate(-50%, -50%) translateY(-3px) rotate(-3deg); }
+  75% { transform: translate(-50%, -50%) translateY(-10px) rotate(8deg) translateX(-5px); }
+}
+
+@keyframes quest-drift {
+  0% { transform: translate(-50%, -50%) translateX(0); }
+  50% { transform: translate(-50%, -50%) translateX(30px); }
+  100% { transform: translate(-50%, -50%) translateX(0); }
+}
+
+@keyframes quest-sparkle {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+}
+
+@keyframes quest-swim {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0) scaleX(1); }
+  25% { transform: translate(-50%, -50%) translateX(10px) scaleX(1); }
+  50% { transform: translate(-50%, -50%) translateX(0) scaleX(-1); }
+  75% { transform: translate(-50%, -50%) translateX(-10px) scaleX(-1); }
+}
+
+@keyframes quest-soar {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) translateX(0); }
+  25% { transform: translate(-50%, -50%) translateY(-20px) translateX(30px); }
+  50% { transform: translate(-50%, -50%) translateY(-10px) translateX(60px); }
+  75% { transform: translate(-50%, -50%) translateY(-25px) translateX(30px); }
+}
+
+/* Milestone flags */
+.quest-flags {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.quest-flag {
+  position: absolute;
+  font-size: 1.2rem;
+  transform: translate(-50%, -50%);
+  animation: quest-flag-wave 2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes quest-flag-wave {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+  50% { transform: translate(-50%, -50%) rotate(5deg); }
+}
+
+/* SVG Path styling */
+.quest-path-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.quest-path-progress {
+  filter: drop-shadow(0 0 8px rgba(255, 123, 74, 0.5));
+}
+
+/* Lesson marker animations */
+.quest-marker-pulse {
+  animation: quest-marker-pulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes quest-marker-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    r: 1.5;
+  }
+  50% {
+    opacity: 0.8;
+    r: 2.5;
+  }
+}
+
+.quest-marker-star {
+  animation: quest-marker-star 1.5s ease-in-out infinite;
+}
+
+@keyframes quest-marker-star {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Node wrapper */
+.quest-node-wrapper {
+  display: block;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  z-index: 5;
+}
+
+.quest-node-wrapper:hover .quest-node {
+  transform: scale(1.08);
+}
+
+.quest-node-wrapper:focus {
+  outline: none;
+}
+
+.quest-node-wrapper:focus .quest-node-circle {
+  box-shadow: 0 0 0 4px var(--color-primary-soft), 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Quest node */
+.quest-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+/* Secondary floating icon */
+.quest-node-secondary {
+  position: absolute;
+  top: -15px;
+  right: -20px;
+  font-size: 1.4rem;
+  animation: quest-secondary-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  z-index: 10;
+}
+
+@keyframes quest-secondary-float {
+  0%, 100% { transform: translateY(0) rotate(-10deg); }
+  50% { transform: translateY(-8px) rotate(10deg); }
+}
+
+/* Glow effect for current/available */
+.quest-node-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  border: 3px solid;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: quest-pulse 2s ease-in-out infinite;
+}
+
+@keyframes quest-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.2; }
+}
+
+/* Main circle */
+.quest-node-circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--node-bg, #fff);
+  border: 4px solid var(--node-color, #ccc);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 0 0 6px rgba(255, 255, 255, 0.8),
+    inset 0 2px 10px rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.quest-node-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.quest-node-wrapper:hover .quest-node-icon {
+  transform: scale(1.1);
+}
+
+/* Locked state */
+.quest-node-locked .quest-node-circle {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+  filter: grayscale(80%);
+  opacity: 0.7;
+}
+
+.quest-node-locked .quest-node-icon {
+  font-size: 2rem;
+  filter: grayscale(100%);
+}
+
+/* Available state */
+.quest-node-available .quest-node-circle {
+  animation: quest-bounce 2s ease-in-out infinite;
+}
+
+@keyframes quest-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Current state */
+.quest-node-current .quest-node-circle {
+  border-width: 5px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.15),
+    0 0 30px var(--node-color),
+    0 0 0 6px rgba(255, 255, 255, 0.9),
+    inset 0 2px 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Completed state */
+.quest-node-completed .quest-node-circle {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  border-color: #00D97E;
+}
+
+/* Checkmark overlay */
+.quest-node-check {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  background: #00D97E;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 217, 126, 0.4);
+}
+
+.quest-node-check svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Stage number badge */
+.quest-node-badge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--node-color);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Info card (appears on hover/focus) - default is bottom */
+.quest-node-info {
+  position: absolute;
+  left: 50%;
+  width: 200px;
+  padding: 1rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 100;
+  text-align: center;
+}
+
+/* Bottom position (default for nodes in top half) */
+.quest-node-info-bottom {
+  top: calc(100% + 16px);
+  transform: translateX(-50%) translateY(10px) scale(0.95);
+}
+
+.quest-node-info-bottom::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom-color: white;
+}
+
+/* Top position (for nodes in bottom half) */
+.quest-node-info-top {
+  bottom: calc(100% + 16px);
+  top: auto;
+  transform: translateX(-50%) translateY(-10px) scale(0.95);
+}
+
+.quest-node-info-top::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: white;
+}
+
+.quest-node-wrapper:hover .quest-node-info,
+.quest-node-wrapper:focus .quest-node-info {
+  opacity: 1;
+  visibility: visible;
+}
+
+.quest-node-wrapper:hover .quest-node-info-bottom,
+.quest-node-wrapper:focus .quest-node-info-bottom {
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.quest-node-wrapper:hover .quest-node-info-top,
+.quest-node-wrapper:focus .quest-node-info-top {
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.quest-node-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-foreground);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.quest-node-desc {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Progress bar */
+.quest-node-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quest-node-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quest-node-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.quest-node-progress-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+/* Stars */
+.quest-node-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.125rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Action button */
+.quest-node-action {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 2rem;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quest-node-wrapper:hover .quest-node-action {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Lessons count */
+.quest-node-lessons {
+  font-size: 0.7rem;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+/* Legend */
+.quest-legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.quest-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.quest-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.quest-legend-completed {
+  background: #D1FAE5;
+  border-color: #00D97E;
+}
+
+.quest-legend-current {
+  background: #FFF5F0;
+  border-color: #FF7B4A;
+  animation: quest-pulse-small 2s ease-in-out infinite;
+}
+
+@keyframes quest-pulse-small {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 123, 74, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 123, 74, 0.1); }
+}
+
+.quest-legend-locked {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+/* Dark mode adjustments */
+
+.dark .quest-node-circle {
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 6px rgba(0, 0, 0, 0.3),
+    inset 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark .quest-node-info {
+  background: var(--color-surface-raised);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.dark .quest-node-info-bottom::before {
+  border-bottom-color: var(--color-surface-raised);
+}
+
+.dark .quest-node-info-top::before {
+  border-top-color: var(--color-surface-raised);
+}
+
+.dark .quest-legend {
+  background: rgba(30, 30, 35, 0.95);
+}
+
+.dark .quest-decor {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .quest-map {
+    min-height: 600px;
+    padding: 1.5rem 0.5rem;
+  }
+
+  .quest-node-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .quest-node-icon {
+    font-size: 2rem;
+  }
+
+  .quest-node-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  .quest-node-info {
+    width: 150px;
+    padding: 0.75rem;
+  }
+
+  .quest-legend {
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .quest-node-glow,
+  .quest-node-available .quest-node-circle,
+  .quest-decor,
+  .quest-legend-current {
+    animation: none;
+  }
+
+  .quest-path-completed {
+    transition: none;
+  }
+}
+
+/* ============================================
+   FLOATING MENU - Full Screen Pages
+   ============================================ */
+
+.floating-menu-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+}
+
+[dir="rtl"] .floating-menu-container {
+  left: auto;
+  right: 1rem;
+}
+
+.floating-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--color-border);
+  border-radius: 9999px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.floating-menu-button:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.15),
+    0 3px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-primary);
+}
+
+.floating-menu-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.dark .floating-menu-button {
+  background: rgba(30, 30, 40, 0.95);
+  border-color: var(--color-border);
+}
+
+.floating-menu-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+}
+
+.floating-menu-text {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.floating-menu-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.floating-menu-arrow-open {
+  transform: rotate(180deg);
+}
+
+.floating-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 0;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem;
+  backdrop-filter: blur(12px);
+  animation: floating-menu-appear 0.2s ease;
+}
+
+[dir="rtl"] .floating-menu-dropdown {
+  left: auto;
+  right: 0;
+}
+
+.dark .floating-menu-dropdown {
+  background: rgba(30, 30, 40, 0.98);
+}
+
+@keyframes floating-menu-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.floating-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  color: var(--color-text);
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.floating-menu-item:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.floating-menu-item-active {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.floating-menu-item-icon {
+  font-size: 1.25rem;
+  width: 1.5rem;
+  text-align: center;
+}
+
+.floating-menu-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.5rem 0.75rem;
+}
+
+.floating-menu-footer {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Hide regular header when fullscreen mode is active */
+.fullscreen-mode header.sticky {
+  display: none;
+}
+
+.fullscreen-mode main {
+  padding: 0;
+  max-width: none;
 }

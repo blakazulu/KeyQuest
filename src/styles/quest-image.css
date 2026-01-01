@@ -1,0 +1,500 @@
+/* ============================================
+   QUEST MAP IMAGE - Background Image with Overlays
+   Fixed sizes that don't scale with browser zoom
+   ============================================ */
+
+/* === CONTAINER === */
+.qmi-container {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  overflow: hidden;
+}
+
+/* Wrapper fills the entire viewport */
+.qmi-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* === BACKGROUND IMAGE === */
+.qmi-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* === OVERLAY CONTAINER === */
+.qmi-overlay {
+  position: absolute;
+  inset: 0;
+  /* This ensures overlays are positioned relative to the image */
+}
+
+/* === SVG PATH === */
+.qmi-path-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* === LESSON MARKERS === */
+.qmi-lesson {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Default: empty/available */
+  background: white;
+  border: 3px solid var(--lesson-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.qmi-lesson-completed {
+  background: var(--lesson-color);
+  color: white;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px color-mix(in srgb, var(--lesson-color) 50%, transparent);
+}
+
+.qmi-lesson-current {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-color: #F59E0B;
+  transform: translate(-50%, -50%) scale(1.2);
+  animation: qmi-lesson-pulse 1.5s ease-in-out infinite;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.qmi-lesson-locked {
+  background: #E5E7EB;
+  border-color: #9CA3AF;
+  opacity: 0.5;
+}
+
+@keyframes qmi-lesson-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 215, 0, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.9);
+  }
+}
+
+/* === STAGE HOTSPOT === */
+.qmi-hotspot-link {
+  text-decoration: none;
+  display: block;
+}
+
+.qmi-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.qmi-hotspot:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  z-index: 30;
+}
+
+.qmi-hotspot:hover .qmi-label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.qmi-hotspot-locked {
+  cursor: not-allowed;
+}
+
+.qmi-hotspot-locked:hover {
+  transform: translate(-50%, -50%);
+}
+
+.qmi-hotspot-locked .qmi-label {
+  filter: grayscale(60%) opacity(0.7);
+}
+
+/* Number badge */
+.qmi-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  border: 3px solid white;
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.qmi-hotspot-current .qmi-badge {
+  animation: qmi-badge-bounce 1s ease-in-out infinite;
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 20px var(--stage-color);
+}
+
+@keyframes qmi-badge-bounce {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.qmi-hotspot-completed .qmi-badge {
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 12px var(--stage-color);
+}
+
+/* Floating label */
+.qmi-label {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  min-width: 140px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #FFF8E7 0%, #F5E6D3 100%);
+  border: 3px solid #8B4513;
+  border-radius: 10px;
+  box-shadow:
+    3px 3px 0 #5D3A1A,
+    0 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 25;
+}
+
+/* Keep label visible on current and when interacting */
+.qmi-hotspot-current .qmi-label,
+.qmi-hotspot:focus-within .qmi-label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Adjust label position for edge stages */
+.qmi-hotspot[style*="left: 82%"] .qmi-label,
+.qmi-hotspot[style*="left: 85%"] .qmi-label {
+  left: auto;
+  right: 50%;
+  transform: translateX(50%) translateY(8px);
+}
+
+.qmi-hotspot[style*="left: 82%"]:hover .qmi-label,
+.qmi-hotspot[style*="left: 85%"]:hover .qmi-label,
+.qmi-hotspot-current[style*="left: 82%"] .qmi-label,
+.qmi-hotspot-current[style*="left: 85%"] .qmi-label {
+  transform: translateX(50%) translateY(0);
+}
+
+.qmi-label-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.qmi-label-name {
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5D3A1A;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.qmi-label-lessons {
+  font-size: 11px;
+  color: #8B6914;
+  margin-bottom: 6px;
+}
+
+.qmi-label-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: #5D3A1A;
+}
+
+.qmi-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #D4B896;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.qmi-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.qmi-label-stars {
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.qmi-label-action {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* === BANNERS === */
+.qmi-start-banner {
+  position: absolute;
+  bottom: calc(100% + 50px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #FF6B35, #F7931E);
+  border: 3px solid #CC4A1D;
+  border-radius: 20px;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 #8B3215;
+  animation: qmi-banner-bounce 2s ease-in-out infinite;
+}
+
+.qmi-finish-banner {
+  position: absolute;
+  bottom: calc(100% + 50px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border: 3px solid #CC9900;
+  border-radius: 20px;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5D3A1A;
+  white-space: nowrap;
+  box-shadow:
+    2px 2px 0 #997300,
+    0 0 20px rgba(255, 215, 0, 0.5);
+  animation: qmi-finish-glow 2s ease-in-out infinite;
+}
+
+@keyframes qmi-banner-bounce {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes qmi-finish-glow {
+
+  0%,
+  100% {
+    box-shadow: 2px 2px 0 #997300, 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+
+  50% {
+    box-shadow: 2px 2px 0 #997300, 0 0 30px rgba(255, 215, 0, 0.8);
+  }
+}
+
+/* YOU ARE HERE indicator */
+.qmi-here-indicator {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: #FF4444;
+  border: 2px solid #CC0000;
+  border-radius: 12px;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  animation: qmi-here-bounce 1s ease-in-out infinite;
+  box-shadow: 0 2px 6px rgba(255, 68, 68, 0.4);
+  z-index: 35;
+}
+
+/* Hide when label is shown */
+.qmi-hotspot-current:hover .qmi-here-indicator {
+  opacity: 0;
+}
+
+@keyframes qmi-here-bounce {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-3px);
+  }
+}
+
+/* === LEGEND === */
+.qmi-legend {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 16px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #8B4513;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+}
+
+[dir="rtl"] .qmi-legend {
+  right: auto;
+  left: 16px;
+}
+
+.qmi-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display-en), var(--font-display-he), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5D3A1A;
+}
+
+.qmi-legend-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.qmi-legend-completed {
+  background: #22C55E;
+}
+
+.qmi-legend-current {
+  background: #F59E0B;
+  animation: qmi-legend-pulse 1.5s ease-in-out infinite;
+}
+
+.qmi-legend-locked {
+  background: #9CA3AF;
+  font-size: 9px;
+}
+
+@keyframes qmi-legend-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(245, 158, 11, 0.2);
+  }
+}
+
+/* === DARK MODE === */
+.dark .qmi-container {
+  background: #0D4F47;
+}
+
+.dark .qmi-label {
+  background: linear-gradient(180deg, #3a3020 0%, #2a2015 100%);
+  border-color: #5D4A30;
+}
+
+.dark .qmi-label-name {
+  color: #F5E6D3;
+}
+
+.dark .qmi-label-lessons {
+  color: #C4A67C;
+}
+
+.dark .qmi-legend {
+  background: rgba(30, 30, 40, 0.95);
+  border-color: #5D4A30;
+}
+
+.dark .qmi-legend-item {
+  color: #F5E6D3;
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+
+  .qmi-lesson-current,
+  .qmi-hotspot-current .qmi-badge,
+  .qmi-start-banner,
+  .qmi-finish-banner,
+  .qmi-here-indicator,
+  .qmi-legend-current {
+    animation: none;
+  }
+}

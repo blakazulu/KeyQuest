@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const t = useTranslations('dashboard');
 
   return (
-    <div className="py-8 max-w-5xl mx-auto px-4">
+    <div className="relative z-10 py-8 max-w-5xl mx-auto px-4">
       <div className="mb-10">
         <h1 className="font-display text-3xl font-bold text-foreground">
           {t('title')}

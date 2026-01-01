@@ -7,7 +7,10 @@
     "home": "Home",
     "levels": "Levels",
     "practice": "Practice",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "home": {
     "headline": "Level Up Your Typing Skills",
@@ -77,32 +80,32 @@
     }
   },
   "levels": {
-    "title": "Learning Path",
-    "subtitle": "Master touch typing step by step",
+    "title": "Your Quest Awaits",
+    "subtitle": "Embark on an epic journey to typing mastery",
     "stages": {
       "1": {
-        "name": "Keyboard Familiarity",
-        "description": "Get comfortable with key positions"
+        "name": "Home Row Haven",
+        "description": "Begin your quest with ASDF and JKL;"
       },
       "2": {
-        "name": "Home Row Mastery",
-        "description": "Master ASDF and JKL; - your foundation"
+        "name": "Letter Lagoon",
+        "description": "Expand to E, R, T, Y, U, I, G, H"
       },
       "3": {
-        "name": "Letter Expansion",
-        "description": "Add more letters to your skills"
+        "name": "Word Mountain",
+        "description": "Conquer the remaining alphabet"
       },
       "4": {
-        "name": "Words & Vocabulary",
-        "description": "Start typing real words"
+        "name": "Sentence Safari",
+        "description": "Venture into words and phrases"
       },
       "5": {
-        "name": "Sentences & Flow",
-        "description": "Build speed with complete sentences"
+        "name": "Paragraph Peak",
+        "description": "Master punctuation and flow"
       },
       "6": {
-        "name": "Fluency & Speed",
-        "description": "Achieve typing mastery"
+        "name": "Master's Summit",
+        "description": "Achieve typing mastery!"
       }
     },
     "lessons": "lessons",

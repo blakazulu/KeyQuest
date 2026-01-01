@@ -229,6 +229,7 @@ export const RightHand = memo(function RightHand({
 
 /**
  * Combined keyboard with hands on both sides
+ * Note: Uses dir="ltr" to prevent hands from swapping in RTL layouts
  */
 export const HandsWithKeyboard = memo(function HandsWithKeyboard({
   activeFinger,
@@ -237,7 +238,7 @@ export const HandsWithKeyboard = memo(function HandsWithKeyboard({
   className = '',
 }: HandGuideProps & { children: React.ReactNode }) {
   return (
-    <div className={`flex items-start justify-center gap-6 ${className}`}>
+    <div dir="ltr" className={`flex items-start justify-center gap-6 ${className}`}>
       <LeftHand activeFinger={activeFinger} locale={locale} />
       <div className="flex-shrink-0">{children}</div>
       <RightHand activeFinger={activeFinger} locale={locale} />

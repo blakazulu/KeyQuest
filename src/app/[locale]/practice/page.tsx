@@ -51,13 +51,13 @@ export default function PracticePage() {
   };
 
   return (
-    <div className="flex flex-col items-center py-8">
+    <div className="relative z-10 flex flex-col items-center py-8 pt-2">
       <header className="text-center">
         <h1 className="text-display-lg">{t('title')}</h1>
         <p className="mt-2 text-body-md text-muted">{t('subtitle')}</p>
       </header>
 
-      <main className="mt-8 w-full max-w-3xl">
+      <main className="mt-2 w-full max-w-3xl">
         <TypingArea
           key={key}
           text={currentText}

@@ -1,0 +1,1067 @@
+/* ============================================
+   QUEST MAP ILLUSTRATED - Storybook Adventure
+   A rich, hand-painted style game map
+   ============================================ */
+
+/* === MAIN CONTAINER === */
+.quest-illustrated {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: linear-gradient(180deg,
+    #1a1a2e 0%,
+    #2d1b4e 5%,
+    #4a2c6a 10%,
+    #6b4d8a 15%,
+    #87CEEB 20%,
+    #98D8E8 30%,
+    #A8E6CF 45%,
+    #88D8A8 55%,
+    #7BC88C 65%,
+    #C2B280 75%,
+    #D4A574 85%,
+    #E8C9A0 95%,
+    #F5E6D3 100%
+  );
+}
+
+.quest-illustrated.quest-map-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 40;
+}
+
+.quest-illustrated.quest-map-fullscreen .quest-zones {
+  min-height: max(100vh, 1200px);
+}
+
+/* === START BANNER === */
+.quest-start-banner {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%);
+  border: 4px solid #5D3A1A;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 0 #3D2A1A,
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #FFF8DC;
+  text-shadow: 2px 2px 0 #5D3A1A;
+  animation: banner-bounce 2s ease-in-out infinite;
+}
+
+.quest-start-flag {
+  font-size: 1.5rem;
+  animation: flag-wave 1s ease-in-out infinite;
+}
+
+@keyframes banner-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes flag-wave {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* === FINISH BANNER === */
+.quest-finish-banner {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+  border: 4px solid #B8860B;
+  border-radius: 12px;
+  box-shadow:
+    0 4px 0 #8B6914,
+    0 8px 24px rgba(255, 215, 0, 0.4),
+    0 0 60px rgba(255, 215, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #5D3A1A;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.quest-finish-trophy {
+  font-size: 3rem;
+  animation: trophy-glow 2s ease-in-out infinite;
+}
+
+@keyframes trophy-glow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+  }
+}
+
+/* === ZONES CONTAINER === */
+.quest-zones {
+  display: flex;
+  flex-direction: column-reverse;
+  min-height: 1200px;
+  padding: 100px 0;
+}
+
+/* === INDIVIDUAL ZONE === */
+.quest-zone {
+  position: relative;
+  min-height: 200px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zone-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.zone-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.zone-path {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* === ZONE 1: VILLAGE === */
+.quest-zone-village {
+  background: linear-gradient(180deg,
+    #C2B280 0%,
+    #D4C4A0 30%,
+    #E8D8B8 60%,
+    #F5E6D3 100%
+  );
+}
+
+.quest-zone-village .zone-bg {
+  background:
+    /* Grass texture */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 20px,
+      rgba(107, 142, 35, 0.1) 20px,
+      rgba(107, 142, 35, 0.1) 40px
+    ),
+    /* Ground pattern */
+    radial-gradient(ellipse at 50% 100%, #8FBC8F 0%, transparent 60%);
+}
+
+.zone-houses {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 0 10%;
+}
+
+.house {
+  width: 60px;
+  height: 80px;
+  position: relative;
+}
+
+.house::before {
+  /* House body */
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 40px;
+  height: 50px;
+  background: linear-gradient(135deg, #DEB887 0%, #D2B48C 50%, #C4A67C 100%);
+  border: 3px solid #8B4513;
+  border-radius: 4px;
+}
+
+.house::after {
+  /* Roof */
+  content: '';
+  position: absolute;
+  bottom: 45px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-bottom: 35px solid #A0522D;
+}
+
+.house-1::before { background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 100%); }
+.house-2::before { background: linear-gradient(135deg, #FAEBD7 0%, #D2B48C 100%); }
+.house-3::before { background: linear-gradient(135deg, #FFE4C4 0%, #DEB887 100%); }
+
+.house-1::after { border-bottom-color: #CD853F; }
+.house-2::after { border-bottom-color: #8B4513; }
+.house-3::after { border-bottom-color: #A0522D; }
+
+.zone-fence {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #8B4513 0px,
+      #8B4513 8px,
+      transparent 8px,
+      transparent 20px
+    );
+  opacity: 0.6;
+}
+
+/* === ZONE 2: LAGOON === */
+.quest-zone-lagoon {
+  background: linear-gradient(180deg,
+    #87CEEB 0%,
+    #98E4FF 20%,
+    #B0F4FF 40%,
+    #E0F7FA 60%,
+    #F5DEB3 80%,
+    #E8D8B8 100%
+  );
+}
+
+.zone-water {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  width: 200%;
+  height: 30px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(64, 224, 208, 0.3) 25%,
+    rgba(64, 224, 208, 0.5) 50%,
+    rgba(64, 224, 208, 0.3) 75%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: wave-motion 4s ease-in-out infinite;
+}
+
+.wave-1 { top: 20%; animation-delay: 0s; }
+.wave-2 { top: 35%; animation-delay: 1s; opacity: 0.7; }
+.wave-3 { top: 50%; animation-delay: 2s; opacity: 0.5; }
+
+@keyframes wave-motion {
+  0%, 100% { transform: translateX(-25%); }
+  50% { transform: translateX(0%); }
+}
+
+.zone-beach {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+}
+
+.shell {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: shell-wiggle 3s ease-in-out infinite;
+}
+
+.shell-1 { bottom: 20%; left: 15%; animation-delay: 0s; }
+.shell-2 { bottom: 30%; right: 20%; animation-delay: 1s; }
+
+.palm {
+  position: absolute;
+  font-size: 3rem;
+  right: 10%;
+  bottom: 10%;
+  animation: palm-sway 4s ease-in-out infinite;
+}
+
+@keyframes shell-wiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes palm-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* === ZONE 3: MOUNTAIN === */
+.quest-zone-mountain {
+  background: linear-gradient(180deg,
+    #708090 0%,
+    #778899 30%,
+    #8B8D8E 50%,
+    #A9A9A9 70%,
+    #C0C0C0 100%
+  );
+}
+
+.zone-rocks {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+}
+
+.rock {
+  position: relative;
+}
+
+.rock::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  border-radius: 30% 30% 50% 50%;
+}
+
+.rock-1::before {
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(135deg, #696969 0%, #808080 50%, #5a5a5a 100%);
+  left: 20px;
+}
+
+.rock-2::before {
+  width: 100px;
+  height: 80px;
+  background: linear-gradient(135deg, #778899 0%, #708090 50%, #5f6a72 100%);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rock-3::before {
+  width: 60px;
+  height: 45px;
+  background: linear-gradient(135deg, #6B7B8C 0%, #5a6a7a 50%, #4a5a6a 100%);
+  right: 20px;
+}
+
+.cave {
+  position: absolute;
+  font-size: 2.5rem;
+  left: 50%;
+  bottom: 20%;
+  transform: translateX(-50%);
+}
+
+/* === ZONE 4: FOREST === */
+.quest-zone-forest {
+  background: linear-gradient(180deg,
+    #228B22 0%,
+    #32CD32 20%,
+    #3CB371 40%,
+    #66CDAA 60%,
+    #8FBC8F 80%,
+    #A9DFBF 100%
+  );
+}
+
+.zone-trees {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 5%;
+}
+
+.tree {
+  font-size: 3rem;
+  animation: tree-sway 5s ease-in-out infinite;
+}
+
+.tree-1 { animation-delay: 0s; font-size: 3.5rem; }
+.tree-2 { animation-delay: 1s; font-size: 2.5rem; }
+.tree-3 { animation-delay: 2s; font-size: 4rem; }
+.tree-4 { animation-delay: 0.5s; font-size: 2rem; }
+
+.vine {
+  position: absolute;
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(180deg, #228B22, #32CD32);
+  border-radius: 2px;
+}
+
+.vine-1 {
+  top: 10%;
+  left: 30%;
+  transform: rotate(15deg);
+}
+
+.butterfly {
+  position: absolute;
+  font-size: 1.5rem;
+  top: 30%;
+  right: 25%;
+  animation: butterfly-fly 6s ease-in-out infinite;
+}
+
+@keyframes tree-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes butterfly-fly {
+  0%, 100% { transform: translate(0, 0) rotate(-5deg); }
+  25% { transform: translate(20px, -15px) rotate(5deg); }
+  50% { transform: translate(40px, 0) rotate(-5deg); }
+  75% { transform: translate(20px, 15px) rotate(5deg); }
+}
+
+/* === ZONE 5: SNOW === */
+.quest-zone-snow {
+  background: linear-gradient(180deg,
+    #B0E0E6 0%,
+    #ADD8E6 20%,
+    #E0FFFF 40%,
+    #F0FFFF 60%,
+    #FFFAFA 80%,
+    #FFFFFF 100%
+  );
+}
+
+.zone-snow-elements {
+  width: 100%;
+  height: 100%;
+}
+
+.snowflake {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: snowfall 4s ease-in-out infinite;
+}
+
+.sf-1 { top: 10%; left: 20%; animation-delay: 0s; }
+.sf-2 { top: 25%; right: 15%; animation-delay: 1s; }
+.sf-3 { top: 5%; left: 60%; animation-delay: 2s; }
+
+@keyframes snowfall {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(20px) rotate(180deg);
+    opacity: 0.6;
+  }
+}
+
+.pine {
+  position: absolute;
+  font-size: 2.5rem;
+}
+
+.pine-1 { bottom: 10%; left: 15%; }
+.pine-2 { bottom: 15%; right: 20%; font-size: 2rem; }
+
+.snowman {
+  position: absolute;
+  font-size: 2.5rem;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: snowman-wiggle 3s ease-in-out infinite;
+}
+
+@keyframes snowman-wiggle {
+  0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+  50% { transform: translateX(-50%) rotate(3deg); }
+}
+
+/* === ZONE 6: SUMMIT === */
+.quest-zone-summit {
+  background: linear-gradient(180deg,
+    #1a1a2e 0%,
+    #2d1b4e 20%,
+    #4a2c6a 40%,
+    #6b4d8a 60%,
+    #8b6daa 80%,
+    #ab8dca 100%
+  );
+  min-height: 250px;
+}
+
+.zone-summit-elements {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.summit-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle,
+    rgba(255, 215, 0, 0.6) 0%,
+    rgba(255, 165, 0, 0.3) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: summit-pulse 3s ease-in-out infinite;
+}
+
+@keyframes summit-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+.trophy {
+  font-size: 4rem;
+  z-index: 10;
+  animation: trophy-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes trophy-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.sparkle {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: sparkle-twinkle 2s ease-in-out infinite;
+}
+
+.sp-1 { top: 20%; left: 30%; animation-delay: 0s; }
+.sp-2 { top: 30%; right: 25%; animation-delay: 0.5s; }
+.sp-3 { bottom: 25%; left: 40%; animation-delay: 1s; }
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.crown {
+  position: absolute;
+  top: 15%;
+  font-size: 2rem;
+  animation: crown-bounce 2s ease-in-out infinite;
+}
+
+@keyframes crown-bounce {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+/* === DOTTED PATH === */
+.path-dots {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(
+    180deg,
+    #8B4513 0px,
+    #8B4513 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.path-dots::before,
+.path-dots::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: #8B4513;
+  border-radius: 50%;
+}
+
+.path-dots::before { top: -8px; }
+.path-dots::after { bottom: -8px; }
+
+.path-dots-final {
+  background: repeating-linear-gradient(
+    180deg,
+    #FFD700 0px,
+    #FFD700 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.path-dots-final::before,
+.path-dots-final::after {
+  background: #FFD700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* === LESSON STONES === */
+.path-stones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  position: relative;
+  z-index: 10;
+}
+
+.quest-stone {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: default;
+  background: linear-gradient(145deg, #E8E8E8 0%, #D0D0D0 50%, #B8B8B8 100%);
+  border: 3px solid #9CA3AF;
+  box-shadow:
+    0 3px 0 #7B7B7B,
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.quest-stone-completed {
+  background: linear-gradient(145deg,
+    var(--stone-color) 0%,
+    color-mix(in srgb, var(--stone-color) 80%, black) 100%
+  );
+  border-color: color-mix(in srgb, var(--stone-color) 70%, black);
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--stone-color) 50%, black),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 0 12px color-mix(in srgb, var(--stone-color) 50%, transparent);
+}
+
+.quest-stone-current {
+  background: linear-gradient(145deg, #FFFACD 0%, #FFD700 50%, #FFA500 100%);
+  border-color: #DAA520;
+  box-shadow:
+    0 3px 0 #B8860B,
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 215, 0, 0.6);
+  animation: stone-pulse 2s ease-in-out infinite;
+  transform: scale(1.15);
+}
+
+@keyframes stone-pulse {
+  0%, 100% { box-shadow: 0 3px 0 #B8860B, 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.6); }
+  50% { box-shadow: 0 3px 0 #B8860B, 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.9); }
+}
+
+.quest-stone-locked {
+  background: linear-gradient(145deg, #D3D3D3 0%, #A9A9A9 50%, #808080 100%);
+  border-color: #696969;
+  opacity: 0.6;
+}
+
+.quest-stone-check {
+  color: white;
+  font-size: 1rem;
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.quest-stone-star {
+  font-size: 1rem;
+}
+
+.quest-stone-num {
+  color: #666;
+}
+
+.quest-stone-lock {
+  font-size: 0.875rem;
+}
+
+/* === SIGNPOST === */
+.quest-signpost-link {
+  text-decoration: none;
+  display: block;
+}
+
+.quest-signpost {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.quest-signpost:hover {
+  transform: scale(1.05);
+}
+
+.quest-signpost-left {
+  left: 10%;
+}
+
+.quest-signpost-right {
+  right: 10%;
+}
+
+.quest-signpost-pole {
+  width: 12px;
+  height: 60px;
+  background: linear-gradient(90deg, #654321 0%, #8B4513 50%, #654321 100%);
+  border-radius: 2px;
+  box-shadow: 2px 0 0 #4a3015;
+}
+
+.quest-signpost-board {
+  position: relative;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #DEB887 0%, #D2B48C 30%, #C4A67C 100%);
+  border: 4px solid #8B4513;
+  border-radius: 8px;
+  box-shadow:
+    4px 4px 0 #5D3A1A,
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 140px;
+  text-align: center;
+  margin-top: -10px;
+}
+
+/* Wood grain texture */
+.quest-signpost-board::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 10px,
+    rgba(139, 69, 19, 0.1) 10px,
+    rgba(139, 69, 19, 0.1) 12px
+  );
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.quest-signpost-number {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--sign-color) 0%, var(--sign-accent) 100%);
+  border: 3px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.quest-signpost-icon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.quest-signpost-name {
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #5D3A1A;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.quest-signpost-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #5D3A1A;
+  margin-bottom: 0.5rem;
+}
+
+.quest-signpost-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #A0522D;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.quest-signpost-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sign-color), var(--sign-accent));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.quest-signpost-stars {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.quest-signpost-action {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background: linear-gradient(135deg, var(--sign-color) 0%, var(--sign-accent) 100%);
+  border-radius: 20px;
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 0 var(--sign-accent);
+}
+
+.quest-signpost-here {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.375rem 0.75rem;
+  background: #FF4500;
+  border: 2px solid #CC3700;
+  border-radius: 20px;
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  animation: here-bounce 1s ease-in-out infinite;
+  box-shadow: 0 2px 8px rgba(255, 69, 0, 0.4);
+}
+
+.quest-signpost-here::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #FF4500;
+}
+
+@keyframes here-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Locked state */
+.quest-signpost-locked {
+  opacity: 0.5;
+  filter: grayscale(60%);
+}
+
+.quest-signpost-locked .quest-signpost-board {
+  background: linear-gradient(135deg, #B0B0B0 0%, #909090 100%);
+}
+
+/* === LEGEND === */
+.quest-legend-illustrated {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #8B4513;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 60;
+  font-family: var(--font-display-en), var(--font-display-he), 'Comic Sans MS', cursive;
+  font-size: 0.75rem;
+}
+
+[dir="rtl"] .quest-legend-illustrated {
+  right: auto;
+  left: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #5D3A1A;
+}
+
+.legend-stone {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.legend-completed {
+  background: linear-gradient(145deg, #4CAF50 0%, #388E3C 100%);
+  border-color: #2E7D32;
+}
+
+.legend-current {
+  background: linear-gradient(145deg, #FFD700 0%, #FFA500 100%);
+  border-color: #DAA520;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.legend-locked {
+  background: linear-gradient(145deg, #9E9E9E 0%, #757575 100%);
+  border-color: #616161;
+  opacity: 0.6;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .quest-signpost-left,
+  .quest-signpost-right {
+    position: relative;
+    left: auto;
+    right: auto;
+  }
+
+  .quest-zone {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .quest-signpost-board {
+    min-width: 120px;
+    padding: 0.75rem 1rem;
+  }
+
+  .quest-start-banner,
+  .quest-finish-banner {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .quest-legend-illustrated {
+    bottom: auto;
+    top: 4rem;
+    right: 0.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .quest-zones {
+    min-height: 1400px;
+  }
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  .quest-start-banner,
+  .quest-start-flag,
+  .quest-finish-trophy,
+  .wave,
+  .shell,
+  .palm,
+  .tree,
+  .butterfly,
+  .snowflake,
+  .snowman,
+  .summit-glow,
+  .trophy,
+  .sparkle,
+  .crown,
+  .quest-stone-current,
+  .quest-signpost-here {
+    animation: none;
+  }
+}
+
+/* === DARK MODE === */
+.dark .quest-illustrated {
+  background: linear-gradient(180deg,
+    #0a0a15 0%,
+    #1a1025 10%,
+    #2a1a3a 20%,
+    #3a2a4a 30%,
+    #2a3a4a 40%,
+    #1a3a3a 50%,
+    #1a2a2a 60%,
+    #1a2020 70%,
+    #2a2015 80%,
+    #3a3020 90%,
+    #4a4030 100%
+  );
+}
+
+.dark .quest-signpost-board {
+  background: linear-gradient(135deg, #4a4030 0%, #3a3020 100%);
+  border-color: #2a2015;
+}
+
+.dark .quest-signpost-name {
+  color: #E8D8B8;
+}
+
+.dark .quest-legend-illustrated {
+  background: rgba(30, 30, 40, 0.95);
+  border-color: #4a4030;
+}
+
+.dark .legend-item {
+  color: #E8D8B8;
+}

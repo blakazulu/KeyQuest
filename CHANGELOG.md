@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 4: Lesson Content & Structure** - Complete curriculum with 37 lessons across 6 stages
+  - TypeScript type definitions for lessons, exercises, stages, and progress (`src/types/lesson.ts`)
+  - Comprehensive exercise types: key-intro, key-practice, letter-combo, words, sentences, paragraph, timed, accuracy
+  - **Stage 1: Home Row Haven** - 5 lessons introducing ASDF JKL; keys
+  - **Stage 2: Letter Lagoon** - 6 lessons adding E, R, T, Y, U, I, G, H keys
+  - **Stage 3: Word Mountain** - 8 lessons covering remaining alphabet and basic punctuation
+  - **Stage 4: Sentence Safari** - 6 lessons with common words and phrases
+  - **Stage 5: Paragraph Peak** - 6 lessons focusing on punctuation (?, !) and paragraphs
+  - **Stage 6: Master's Summit** - 6 lessons with advanced fluency challenges and numbers
+  - Lesson progression logic (`src/lib/lessonProgression.ts`) with unlock conditions
+  - Curriculum utilities: getNextLesson, getCurrentLesson, getRecommendedLessons
+  - Star rating system (1-3 stars based on accuracy)
+  - XP calculation with star bonuses
+  - Stage unlock logic (complete previous stage to unlock next)
+  - Key mastery tracking (locked, learning, weak, mastered states)
+  - Updated `useProgressStore` with curriculum progress methods
+  - Store migration for existing users (version 2)
+  - All lesson content bilingual (English/Hebrew instructions)
 - **Soft, Modern Visual Redesign** - Clean, dreamy aesthetic matching professional mockup
   - New soft pastel color palette with blue tones (#F0F4FF background, soft accent colors)
   - Orange primary (#FF7B4A) for CTAs maintaining visual pop

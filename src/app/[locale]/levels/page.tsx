@@ -1,42 +1,80 @@
-import { useTranslations, useLocale } from 'next-intl';
-import { LevelCard, type LevelStatus } from '@/components/ui';
+'use client';
 
-const stages: { id: number; lessons: number; status: LevelStatus }[] = [
-  { id: 1, lessons: 5, status: 'available' },
-  { id: 2, lessons: 8, status: 'locked' },
-  { id: 3, lessons: 12, status: 'locked' },
-  { id: 4, lessons: 10, status: 'locked' },
-  { id: 5, lessons: 10, status: 'locked' },
-  { id: 6, lessons: 15, status: 'locked' },
+import { useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { QuestMapImage } from '@/components/levels/QuestMapImage';
+import { FloatingMenu } from '@/components/layout/FloatingMenu';
+import type { LevelStatus } from '@/components/ui/LevelCard';
+
+// Stage data - will be connected to useProgressStore in Phase 5
+const getStages = (t: ReturnType<typeof useTranslations>) => [
+  {
+    id: 1,
+    name: t('stages.1.name'),
+    description: t('stages.1.description'),
+    lessons: 5,
+    completedLessons: 2,
+    status: 'current' as LevelStatus,
+    href: '/practice',
+  },
+  {
+    id: 2,
+    name: t('stages.2.name'),
+    description: t('stages.2.description'),
+    lessons: 6,
+    status: 'locked' as LevelStatus,
+  },
+  {
+    id: 3,
+    name: t('stages.3.name'),
+    description: t('stages.3.description'),
+    lessons: 8,
+    status: 'locked' as LevelStatus,
+  },
+  {
+    id: 4,
+    name: t('stages.4.name'),
+    description: t('stages.4.description'),
+    lessons: 6,
+    status: 'locked' as LevelStatus,
+  },
+  {
+    id: 5,
+    name: t('stages.5.name'),
+    description: t('stages.5.description'),
+    lessons: 6,
+    status: 'locked' as LevelStatus,
+  },
+  {
+    id: 6,
+    name: t('stages.6.name'),
+    description: t('stages.6.description'),
+    lessons: 6,
+    status: 'locked' as LevelStatus,
+  },
 ];
 
 export default function LevelsPage() {
   const t = useTranslations('levels');
   const locale = useLocale() as 'en' | 'he';
 
-  return (
-    <div className="py-8">
-      <h1 className="font-display text-3xl font-bold text-foreground">
-        {t('title')}
-      </h1>
-      <p className="mt-2 text-muted">
-        {t('subtitle')}
-      </p>
+  const stages = getStages(t);
 
-      <div className="mt-8 space-y-4">
-        {stages.map((stage) => (
-          <LevelCard
-            key={stage.id}
-            stageNumber={stage.id}
-            name={t(`stages.${stage.id}.name`)}
-            description={t(`stages.${stage.id}.description`)}
-            lessonCount={stage.lessons}
-            status={stage.status}
-            href={stage.status !== 'locked' ? '/practice' : undefined}
-            locale={locale}
-          />
-        ))}
-      </div>
-    </div>
+  // Enable fullscreen mode for this page
+  useEffect(() => {
+    document.body.classList.add('fullscreen-mode');
+    return () => {
+      document.body.classList.remove('fullscreen-mode');
+    };
+  }, []);
+
+  return (
+    <>
+      {/* Floating menu for navigation */}
+      <FloatingMenu />
+
+      {/* Full-screen Quest Map with Background Image */}
+      <QuestMapImage stages={stages} locale={locale} />
+    </>
   );
 }
