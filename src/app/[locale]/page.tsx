@@ -50,7 +50,20 @@ export default function Home() {
         speakableSelectors={['#hero-description', '#why-learn', '.faq-answer']}
       />
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative">
+        {/* Decorative key GIF - fixed left side */}
+        <div className="hidden lg:block fixed left-4 xl:left-12 top-6 z-20 pointer-events-none">
+          <Image
+            src="/key-gif.gif"
+            alt=""
+            width={120}
+            height={120}
+            className="w-24 xl:w-32 h-auto opacity-90 -scale-x-100"
+            unoptimized
+            aria-hidden="true"
+          />
+        </div>
+
         {/* Hero Section */}
         <section className="w-full max-w-5xl text-center pb-16 px-4">
           <h1 className="relative z-10 font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
