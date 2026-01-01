@@ -40,24 +40,72 @@ const stageThemes: Record<number, { emoji: string; color: string }> = {
   6: { emoji: '🏆', color: '#F59E0B' },  // Treasure - gold
 };
 
-// Calculate point along a line at parameter t (0-1)
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+// Calculate point along a cubic bezier curve at parameter t (0-1)
+const bezierPoint = (
+  p0: { x: number; y: number },
+  p1: { x: number; y: number },
+  p2: { x: number; y: number },
+  p3: { x: number; y: number },
+  t: number
+) => {
+  const mt = 1 - t;
+  const mt2 = mt * mt;
+  const mt3 = mt2 * mt;
+  const t2 = t * t;
+  const t3 = t2 * t;
+  return {
+    x: mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x,
+    y: mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y,
+  };
+};
 
-// Generate lesson marker positions between two stages
+// Generate control points for a curvy path between two stages
+const getControlPoints = (from: { x: number; y: number }, to: { x: number; y: number }, index: number) => {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+
+  // Alternate curve direction for playful winding effect
+  const curveStrength = 15 + (index % 2) * 10;
+  const direction = index % 2 === 0 ? 1 : -1;
+
+  // Calculate perpendicular offset for control points
+  const len = Math.sqrt(dx * dx + dy * dy);
+  const perpX = (-dy / len) * curveStrength * direction;
+  const perpY = (dx / len) * curveStrength * direction;
+
+  return {
+    cp1: { x: from.x + dx * 0.3 + perpX, y: from.y + dy * 0.3 + perpY },
+    cp2: { x: from.x + dx * 0.7 - perpX * 0.5, y: from.y + dy * 0.7 - perpY * 0.5 },
+  };
+};
+
+// Generate SVG path for a single segment (curvy)
+const generateSegmentPath = (fromIndex: number, toIndex: number) => {
+  const from = stagePositions[fromIndex];
+  const to = stagePositions[toIndex];
+  const { cp1, cp2 } = getControlPoints(from, to, fromIndex);
+  return `M ${from.x} ${from.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${to.x} ${to.y}`;
+};
+
+// Generate lesson marker positions along a curved path
 const getLessonMarkers = (
-  fromPos: { x: number; y: number },
-  toPos: { x: number; y: number },
+  fromIndex: number,
+  toIndex: number,
   lessonCount: number,
   completedLessons: number,
   isLocked: boolean
 ) => {
+  const from = stagePositions[fromIndex];
+  const to = stagePositions[toIndex];
+  const { cp1, cp2 } = getControlPoints(from, to, fromIndex);
+
   const markers = [];
   for (let i = 0; i < lessonCount; i++) {
-    // Distribute markers evenly along the path (avoiding endpoints)
     const t = (i + 1) / (lessonCount + 1);
+    const point = bezierPoint(from, cp1, cp2, to, t);
     markers.push({
-      x: lerp(fromPos.x, toPos.x, t),
-      y: lerp(fromPos.y, toPos.y, t),
+      x: point.x,
+      y: point.y,
       completed: i < completedLessons,
       current: !isLocked && i === completedLessons,
       locked: isLocked,
@@ -65,19 +113,6 @@ const getLessonMarkers = (
     });
   }
   return markers;
-};
-
-// Generate SVG path string for dotted trail
-const generatePathD = () => {
-  const points = stagePositions;
-  let d = `M ${points[0].x} ${points[0].y}`;
-
-  for (let i = 1; i < points.length; i++) {
-    // Simple lines between points (could add curves later)
-    d += ` L ${points[i].x} ${points[i].y}`;
-  }
-
-  return d;
 };
 
 // Stage hotspot component
@@ -233,8 +268,6 @@ export const QuestMapImage = memo(function QuestMapImage({
   stages,
   locale,
 }: QuestMapProps) {
-  const pathD = generatePathD();
-
   return (
     <div className="qmi-container" dir="ltr">
       {/* Fixed aspect ratio wrapper */}
@@ -249,39 +282,85 @@ export const QuestMapImage = memo(function QuestMapImage({
 
         {/* Overlay container - matches image dimensions */}
         <div className="qmi-overlay">
-          {/* SVG for dotted path */}
+          {/* SVG for curvy colored roads */}
           <svg
             className="qmi-path-svg"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
           >
-            {/* Path shadow */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="rgba(139, 69, 19, 0.4)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-            {/* Dotted path */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="#8B4513"
-              strokeWidth="0.8"
-              strokeLinecap="round"
-              strokeDasharray="1.5 2.5"
-            />
+            <defs>
+              {/* Gradients for each road segment */}
+              {stages.slice(0, -1).map((stage, index) => {
+                const fromTheme = stageThemes[stage.id];
+                const toTheme = stageThemes[stages[index + 1].id];
+                return (
+                  <linearGradient
+                    key={`grad-${index}`}
+                    id={`roadGradient${index}`}
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor={fromTheme.color} />
+                    <stop offset="100%" stopColor={toTheme.color} />
+                  </linearGradient>
+                );
+              })}
+            </defs>
+
+            {/* Render each road segment */}
+            {stages.slice(0, -1).map((stage, index) => {
+              const pathD = generateSegmentPath(index, index + 1);
+              const isLocked = stage.status === 'locked';
+
+              return (
+                <g key={`road-${index}`} className={isLocked ? 'qmi-road-locked' : ''}>
+                  {/* Road shadow/outline */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="rgba(0, 0, 0, 0.3)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                  {/* Road base (white/light edge) */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.8)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                  {/* Road colored center */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke={isLocked ? '#9CA3AF' : `url(#roadGradient${index})`}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    className="qmi-road-center"
+                  />
+                  {/* Road dashed line (like road markings) */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.6)"
+                    strokeWidth="0.5"
+                    strokeLinecap="round"
+                    strokeDasharray="2 3"
+                  />
+                </g>
+              );
+            })}
           </svg>
 
           {/* Lesson markers along paths */}
           {stages.slice(0, -1).map((stage, index) => {
-            const fromPos = stagePositions[index];
-            const toPos = stagePositions[index + 1];
             const theme = stageThemes[stage.id];
             const markers = getLessonMarkers(
-              fromPos,
-              toPos,
+              index,
+              index + 1,
               stage.lessons,
               stage.completedLessons || 0,
               stage.status === 'locked'

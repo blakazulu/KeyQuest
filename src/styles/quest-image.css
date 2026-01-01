@@ -47,6 +47,19 @@
   z-index: 5;
 }
 
+/* Road styling */
+.qmi-road-center {
+  filter: drop-shadow(0 0 2px currentColor);
+}
+
+.qmi-road-locked {
+  opacity: 0.5;
+}
+
+.qmi-road-locked .qmi-road-center {
+  filter: none;
+}
+
 /* === LESSON MARKERS === */
 .qmi-lesson {
   position: absolute;
