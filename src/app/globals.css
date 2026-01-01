@@ -380,9 +380,14 @@ body {
 /* Typing practice text */
 .typing-text {
   font-family: var(--font-mono);
-  font-size: var(--text-typing);
+  font-size: 1.75rem;
   letter-spacing: 0.05em;
   line-height: 2;
+  min-height: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ============================================
