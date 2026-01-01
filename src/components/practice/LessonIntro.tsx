@@ -242,8 +242,11 @@ export const LessonIntro = memo(function LessonIntro({
         {/* Card */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
           {/* Header with gradient */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-            <div className="flex items-center gap-2 text-indigo-200 text-sm mb-2">
+          <div
+            className="p-6 text-white"
+            style={{ background: 'linear-gradient(135deg, #ff9a56, #ff6f3c, #ff5722)' }}
+          >
+            <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
               <span>{labels.stage} {lesson.stageId}</span>
               <span>·</span>
               <span>{labels.lesson} {lesson.lessonNumber}</span>
@@ -251,7 +254,7 @@ export const LessonIntro = memo(function LessonIntro({
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               {lesson.title[locale]}
             </h1>
-            <p className="text-indigo-100 text-lg">
+            <p className="text-white/90 text-lg">
               {lesson.description[locale]}
             </p>
           </div>

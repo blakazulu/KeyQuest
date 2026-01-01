@@ -213,7 +213,7 @@ export const LessonSummary = memo(function LessonSummary({
                   window.scrollTo({ top: 0, behavior: 'instant' });
                   router.push(`/${locale}/practice/${nextLessonId}`);
                 }}
-                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02]"
+                className="w-full py-4 btn-rainbow text-white text-lg font-bold rounded-xl transition-all transform hover:scale-[1.02]"
               >
                 {labels.nextLesson}
               </button>

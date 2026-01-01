@@ -240,7 +240,7 @@ export const HandsWithKeyboard = memo(function HandsWithKeyboard({
   return (
     <div dir="ltr" className={`flex items-start justify-center gap-6 ${className}`}>
       <LeftHand activeFinger={activeFinger} locale={locale} />
-      <div className="flex-shrink-0">{children}</div>
+      <div className="flex-1">{children}</div>
       <RightHand activeFinger={activeFinger} locale={locale} />
     </div>
   );

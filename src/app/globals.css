@@ -798,13 +798,24 @@ body {
   border-radius: var(--radius-xl);
   padding: var(--space-4);
   box-shadow: var(--shadow-lg);
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.keyboard-row:last-child {
+  margin-bottom: 0;
 }
 
 .keyboard-key {
-  width: 48px;
-  height: 48px;
+  flex: 1;
+  min-height: 40px;
+  max-height: 50px;
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -817,6 +828,15 @@ body {
   justify-content: center;
   transition: all var(--duration-fast) var(--ease-default);
 }
+
+/* Variable width keys */
+.keyboard-key-w125 { flex: 1.25; }
+.keyboard-key-w150 { flex: 1.5; }
+.keyboard-key-w175 { flex: 1.75; }
+.keyboard-key-wide { flex: 2; }
+.keyboard-key-w225 { flex: 2.25; }
+.keyboard-key-w275 { flex: 2.75; }
+.keyboard-key-space { flex: 6.25; }
 
 .keyboard-key-highlighted {
   color: white;
@@ -836,6 +856,14 @@ body {
 .keyboard-key-wrong {
   background: var(--color-error);
   color: white;
+}
+
+/* Muted keys (non-typing: Ctrl, Alt, Shift, etc.) */
+.keyboard-key-muted {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  opacity: 0.5;
 }
 
 /* Finger colors for keys */

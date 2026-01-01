@@ -97,8 +97,7 @@ export const Keyboard = memo(function Keyboard({
       {qwertyLayout.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className="flex justify-center mb-1 last:mb-0"
-          style={{ paddingLeft: rowIndex === 2 ? 8 : rowIndex === 3 ? 16 : 0 }}
+          className="keyboard-row"
         >
           {row.keys.map((keyData, keyIndex) => (
             <Key
@@ -182,18 +181,16 @@ export const CompactKeyboard = memo(function CompactKeyboard({
         </div>
       ))}
 
-      {/* Space bar */}
-      {highlightedKey === ' ' && (
-        <div className="flex justify-center mt-2">
-          <Key
-            keyData={{ key: ' ', label: 'Space', finger: 'thumb', width: 6 }}
-            state={highlightedKey === ' ' ? 'highlighted' : 'default'}
-            showFingerColors={showFingerColors}
-            baseSize={baseSize}
-            onClick={onKeyClick}
-          />
-        </div>
-      )}
+      {/* Space bar - always shown */}
+      <div className="flex justify-center mt-2">
+        <Key
+          keyData={{ key: ' ', label: 'Space', finger: 'thumb', width: 6 }}
+          state={highlightedKey === ' ' ? 'highlighted' : 'default'}
+          showFingerColors={showFingerColors}
+          baseSize={baseSize}
+          onClick={onKeyClick}
+        />
+      </div>
     </div>
   );
 });

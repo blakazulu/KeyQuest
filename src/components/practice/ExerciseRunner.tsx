@@ -16,110 +16,6 @@ interface ExerciseRunnerProps {
   }) => void;
 }
 
-// Exercise instruction component
-const ExerciseInstructions = memo(function ExerciseInstructions({
-  exercise,
-  locale,
-  exerciseNumber,
-  totalExercises,
-  onStart,
-}: {
-  exercise: Exercise;
-  locale: 'en' | 'he';
-  exerciseNumber: number;
-  totalExercises: number;
-  onStart: () => void;
-}) {
-  const isRTL = locale === 'he';
-
-  // Auto-start after short delay if this isn't the first exercise
-  useEffect(() => {
-    if (exerciseNumber > 1) {
-      const timer = setTimeout(onStart, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [exerciseNumber, onStart]);
-
-  // Handle Enter key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        onStart();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onStart]);
-
-  const labels = {
-    exercise: locale === 'he' ? 'תרגיל' : 'Exercise',
-    of: locale === 'he' ? 'מתוך' : 'of',
-    ready: locale === 'he' ? 'מוכן?' : 'Ready?',
-    pressEnter: locale === 'he' ? 'לחץ Enter להתחלה' : 'Press Enter to start',
-  };
-
-  return (
-    <div
-      className="flex flex-col items-center justify-center py-8 px-4"
-      dir={isRTL ? 'rtl' : 'ltr'}
-    >
-      {/* Exercise counter */}
-      <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-        {labels.exercise} {exerciseNumber} {labels.of} {totalExercises}
-      </div>
-
-      {/* Progress dots */}
-      <div className="flex gap-2 mb-6">
-        {Array.from({ length: totalExercises }).map((_, i) => (
-          <div
-            key={i}
-            className={`w-2 h-2 rounded-full transition-all ${
-              i < exerciseNumber - 1
-                ? 'bg-emerald-500'
-                : i === exerciseNumber - 1
-                ? 'bg-indigo-500 scale-125'
-                : 'bg-gray-300 dark:bg-gray-600'
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Instructions */}
-      <div className="max-w-md text-center mb-6">
-        <p className="text-lg text-gray-700 dark:text-gray-300">
-          {exercise.instructions[locale]}
-        </p>
-      </div>
-
-      {/* Target info if available */}
-      <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
-        {exercise.targetAccuracy && (
-          <span>🎯 {exercise.targetAccuracy}%</span>
-        )}
-        {exercise.targetWpm && (
-          <span>⚡ {exercise.targetWpm} WPM</span>
-        )}
-        {exercise.timeLimit && (
-          <span>⏱ {exercise.timeLimit}s</span>
-        )}
-      </div>
-
-      {/* Start prompt */}
-      <button
-        onClick={onStart}
-        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
-      >
-        {labels.ready}
-      </button>
-      <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-        {labels.pressEnter}
-      </p>
-    </div>
-  );
-});
-
 // Exercise result mini-display
 const ExerciseResultMini = memo(function ExerciseResultMini({
   result,
@@ -162,18 +58,12 @@ export const ExerciseRunner = memo(function ExerciseRunner({
 }: ExerciseRunnerProps) {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [exerciseResults, setExerciseResults] = useState<ExerciseResult[]>([]);
-  const [phase, setPhase] = useState<'instructions' | 'typing' | 'result'>('instructions');
+  const [phase, setPhase] = useState<'typing' | 'result'>('typing');
   const [typingKey, setTypingKey] = useState(0);
   const [lastResult, setLastResult] = useState<ExerciseResult | null>(null);
 
   const currentExercise = lesson.exercises[currentExerciseIndex];
   const isLastExercise = currentExerciseIndex === lesson.exercises.length - 1;
-
-  // Handle starting an exercise
-  const handleStart = useCallback(() => {
-    setPhase('typing');
-    setTypingKey((k) => k + 1);
-  }, []);
 
   // Handle exercise completion
   const handleExerciseComplete = useCallback((stats: TypingStats) => {
@@ -220,7 +110,8 @@ export const ExerciseRunner = memo(function ExerciseRunner({
       // Move to next exercise after short delay
       setTimeout(() => {
         setCurrentExerciseIndex((i) => i + 1);
-        setPhase('instructions');
+        setPhase('typing');
+        setTypingKey((k) => k + 1);
         setLastResult(null);
       }, 1500);
     }
@@ -229,7 +120,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950">
       {/* Header with progress */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-b-2xl">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <div>
             <h1 className="font-semibold text-gray-800 dark:text-gray-200">
@@ -253,29 +144,17 @@ export const ExerciseRunner = memo(function ExerciseRunner({
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {phase === 'instructions' && (
-          <ExerciseInstructions
-            exercise={currentExercise}
-            locale={locale}
-            exerciseNumber={currentExerciseIndex + 1}
-            totalExercises={lesson.exercises.length}
-            onStart={handleStart}
-          />
-        )}
-
+      <div className="flex-1 flex flex-col mt-2">
         {phase === 'typing' && (
-          <div className="flex-1 flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-3xl">
-              <TypingArea
-                key={typingKey}
-                text={currentExercise.content}
-                onComplete={handleExerciseComplete}
-                showStats={true}
-                allowBackspace={false}
-                compactKeyboard={true}
-              />
-            </div>
+          <div className="flex-1 flex flex-col w-full h-full">
+            <TypingArea
+              key={typingKey}
+              text={currentExercise.content}
+              onComplete={handleExerciseComplete}
+              showStats={true}
+              allowBackspace={false}
+              compactKeyboard={false}
+            />
           </div>
         )}
 

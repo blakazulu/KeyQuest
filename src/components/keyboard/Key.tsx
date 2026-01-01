@@ -34,10 +34,8 @@ export const Key = memo(function Key({
 }: KeyProps) {
   const { key, label, shiftLabel, finger, width = 1, isHomeRow } = keyData;
 
-  // Calculate dimensions
-  const keyWidth = baseSize * width;
-  const keyHeight = baseSize;
-  const gap = 4; // Gap between keys
+  // Check if this is a non-typing key (modifier keys, function keys, etc.)
+  const isModifierKey = key.length > 1 && key !== ' ';
 
   // Build class names based on state
   const stateClasses: Record<KeyState, string> = {
@@ -52,14 +50,28 @@ export const Key = memo(function Key({
   const showFingerColor = showFingerColors && state === 'highlighted';
   const fingerClass = showFingerColor ? fingerToClass[finger] : '';
 
+  // Width class for special keys
+  const getWidthClass = () => {
+    if (key === ' ') return 'keyboard-key-space';
+    if (width >= 2.75) return 'keyboard-key-w275';
+    if (width >= 2.25) return 'keyboard-key-w225';
+    if (width >= 2) return 'keyboard-key-wide';
+    if (width >= 1.75) return 'keyboard-key-w175';
+    if (width >= 1.5) return 'keyboard-key-w150';
+    if (width >= 1.25) return 'keyboard-key-w125';
+    return '';
+  };
+  const widthClass = getWidthClass();
+
   // Combine all classes
   const className = [
     'keyboard-key',
+    widthClass,
     'relative',
     'flex flex-col items-center justify-center',
     'select-none',
     'transition-all duration-75',
-    state === 'default' && showFingerColors ? '' : stateClasses[state],
+    isModifierKey && state === 'default' ? 'keyboard-key-muted' : (state === 'default' && showFingerColors ? '' : stateClasses[state]),
     state === 'highlighted' ? fingerClass : '',
     onClick ? 'cursor-pointer hover:brightness-95 active:scale-95' : '',
   ]
@@ -76,11 +88,6 @@ export const Key = memo(function Key({
     <button
       type="button"
       className={className}
-      style={{
-        width: keyWidth,
-        height: keyHeight,
-        marginRight: gap,
-      }}
       onClick={handleClick}
       disabled={!onClick}
       aria-label={`Key ${label || key}`}
