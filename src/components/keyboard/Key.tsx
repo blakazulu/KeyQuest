@@ -39,9 +39,9 @@ export const Key = memo(function Key({
 
   // Build class names based on state
   const stateClasses: Record<KeyState, string> = {
-    default: 'bg-surface-raised border-border text-foreground',
+    default: '',
     highlighted: `${fingerToClass[finger]} keyboard-key-highlighted`,
-    pressed: 'keyboard-key-pressed bg-surface border-border',
+    pressed: 'keyboard-key-pressed',
     correct: 'keyboard-key-correct',
     wrong: 'keyboard-key-wrong animate-shake',
   };
@@ -71,7 +71,7 @@ export const Key = memo(function Key({
     'flex flex-col items-center justify-center',
     'select-none',
     'transition-all duration-75',
-    isModifierKey && state === 'default' ? 'keyboard-key-muted' : (state === 'default' && showFingerColors ? '' : stateClasses[state]),
+    isModifierKey ? 'keyboard-key-muted' : stateClasses[state],
     state === 'highlighted' ? fingerClass : '',
     onClick ? 'cursor-pointer hover:brightness-95 active:scale-95' : '',
   ]

@@ -870,12 +870,30 @@ body {
    KEYBOARD STYLES
    ============================================ */
 
+/* Keyboard styled like a physical keyboard */
 .keyboard-container {
-  background: var(--color-surface);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4);
-  box-shadow: var(--shadow-lg);
+  position: relative;
   width: 100%;
+  background: linear-gradient(180deg, #2d2d3a 0%, #1f1f2a 100%);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  border: 3px solid #3d3d4a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Top edge highlight */
+.keyboard-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: var(--radius-xl);
 }
 
 .keyboard-row {
@@ -891,19 +909,24 @@ body {
 
 .keyboard-key {
   flex: 1;
-  min-height: 40px;
-  max-height: 50px;
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
+  min-height: 44px;
+  max-height: 52px;
+  background: linear-gradient(180deg, #4a4a5a 0%, #3a3a4a 100%);
+  border: 1px solid #5a5a6a;
+  border-bottom: 3px solid #2a2a3a;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: var(--text-body-sm);
-  color: var(--color-text);
+  color: #e8e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--duration-fast) var(--ease-default);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Variable width keys */
@@ -917,42 +940,90 @@ body {
 
 .keyboard-key-highlighted {
   color: white;
-  box-shadow: var(--shadow-glow-primary);
+  box-shadow:
+    0 0 20px currentColor,
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .keyboard-key-pressed {
-  transform: scale(0.95);
-  background: var(--color-surface);
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  background: linear-gradient(180deg, #3a3a4a 0%, #2a2a3a 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .keyboard-key-correct {
-  background: var(--color-success);
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  border-color: #15803d;
   color: white;
+  box-shadow:
+    0 0 16px rgba(34, 197, 94, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .keyboard-key-wrong {
-  background: var(--color-error);
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  border-color: #b91c1c;
   color: white;
+  box-shadow:
+    0 0 16px rgba(239, 68, 68, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Muted keys (non-typing: Ctrl, Alt, Shift, etc.) */
 .keyboard-key-muted {
-  background: var(--color-surface);
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
-  opacity: 0.5;
+  background: linear-gradient(180deg, #35353f 0%, #28282f 100%);
+  border-color: #3a3a44;
+  color: #6a6a7a;
+  box-shadow: none;
 }
 
-/* Finger colors for keys */
-.finger-lpinky { background: var(--color-finger-lpinky); color: white; }
-.finger-lring { background: var(--color-finger-lring); color: white; }
-.finger-lmiddle { background: var(--color-finger-lmiddle); color: white; }
-.finger-lindex { background: var(--color-finger-lindex); color: white; }
-.finger-rindex { background: var(--color-finger-rindex); color: #18181B; }
-.finger-rmiddle { background: var(--color-finger-rmiddle); color: white; }
-.finger-rring { background: var(--color-finger-rring); color: white; }
-.finger-rpinky { background: var(--color-finger-rpinky); color: white; }
-.finger-thumb { background: var(--color-finger-thumb); color: white; }
+/* Finger colors for keys - with gradient for depth */
+.finger-lpinky {
+  background: linear-gradient(180deg, #FF6B9D 0%, #e55a8a 100%);
+  border-color: #cc4a7a;
+  color: white;
+}
+.finger-lring {
+  background: linear-gradient(180deg, #9D4EDD 0%, #8a3fcc 100%);
+  border-color: #7730bb;
+  color: white;
+}
+.finger-lmiddle {
+  background: linear-gradient(180deg, #00B4D8 0%, #009fc2 100%);
+  border-color: #008aac;
+  color: white;
+}
+.finger-lindex {
+  background: linear-gradient(180deg, #00D97E 0%, #00c26e 100%);
+  border-color: #00ab5e;
+  color: white;
+}
+.finger-rindex {
+  background: linear-gradient(180deg, #FFD60A 0%, #e6c009 100%);
+  border-color: #ccaa08;
+  color: #18181B;
+}
+.finger-rmiddle {
+  background: linear-gradient(180deg, #FF6B35 0%, #e65a2a 100%);
+  border-color: #cc4a20;
+  color: white;
+}
+.finger-rring {
+  background: linear-gradient(180deg, #FF4757 0%, #e63a4a 100%);
+  border-color: #cc2d3d;
+  color: white;
+}
+.finger-rpinky {
+  background: linear-gradient(180deg, #9D4EDD 0%, #8a3fcc 100%);
+  border-color: #7730bb;
+  color: white;
+}
+.finger-thumb {
+  background: linear-gradient(180deg, #A0AEC0 0%, #8a9aae 100%);
+  border-color: #74869c;
+  color: white;
+}
 
 /* ============================================
    GAMIFICATION STYLES
