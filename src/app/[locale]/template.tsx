@@ -1,31 +1,68 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import {
-  getPageType,
-  pageVariants,
-  getRTLVariants,
-} from '@/lib/pageTransitions';
+import { motion } from 'framer-motion';
+import { usePathname, useParams } from 'next/navigation';
+import { getPageType, PageType } from '@/lib/pageTransitions';
 
 type Props = {
   children: React.ReactNode;
 };
 
 /**
+ * Simple, reliable page transition variants
+ * Each page type gets a unique entrance animation
+ */
+const transitions: Record<PageType, {
+  initial: Record<string, number | string>;
+  animate: Record<string, number | string>;
+  transition: Record<string, unknown>;
+}> = {
+  // Home: Rise up with fade
+  home: {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+
+  // Levels: Scale in (map appearing)
+  levels: {
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  },
+
+  // Dashboard: Slide up
+  dashboard: {
+    initial: { opacity: 0, y: 40 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+
+  // Practice: Slide from side
+  practice: {
+    initial: { opacity: 0, x: 60 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  },
+
+  // Active lesson: Quick focus zoom
+  lesson: {
+    initial: { opacity: 0, scale: 1.05 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+  },
+
+  // Default: Simple fade
+  default: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: 0.25 },
+  },
+};
+
+/**
  * Page transition template
- *
- * This component wraps every page and applies custom animations
- * based on the page type. Each route has its own unique entrance
- * and exit animation for a polished, game-like feel.
- *
- * Animation styles:
- * - Home: Grand rise from below with subtle scale
- * - Levels: Zoom in like approaching a treasure map
- * - Dashboard: Slide up with card-like feel
- * - Practice: Quick slide from side (RTL-aware)
- * - Lesson: Dramatic focus zoom (tunnel vision effect)
+ * Applies entrance animations based on route
  */
 export default function Template({ children }: Props) {
   const pathname = usePathname();
@@ -33,30 +70,27 @@ export default function Template({ children }: Props) {
   const locale = params.locale as string;
   const isRTL = locale === 'he';
 
-  // Determine page type and get appropriate animation
   const pageType = getPageType(pathname);
-  const baseVariants = pageVariants[pageType];
+  const { initial, animate, transition } = transitions[pageType];
 
-  // Apply RTL adjustments for directional animations
-  const variants = getRTLVariants(baseVariants, isRTL);
+  // Flip x-direction for RTL
+  const adjustedInitial = { ...initial };
+  if (isRTL && 'x' in adjustedInitial && typeof adjustedInitial.x === 'number') {
+    adjustedInitial.x = -adjustedInitial.x;
+  }
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={pathname}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants}
-        className="page-transition-wrapper"
-        style={{
-          // Prevent layout shift during animations
-          willChange: 'transform, opacity',
-          transformOrigin: 'center top',
-        }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      initial={adjustedInitial}
+      animate={animate}
+      transition={transition}
+      style={{
+        width: '100%',
+        minHeight: '100%',
+      }}
+    >
+      {children}
+    </motion.div>
   );
 }

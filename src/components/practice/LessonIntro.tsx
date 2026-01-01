@@ -320,7 +320,7 @@ export const LessonIntro = memo(function LessonIntro({
             <button
               ref={startButtonRef}
               onClick={onStart}
-              className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-4 btn-rainbow text-white text-lg font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               aria-label={labels.startLesson}
             >
               {labels.startLesson}

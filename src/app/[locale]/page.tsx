@@ -116,11 +116,7 @@ export default function Home() {
                 <Button
                   variant="game"
                   size="lg"
-                  className="text-lg px-12"
-                  style={{
-                    background: 'linear-gradient(90deg, #10a9fc, #7f9bdf, #c092ba, #f5849d, #ff913e)',
-                    boxShadow: '0 8px 25px -5px rgba(16, 169, 252, 0.4), 0 8px 25px -5px rgba(192, 146, 186, 0.35), 0 8px 25px -5px rgba(255, 145, 62, 0.4)',
-                  }}
+                  className="text-lg px-12 btn-rainbow"
                 >
                   {t('startQuest')}
                 </Button>
