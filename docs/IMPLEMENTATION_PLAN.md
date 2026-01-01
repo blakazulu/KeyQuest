@@ -428,21 +428,28 @@ typing-learning/
 ### Phase 4: Lesson Content & Structure
 
 **Goal**: Define all lesson content and progression logic
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #   | Task                           | Status | Description                                                  |
 | --- | ------------------------------ | ------ | ------------------------------------------------------------ |
-| 4.1 | Define TypeScript types        | [ ]    | Lesson, Stage, Exercise, Progress types                      |
-| 4.2 | Create Stage 1 content         | [ ]    | Keyboard familiarity exercises (no typing, just exploration) |
-| 4.3 | Create Stage 2 content         | [ ]    | Home row exercises (ASDF JKL;)                               |
-| 4.4 | Create Stage 3 content         | [ ]    | Letter expansion (2-3 letters per sub-stage)                 |
-| 4.5 | Create Stage 4 content         | [ ]    | Short word lists (3-5 letter words)                          |
-| 4.6 | Create Stage 5 content         | [ ]    | Sentence collections (easy, funny, neutral)                  |
-| 4.7 | Create Stage 6 content         | [ ]    | Fluency challenges (longer texts, emails, etc.)              |
-| 4.8 | Build lesson progression logic | [ ]    | Track completion, unlock next lessons                        |
-| 4.9 | Build `useProgressStore`       | [ ]    | Store user progress through lessons                          |
+| 4.1 | Define TypeScript types        | [x]    | Lesson, Stage, Exercise, Progress types                      |
+| 4.2 | Create Stage 1 content         | [x]    | Keyboard familiarity exercises (no typing, just exploration) |
+| 4.3 | Create Stage 2 content         | [x]    | Home row exercises (ASDF JKL;)                               |
+| 4.4 | Create Stage 3 content         | [x]    | Letter expansion (2-3 letters per sub-stage)                 |
+| 4.5 | Create Stage 4 content         | [x]    | Short word lists (3-5 letter words)                          |
+| 4.6 | Create Stage 5 content         | [x]    | Sentence collections (easy, funny, neutral)                  |
+| 4.7 | Create Stage 6 content         | [x]    | Fluency challenges (longer texts, emails, etc.)              |
+| 4.8 | Build lesson progression logic | [x]    | Track completion, unlock next lessons                        |
+| 4.9 | Build `useProgressStore`       | [x]    | Store user progress through lessons                          |
 
-**Deliverable**: Complete lesson content library with progression system
+**Additional Deliverables**:
+- Quest map with background image (`map.webp`) and interactive overlays
+- Custom stage positions aligned to map landmarks
+- Bridge image for water crossing between stages 3-4
+- Custom lesson marker positions for paths over bridge and to treasure
+- Floating labels with per-stage positioning
+
+**Deliverable**: Complete lesson content library with progression system and visual quest map
 
 ---
 
