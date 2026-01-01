@@ -66,9 +66,9 @@ const stage3to4Overrides: Record<number, { x?: number; y?: number }> = {
   2: { x: 38.945471, y: 74 },             // Lesson 3
   3: { y: 71.703704 },                    // Lesson 4
   4: { x: 52.522634, y: 73.851852 },      // Lesson 5
-  5: { x: 60.511111 },                    // Lesson 6
+  5: { x: 60.511111, y: 83.059259 },      // Lesson 6
   6: { y: 86.703704 },                    // Lesson 7
-  7: { y: 88.518519 },                    // Lesson 8
+  7: { y: 85.818519 },                    // Lesson 8
 };
 
 // Custom coordinate overrides for stage 5→6 path (Castle to Treasure)

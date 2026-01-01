@@ -225,11 +225,28 @@
   visibility: visible;
 }
 
-/* Adjust label position for right-side stages (show label on left) */
-.qmi-hotspot[style*="left: 74"] .qmi-label,
-.qmi-hotspot[style*="left: 82%"] .qmi-label {
-  left: auto;
-  right: calc(100% + 52px);
+/* Stage 3 (Cave) - bottom of screen */
+.qmi-hotspot[style*="top: 92%"] .qmi-label {
+  top: -180px;
+  left: 40px;
+}
+
+/* Stage 4 (Snowy mountain) - bottom-right */
+.qmi-hotspot[style*="top: 82%"] .qmi-label {
+  left: -22px;
+  top: -150px;
+}
+
+/* Stage 5 (Castle) - middle-right */
+.qmi-hotspot[style*="left: 74.7%"] .qmi-label {
+  left: -50px;
+  top: -160px;
+}
+
+/* Stage 6 (Treasure) - top-right */
+.qmi-hotspot[style*="top: 18%"] .qmi-label {
+  left: 20px;
+  top: 50px;
 }
 
 .qmi-label-icon {
