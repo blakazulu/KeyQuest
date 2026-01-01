@@ -83,15 +83,18 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 2 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 5 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
 **Completed**:
 - Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
 - Phase 1.5: i18n (English/Hebrew with RTL)
 - Phase 1.6: Typography, Metadata, SEO/AEO/GEO, Design System
 - Phase 2: Core Typing Engine (hooks, components, stats, keyboard input)
+- Phase 3: Visual Keyboard (finger color coding, key highlights, hand guide)
+- Phase 4: Lesson Content & Structure (6 stages, 37 lessons, quest map)
+- Phase 5: Practice Flow (lesson selection modal, intro, exercise runner, summary)
 
-**Next**: Phase 3 (Visual Keyboard)
+**Next**: Phase 6 (Progress Persistence)
 
 **Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
 

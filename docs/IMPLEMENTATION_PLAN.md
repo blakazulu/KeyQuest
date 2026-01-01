@@ -456,20 +456,20 @@ typing-learning/
 ### Phase 5: Practice Flow
 
 **Goal**: Complete practice experience from start to summary
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #    | Task                          | Status | Description                                  |
 | ---- | ----------------------------- | ------ | -------------------------------------------- |
-| 5.1  | Build Levels/Worlds page      | [ ]    | Visual level map showing stages and progress |
-| 5.2  | Build lesson selection UI     | [ ]    | Choose specific lesson within a stage        |
-| 5.3  | Build practice intro screen   | [ ]    | Show lesson goal, finger placement tips      |
-| 5.4  | Build practice screen         | [ ]    | Main typing area + keyboard + stats          |
-| 5.5  | Build practice summary screen | [ ]    | Show results: accuracy, WPM, time, errors    |
-| 5.6  | Add "Next Lesson" flow        | [ ]    | Transition to next lesson or back to map     |
-| 5.7  | Handle lesson completion      | [ ]    | Save progress, calculate scores              |
-| 5.8  | Add restart functionality     | [ ]    | Retry current lesson                         |
-| 5.9  | Add keyboard navigation       | [ ]    | Arrow keys for levels, Enter/R for actions   |
-| 5.10 | Add focus management          | [ ]    | Auto-focus on key elements after transitions |
+| 5.1  | Build Levels/Worlds page      | [x]    | Visual level map showing stages and progress |
+| 5.2  | Build lesson selection UI     | [x]    | Choose specific lesson within a stage        |
+| 5.3  | Build practice intro screen   | [x]    | Show lesson goal, finger placement tips      |
+| 5.4  | Build practice screen         | [x]    | Main typing area + keyboard + stats          |
+| 5.5  | Build practice summary screen | [x]    | Show results: accuracy, WPM, time, errors    |
+| 5.6  | Add "Next Lesson" flow        | [x]    | Transition to next lesson or back to map     |
+| 5.7  | Handle lesson completion      | [x]    | Save progress, calculate scores              |
+| 5.8  | Add restart functionality     | [x]    | Retry current lesson                         |
+| 5.9  | Add keyboard navigation       | [x]    | Arrow keys for levels, Enter/R for actions   |
+| 5.10 | Add focus management          | [x]    | Auto-focus on key elements after transitions |
 
 **Accessibility requirements for this phase**:
 
@@ -481,6 +481,20 @@ typing-learning/
 - Progress bar: `role="progressbar"` with `aria-valuenow`/`aria-valuemax`
 
 **Deliverable**: End-to-end practice flow from level selection to completion
+
+**Components Created**:
+- `LessonSelectionModal` - Modal overlay for selecting lessons within a stage
+- `LessonIntro` - Pre-practice screen showing lesson info and new keys
+- `ExerciseRunner` - Multi-exercise flow with progress tracking
+- `LessonSummary` - Results screen with stars, XP, and navigation
+
+**Routes Added**:
+- `/practice/[lessonId]` - Dynamic route for practicing specific lessons
+
+**Integration**:
+- Quest map now opens lesson modal on stage click
+- Levels page connected to `useProgressStore` for real progress
+- Progress automatically saved after lesson completion
 
 ---
 

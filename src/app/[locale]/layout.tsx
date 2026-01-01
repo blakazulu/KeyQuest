@@ -63,7 +63,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Clouds />
       <NextIntlClientProvider messages={messages}>
         <Header />
-        <main className="relative mx-auto max-w-7xl px-4 py-8 pt-0">
+        <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 pt-0">
           {children}
         </main>
       </NextIntlClientProvider>

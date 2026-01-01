@@ -1,0 +1,299 @@
+'use client';
+
+import { memo, useState, useCallback, useEffect } from 'react';
+import { TypingArea } from '@/components/typing';
+import type { Lesson, Exercise, ExerciseResult } from '@/types/lesson';
+import type { TypingStats } from '@/hooks/useTypingEngine';
+
+interface ExerciseRunnerProps {
+  lesson: Lesson;
+  locale: 'en' | 'he';
+  onComplete: (results: ExerciseResult[], totalStats: {
+    accuracy: number;
+    wpm: number;
+    timeSpent: number;
+    errors: number;
+  }) => void;
+}
+
+// Exercise instruction component
+const ExerciseInstructions = memo(function ExerciseInstructions({
+  exercise,
+  locale,
+  exerciseNumber,
+  totalExercises,
+  onStart,
+}: {
+  exercise: Exercise;
+  locale: 'en' | 'he';
+  exerciseNumber: number;
+  totalExercises: number;
+  onStart: () => void;
+}) {
+  const isRTL = locale === 'he';
+
+  // Auto-start after short delay if this isn't the first exercise
+  useEffect(() => {
+    if (exerciseNumber > 1) {
+      const timer = setTimeout(onStart, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [exerciseNumber, onStart]);
+
+  // Handle Enter key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onStart();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onStart]);
+
+  const labels = {
+    exercise: locale === 'he' ? 'תרגיל' : 'Exercise',
+    of: locale === 'he' ? 'מתוך' : 'of',
+    ready: locale === 'he' ? 'מוכן?' : 'Ready?',
+    pressEnter: locale === 'he' ? 'לחץ Enter להתחלה' : 'Press Enter to start',
+  };
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center py-8 px-4"
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
+      {/* Exercise counter */}
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+        {labels.exercise} {exerciseNumber} {labels.of} {totalExercises}
+      </div>
+
+      {/* Progress dots */}
+      <div className="flex gap-2 mb-6">
+        {Array.from({ length: totalExercises }).map((_, i) => (
+          <div
+            key={i}
+            className={`w-2 h-2 rounded-full transition-all ${
+              i < exerciseNumber - 1
+                ? 'bg-emerald-500'
+                : i === exerciseNumber - 1
+                ? 'bg-indigo-500 scale-125'
+                : 'bg-gray-300 dark:bg-gray-600'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Instructions */}
+      <div className="max-w-md text-center mb-6">
+        <p className="text-lg text-gray-700 dark:text-gray-300">
+          {exercise.instructions[locale]}
+        </p>
+      </div>
+
+      {/* Target info if available */}
+      <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400 mb-8">
+        {exercise.targetAccuracy && (
+          <span>🎯 {exercise.targetAccuracy}%</span>
+        )}
+        {exercise.targetWpm && (
+          <span>⚡ {exercise.targetWpm} WPM</span>
+        )}
+        {exercise.timeLimit && (
+          <span>⏱ {exercise.timeLimit}s</span>
+        )}
+      </div>
+
+      {/* Start prompt */}
+      <button
+        onClick={onStart}
+        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
+      >
+        {labels.ready}
+      </button>
+      <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+        {labels.pressEnter}
+      </p>
+    </div>
+  );
+});
+
+// Exercise result mini-display
+const ExerciseResultMini = memo(function ExerciseResultMini({
+  result,
+  locale,
+}: {
+  result: ExerciseResult;
+  locale: 'en' | 'he';
+}) {
+  const labels = {
+    wpm: 'WPM',
+    accuracy: locale === 'he' ? 'דיוק' : 'Accuracy',
+    continue: locale === 'he' ? 'ממשיך...' : 'Continuing...',
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-6 py-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl animate-pulse">
+      <div className="text-center">
+        <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          {result.wpm}
+        </span>
+        <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{labels.wpm}</span>
+      </div>
+      <div className="text-center">
+        <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          {result.accuracy}%
+        </span>
+        <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{labels.accuracy}</span>
+      </div>
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        {labels.continue}
+      </div>
+    </div>
+  );
+});
+
+export const ExerciseRunner = memo(function ExerciseRunner({
+  lesson,
+  locale,
+  onComplete,
+}: ExerciseRunnerProps) {
+  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
+  const [exerciseResults, setExerciseResults] = useState<ExerciseResult[]>([]);
+  const [phase, setPhase] = useState<'instructions' | 'typing' | 'result'>('instructions');
+  const [typingKey, setTypingKey] = useState(0);
+  const [lastResult, setLastResult] = useState<ExerciseResult | null>(null);
+
+  const currentExercise = lesson.exercises[currentExerciseIndex];
+  const isLastExercise = currentExerciseIndex === lesson.exercises.length - 1;
+
+  // Handle starting an exercise
+  const handleStart = useCallback(() => {
+    setPhase('typing');
+    setTypingKey((k) => k + 1);
+  }, []);
+
+  // Handle exercise completion
+  const handleExerciseComplete = useCallback((stats: TypingStats) => {
+    const result: ExerciseResult = {
+      exerciseId: currentExercise.id,
+      accuracy: stats.accuracy,
+      wpm: stats.wpm,
+      timeSpent: stats.elapsedTime / 1000, // Convert to seconds
+      errors: stats.errorCount,
+      totalCharacters: currentExercise.content.length,
+      passed: stats.accuracy >= (currentExercise.targetAccuracy || lesson.passingAccuracy),
+    };
+
+    const newResults = [...exerciseResults, result];
+    setExerciseResults(newResults);
+    setLastResult(result);
+    setPhase('result');
+
+    if (isLastExercise) {
+      // Calculate total stats
+      const totalStats = newResults.reduce(
+        (acc, r) => ({
+          accuracy: acc.accuracy + r.accuracy,
+          wpm: acc.wpm + r.wpm,
+          timeSpent: acc.timeSpent + r.timeSpent,
+          errors: acc.errors + r.errors,
+        }),
+        { accuracy: 0, wpm: 0, timeSpent: 0, errors: 0 }
+      );
+
+      // Average accuracy and wpm
+      const avgStats = {
+        accuracy: Math.round(totalStats.accuracy / newResults.length),
+        wpm: Math.round(totalStats.wpm / newResults.length),
+        timeSpent: Math.round(totalStats.timeSpent),
+        errors: totalStats.errors,
+      };
+
+      // Small delay before completing
+      setTimeout(() => {
+        onComplete(newResults, avgStats);
+      }, 1000);
+    } else {
+      // Move to next exercise after short delay
+      setTimeout(() => {
+        setCurrentExerciseIndex((i) => i + 1);
+        setPhase('instructions');
+        setLastResult(null);
+      }, 1500);
+    }
+  }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy, onComplete]);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950">
+      {/* Header with progress */}
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-semibold text-gray-800 dark:text-gray-200">
+              {lesson.title[locale]}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {locale === 'he' ? 'תרגיל' : 'Exercise'} {currentExerciseIndex + 1} / {lesson.exercises.length}
+            </p>
+          </div>
+
+          {/* Progress bar */}
+          <div className="flex-1 max-w-xs">
+            <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+                style={{ width: `${((currentExerciseIndex + (phase === 'result' ? 1 : 0)) / lesson.exercises.length) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
+        {phase === 'instructions' && (
+          <ExerciseInstructions
+            exercise={currentExercise}
+            locale={locale}
+            exerciseNumber={currentExerciseIndex + 1}
+            totalExercises={lesson.exercises.length}
+            onStart={handleStart}
+          />
+        )}
+
+        {phase === 'typing' && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4">
+            <div className="w-full max-w-3xl">
+              <TypingArea
+                key={typingKey}
+                text={currentExercise.content}
+                onComplete={handleExerciseComplete}
+                showStats={true}
+                allowBackspace={false}
+                compactKeyboard={true}
+              />
+            </div>
+          </div>
+        )}
+
+        {phase === 'result' && lastResult && (
+          <div className="flex-1 flex flex-col items-center justify-center p-4">
+            <div className="w-full max-w-md">
+              <ExerciseResultMini result={lastResult} locale={locale} />
+              {isLastExercise && (
+                <p className="text-center text-gray-500 dark:text-gray-400 mt-4 animate-pulse">
+                  {locale === 'he' ? 'מחשב תוצאות...' : 'Calculating results...'}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
+export default ExerciseRunner;

@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Page Transitions** - Custom animated transitions between pages using Framer Motion
+  - Home page: Grand rise from below with subtle scale and glow effect
+  - Levels/Quest Map: Zoom in with perspective tilt like approaching a treasure map
+  - Dashboard: Slide up with card-like stagger effect
+  - Practice: Quick slide from side (RTL-aware for Hebrew)
+  - Active Lesson: Dramatic focus zoom with blur-to-sharp (tunnel vision effect)
+  - Route-based detection automatically applies correct animation per page type
+  - Reusable motion components: PageContent, MotionItem, MotionCard, MotionFade, MotionScale, MotionList, MotionHero
+  - CSS helper classes for staggered children animations
+  - Full `prefers-reduced-motion` support for accessibility
 - **Phase 4: Lesson Content & Structure** - Complete curriculum with 37 lessons across 6 stages
   - TypeScript type definitions for lessons, exercises, stages, and progress (`src/types/lesson.ts`)
   - Comprehensive exercise types: key-intro, key-practice, letter-combo, words, sentences, paragraph, timed, accuracy

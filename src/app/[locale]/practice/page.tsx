@@ -1,124 +1,61 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { TypingArea } from '@/components/typing';
-import type { TypingStats } from '@/hooks/useTypingEngine';
-
-// Sample practice texts - will be replaced with lesson content in Phase 4
-const PRACTICE_TEXTS = [
-  'The quick brown fox jumps over the lazy dog.',
-  'Pack my box with five dozen liquor jugs.',
-  'How vexingly quick daft zebras jump!',
-  'The five boxing wizards jump quickly.',
-  'Sphinx of black quartz, judge my vow.',
-];
+import { useProgressStore } from '@/stores/useProgressStore';
 
 export default function PracticePage() {
-  const t = useTranslations('practice');
-  const tFeedback = useTranslations('practice.feedback');
-  const tActions = useTranslations('practice.actions');
+  const router = useRouter();
+  const locale = useLocale() as 'en' | 'he';
 
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [completedStats, setCompletedStats] = useState<TypingStats | null>(null);
-  const [key, setKey] = useState(0); // Used to force remount of TypingArea
+  const getCurrentLesson = useProgressStore((s) => s.getCurrentLesson);
 
-  const currentText = PRACTICE_TEXTS[currentTextIndex];
+  // Redirect to current lesson on mount
+  useEffect(() => {
+    const currentLesson = getCurrentLesson();
+    if (currentLesson) {
+      router.replace(`/${locale}/practice/${currentLesson.id}`);
+    }
+  }, [getCurrentLesson, router, locale]);
 
-  const handleComplete = useCallback((stats: TypingStats) => {
-    setCompletedStats(stats);
-  }, []);
+  const currentLesson = getCurrentLesson();
 
-  const handleRestart = useCallback(() => {
-    setCompletedStats(null);
-    setKey((k) => k + 1); // Force remount to reset state
-  }, []);
-
-  const handleNext = useCallback(() => {
-    setCompletedStats(null);
-    setCurrentTextIndex((i) => (i + 1) % PRACTICE_TEXTS.length);
-    setKey((k) => k + 1);
-  }, []);
-
-  // Determine feedback based on performance
-  const getFeedbackKey = (accuracy: number, wpm: number): string => {
-    if (accuracy >= 98 && wpm >= 40) return 'excellent';
-    if (accuracy >= 95 && wpm >= 30) return 'great';
-    if (accuracy >= 90) return 'good';
-    if (accuracy >= 80) return 'keepPracticing';
-    return 'needsWork';
-  };
-
-  return (
-    <div className="relative z-10 flex flex-col items-center py-8 pt-2">
-      <header className="text-center">
-        <h1 className="text-display-lg">{t('title')}</h1>
-        <p className="mt-2 text-body-md text-muted">{t('subtitle')}</p>
-      </header>
-
-      <main className="mt-2 w-full max-w-3xl">
-        <TypingArea
-          key={key}
-          text={currentText}
-          onComplete={handleComplete}
-          showStats={true}
-          allowBackspace={false}
-        />
-
-        {/* Completion Summary */}
-        {completedStats && (
-          <div className="mt-8 card-raised text-center">
-            <div className="text-display-md text-success mb-2">
-              {tFeedback(getFeedbackKey(completedStats.accuracy, completedStats.wpm))}
-            </div>
-
-            <div className="grid grid-cols-3 gap-4 mt-6 mb-6">
-              <div>
-                <div className="score-display text-primary">{completedStats.wpm}</div>
-                <div className="text-caption text-muted">WPM</div>
-              </div>
-              <div>
-                <div className="score-display text-success">{completedStats.accuracy}%</div>
-                <div className="text-caption text-muted">{t('stats.accuracy')}</div>
-              </div>
-              <div>
-                <div className="score-display">
-                  {completedStats.errorCount}
-                </div>
-                <div className="text-caption text-muted">{t('stats.errors')}</div>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={handleRestart}
-                className="btn btn-secondary"
-                aria-label={tActions('restart')}
-              >
-                {tActions('restart')}
-              </button>
-              <button
-                onClick={handleNext}
-                className="btn btn-primary"
-                aria-label={tActions('next')}
-              >
-                {tActions('next')}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/levels"
-            className="text-body-sm text-primary hover:underline"
-          >
-            {tActions('backToLevels')}
-          </Link>
+  // If we have a current lesson, show loading while redirecting
+  if (currentLesson) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4" />
+          <p className="text-gray-500 dark:text-gray-400">
+            {locale === 'he' ? 'טוען שיעור...' : 'Loading lesson...'}
+          </p>
         </div>
-      </main>
+      </div>
+    );
+  }
+
+  // If no current lesson (shouldn't happen), show message to go to levels
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center max-w-md">
+        <div className="text-6xl mb-4">🎯</div>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+          {locale === 'he' ? 'בחר שיעור' : 'Choose a Lesson'}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          {locale === 'he'
+            ? 'עבור למפת המסע כדי לבחור שיעור להתחיל'
+            : 'Go to the quest map to select a lesson to start'}
+        </p>
+        <Link
+          href="/levels"
+          className="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
+        >
+          {locale === 'he' ? 'למפת המסע' : 'Go to Quest Map'}
+        </Link>
+      </div>
     </div>
   );
 }

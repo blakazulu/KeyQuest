@@ -1,7 +1,6 @@
 'use client';
 
-import { memo, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+import { memo, useEffect, useState } from 'react';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
 // Key character images
@@ -38,6 +37,7 @@ interface Stage {
 interface QuestMapProps {
   stages: Stage[];
   locale: 'en' | 'he';
+  onStageClick?: (stageId: number) => void;
 }
 
 // Stage positions mapped to landmarks on map.webp (percentage coordinates)
@@ -265,6 +265,7 @@ const StageHotspot = memo(function StageHotspot({
   isFirst,
   isLast,
   keyImage,
+  onClick,
 }: {
   stage: Stage;
   position: { x: number; y: number };
@@ -272,6 +273,7 @@ const StageHotspot = memo(function StageHotspot({
   isFirst: boolean;
   isLast: boolean;
   keyImage: string;
+  onClick?: () => void;
 }) {
   const theme = stageThemes[stage.id];
   const isLocked = stage.status === 'locked';
@@ -362,11 +364,16 @@ const StageHotspot = memo(function StageHotspot({
     </div>
   );
 
-  if (!isLocked && stage.href) {
+  if (!isLocked && onClick) {
     return (
-      <Link href={stage.href} className="qmi-hotspot-link">
+      <button
+        type="button"
+        onClick={onClick}
+        className="qmi-hotspot-link"
+        aria-label={`${stage.name}, ${stage.lessons} ${locale === 'he' ? 'שיעורים' : 'lessons'}`}
+      >
         {content}
-      </Link>
+      </button>
     );
   }
 
@@ -412,6 +419,7 @@ const LessonMarker = memo(function LessonMarker({
 export const QuestMapImage = memo(function QuestMapImage({
   stages,
   locale,
+  onStageClick,
 }: QuestMapProps) {
   // Generate random key images for each stage (shuffled on each page load)
   // Use useState + useEffect to avoid hydration mismatch (random must run client-side only)
@@ -590,6 +598,7 @@ export const QuestMapImage = memo(function QuestMapImage({
               isFirst={index === 0}
               isLast={index === stages.length - 1}
               keyImage={stageKeyImages[index]}
+              onClick={onStageClick ? () => onStageClick(stage.id) : undefined}
             />
           ))}
 

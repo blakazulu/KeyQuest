@@ -7,6 +7,8 @@ import { qwertyLayout, getKeyData, type KeyData } from '@/data/keyboard-layout';
 interface KeyboardProps {
   /** Character that should be highlighted as the next key to press */
   highlightedKey?: string;
+  /** Multiple keys to highlight (for lesson intros) */
+  highlightedKeys?: string[];
   /** Set of keys currently being pressed */
   pressedKeys?: Set<string>;
   /** Key that was just typed correctly (for flash effect) */
@@ -31,6 +33,7 @@ interface KeyboardProps {
  */
 export const Keyboard = memo(function Keyboard({
   highlightedKey,
+  highlightedKeys = [],
   pressedKeys = new Set(),
   correctKey,
   wrongKey,
@@ -40,10 +43,17 @@ export const Keyboard = memo(function Keyboard({
   onKeyClick,
   className = '',
 }: KeyboardProps) {
+  // Build set of highlighted keys for efficient lookup
+  const highlightedSet = useMemo(() => {
+    const set = new Set<string>();
+    if (highlightedKey) set.add(highlightedKey.toLowerCase());
+    highlightedKeys.forEach((k) => set.add(k.toLowerCase()));
+    return set;
+  }, [highlightedKey, highlightedKeys]);
+
   // Determine state for each key
   const getKeyState = (keyData: KeyData): KeyState => {
     const keyLower = keyData.key.toLowerCase();
-    const highlightedLower = highlightedKey?.toLowerCase();
 
     // Check for wrong key (highest priority for visual feedback)
     if (wrongKey && keyLower === wrongKey.toLowerCase()) {
@@ -60,20 +70,17 @@ export const Keyboard = memo(function Keyboard({
       return 'pressed';
     }
 
-    // Check for highlighted (next key to press)
-    if (highlightedLower) {
-      // Direct match
-      if (keyLower === highlightedLower) {
-        return 'highlighted';
-      }
-      // Check shift label for symbols
-      if (keyData.shiftLabel === highlightedKey) {
-        return 'highlighted';
-      }
-      // Space bar
-      if (keyData.key === ' ' && highlightedKey === ' ') {
-        return 'highlighted';
-      }
+    // Check for highlighted (next key to press or intro keys)
+    if (highlightedSet.has(keyLower)) {
+      return 'highlighted';
+    }
+    // Check shift label for symbols
+    if (keyData.shiftLabel && highlightedSet.has(keyData.shiftLabel.toLowerCase())) {
+      return 'highlighted';
+    }
+    // Space bar
+    if (keyData.key === ' ' && highlightedSet.has(' ')) {
+      return 'highlighted';
     }
 
     return 'default';

@@ -1,64 +1,74 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useLocale } from 'next-intl';
 import { QuestMapImage } from '@/components/levels/QuestMapImage';
+import { LessonSelectionModal } from '@/components/levels/LessonSelectionModal';
 import { FloatingMenu } from '@/components/layout/FloatingMenu';
+import { useProgressStore } from '@/stores/useProgressStore';
+import { stages as allStages, getStage } from '@/data/lessons';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
-// Stage data - will be connected to useProgressStore in Phase 5
-const getStages = (t: ReturnType<typeof useTranslations>) => [
-  {
-    id: 1,
-    name: t('stages.1.name'),
-    description: t('stages.1.description'),
-    lessons: 5,
-    completedLessons: 2,
-    status: 'current' as LevelStatus,
-    href: '/practice',
-  },
-  {
-    id: 2,
-    name: t('stages.2.name'),
-    description: t('stages.2.description'),
-    lessons: 6,
-    status: 'locked' as LevelStatus,
-  },
-  {
-    id: 3,
-    name: t('stages.3.name'),
-    description: t('stages.3.description'),
-    lessons: 8,
-    status: 'locked' as LevelStatus,
-  },
-  {
-    id: 4,
-    name: t('stages.4.name'),
-    description: t('stages.4.description'),
-    lessons: 6,
-    status: 'locked' as LevelStatus,
-  },
-  {
-    id: 5,
-    name: t('stages.5.name'),
-    description: t('stages.5.description'),
-    lessons: 6,
-    status: 'locked' as LevelStatus,
-  },
-  {
-    id: 6,
-    name: t('stages.6.name'),
-    description: t('stages.6.description'),
-    lessons: 6,
-    status: 'locked' as LevelStatus,
-  },
-];
-
 export default function LevelsPage() {
-  const t = useTranslations('levels');
   const locale = useLocale() as 'en' | 'he';
 
-  const stages = getStages(t);
+  // Modal state
+  const [selectedStageId, setSelectedStageId] = useState<number | null>(null);
+
+  // Progress store
+  const isStageUnlocked = useProgressStore((s) => s.isStageUnlocked);
+  const isStageCompleted = useProgressStore((s) => s.isStageCompleted);
+  const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked);
+  const getLessonProgress = useProgressStore((s) => s.getLessonProgress);
+  const completedLessons = useProgressStore((s) => s.completedLessons);
+
+  // Compute stage statuses from progress store
+  const stages = useMemo(() => {
+    return allStages.map((stage) => {
+      // Count completed lessons in this stage
+      const completedCount = stage.lessons.filter(
+        (l) => completedLessons.includes(l.id)
+      ).length;
+
+      // Determine status
+      let status: LevelStatus = 'locked';
+      if (isStageCompleted(stage.id)) {
+        status = 'completed';
+      } else if (isStageUnlocked(stage.id)) {
+        status = completedCount > 0 ? 'current' : 'available';
+      }
+
+      // For display, treat 'available' as 'current' for first unlocked stage
+      if (status === 'available' && completedCount === 0) {
+        status = 'current';
+      }
+
+      return {
+        id: stage.id,
+        name: stage.name[locale],
+        description: stage.description[locale],
+        lessons: stage.lessons.length,
+        completedLessons: completedCount,
+        status,
+      };
+    });
+  }, [allStages, locale, completedLessons, isStageCompleted, isStageUnlocked]);
+
+  // Get the selected stage data for the modal
+  const selectedStage = useMemo(() => {
+    if (selectedStageId === null) return null;
+    return getStage(selectedStageId) ?? null;
+  }, [selectedStageId]);
+
+  // Handle stage click to open modal
+  const handleStageClick = useCallback((stageId: number) => {
+    setSelectedStageId(stageId);
+  }, []);
+
+  // Handle modal close
+  const handleCloseModal = useCallback(() => {
+    setSelectedStageId(null);
+  }, []);
 
   // Enable fullscreen mode for this page
   useEffect(() => {
@@ -74,7 +84,23 @@ export default function LevelsPage() {
       <FloatingMenu />
 
       {/* Full-screen Quest Map with Background Image */}
-      <QuestMapImage stages={stages} locale={locale} />
+      <QuestMapImage
+        stages={stages}
+        locale={locale}
+        onStageClick={handleStageClick}
+      />
+
+      {/* Lesson Selection Modal */}
+      {selectedStage && (
+        <LessonSelectionModal
+          stage={selectedStage}
+          locale={locale}
+          isOpen={selectedStageId !== null}
+          onClose={handleCloseModal}
+          isLessonUnlocked={isLessonUnlocked}
+          getLessonProgress={getLessonProgress}
+        />
+      )}
     </>
   );
 }
