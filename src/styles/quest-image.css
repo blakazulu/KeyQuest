@@ -191,6 +191,18 @@
   }
 }
 
+/* === KEY CHARACTER === */
+.qmi-key-character {
+  position: absolute;
+  width: 60px;
+  height: auto;
+  transform: translate(-20%, -120%);
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+  z-index: 25;
+}
+
 .qmi-hotspot-completed .qmi-badge {
   box-shadow:
     0 3px 0 rgba(0, 0, 0, 0.2),

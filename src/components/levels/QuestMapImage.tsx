@@ -1,8 +1,29 @@
 'use client';
 
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { LevelStatus } from '@/components/ui/LevelCard';
+
+// Key character images
+const KEY_IMAGES = [
+  '/images/key/key1.png',
+  '/images/key/key2.png',
+  '/images/key/key3.png',
+  '/images/key/key4.png',
+  '/images/key/key5.png',
+  '/images/key/key6.png',
+  '/images/key/key7.png',
+];
+
+// Fisher-Yates shuffle
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 interface Stage {
   id: number;
@@ -243,12 +264,14 @@ const StageHotspot = memo(function StageHotspot({
   locale,
   isFirst,
   isLast,
+  keyImage,
 }: {
   stage: Stage;
   position: { x: number; y: number };
   locale: 'en' | 'he';
   isFirst: boolean;
   isLast: boolean;
+  keyImage: string;
 }) {
   const theme = stageThemes[stage.id];
   const isLocked = stage.status === 'locked';
@@ -273,6 +296,7 @@ const StageHotspot = memo(function StageHotspot({
       <div className="qmi-badge" style={{ backgroundColor: isLocked ? '#9CA3AF' : theme.color }}>
         {isLocked ? '🔒' : stage.id}
       </div>
+
 
       {/* Floating label */}
       <div className="qmi-label">
@@ -389,6 +413,16 @@ export const QuestMapImage = memo(function QuestMapImage({
   stages,
   locale,
 }: QuestMapProps) {
+  // Generate random key images for each stage (shuffled on each page load)
+  // Use useState + useEffect to avoid hydration mismatch (random must run client-side only)
+  const [stageKeyImages, setStageKeyImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const shuffled = shuffleArray(KEY_IMAGES);
+    // If we have more stages than images, cycle through
+    setStageKeyImages(stages.map((_, index) => shuffled[index % shuffled.length]));
+  }, [stages.length]); // Randomize on mount
+
   // Detect browser zoom and apply inverse scale to keep overlays fixed size
   useEffect(() => {
     // Store the base devicePixelRatio at initial load (assumed 100% zoom)
@@ -555,7 +589,25 @@ export const QuestMapImage = memo(function QuestMapImage({
               locale={locale}
               isFirst={index === 0}
               isLast={index === stages.length - 1}
+              keyImage={stageKeyImages[index]}
             />
+          ))}
+
+          {/* Key character - shown only on current stage */}
+          {stages.map((stage, index) => (
+            stage.status === 'current' && stageKeyImages[index] && (
+              <img
+                key={`key-${index}`}
+                src={stageKeyImages[index]}
+                alt=""
+                className="qmi-key-character"
+                style={{
+                  left: `${stagePositions[index].x}%`,
+                  top: `${stagePositions[index].y}%`,
+                }}
+                draggable={false}
+              />
+            )
           ))}
         </div>
       </div>
