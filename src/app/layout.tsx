@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Baloo_2, Nunito, Heebo, Varela_Round } from 'next/font/google';
 import './globals.css';
 
@@ -37,6 +37,14 @@ const heebo = Heebo({
 });
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest.com';
+
+// Disable zoom to keep UI elements fixed size
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

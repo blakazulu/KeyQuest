@@ -63,7 +63,7 @@
 /* === LESSON MARKERS === */
 .qmi-lesson {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--zoom-scale, 1));
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -73,7 +73,7 @@
   font-size: 10px;
   font-weight: 700;
   z-index: 10;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
   /* Default: empty/available */
   background: white;
   border: 3px solid var(--lesson-color);
@@ -91,7 +91,7 @@
 .qmi-lesson-current {
   background: linear-gradient(135deg, #FFD700, #FFA500);
   border-color: #F59E0B;
-  transform: translate(-50%, -50%) scale(1.2);
+  transform: translate(-50%, -50%) scale(calc(var(--zoom-scale, 1) * 1.2));
   animation: qmi-lesson-pulse 1.5s ease-in-out infinite;
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.3),
@@ -124,14 +124,14 @@
 
 .qmi-hotspot {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--zoom-scale, 1));
   z-index: 20;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
 .qmi-hotspot:hover {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: translate(-50%, -50%) scale(calc(var(--zoom-scale, 1) * 1.05));
   z-index: 30;
 }
 
@@ -145,7 +145,7 @@
 }
 
 .qmi-hotspot-locked:hover {
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--zoom-scale, 1));
 }
 
 .qmi-hotspot-locked .qmi-label {
@@ -418,11 +418,14 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 50;
+  transform: scale(var(--zoom-scale, 1));
+  transform-origin: bottom right;
 }
 
 [dir="rtl"] .qmi-legend {
   right: auto;
   left: 16px;
+  transform-origin: bottom left;
 }
 
 .qmi-legend-item {
@@ -502,9 +505,13 @@
 }
 
 /* === BRIDGE === */
-.qmi-bridge {
+.qmi-bridge-wrapper {
   position: absolute;
   z-index: 4;
+  transform: scale(var(--zoom-scale, 1));
+}
+
+.qmi-bridge {
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));

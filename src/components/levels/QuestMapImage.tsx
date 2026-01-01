@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import Link from 'next/link';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
@@ -389,6 +389,32 @@ export const QuestMapImage = memo(function QuestMapImage({
   stages,
   locale,
 }: QuestMapProps) {
+  // Detect browser zoom and apply inverse scale to keep overlays fixed size
+  useEffect(() => {
+    // Store the base devicePixelRatio at initial load (assumed 100% zoom)
+    const baseRatio = window.devicePixelRatio || 1;
+
+    const updateZoomScale = () => {
+      // Calculate current zoom relative to base
+      const currentRatio = window.devicePixelRatio || 1;
+      const zoomLevel = currentRatio / baseRatio;
+      // Apply inverse scale as CSS variable
+      document.documentElement.style.setProperty('--zoom-scale', String(1 / zoomLevel));
+    };
+
+    updateZoomScale();
+
+    // Use matchMedia for more reliable zoom detection
+    const mediaQuery = window.matchMedia(`(resolution: ${baseRatio}dppx)`);
+    mediaQuery.addEventListener('change', updateZoomScale);
+    window.addEventListener('resize', updateZoomScale);
+
+    return () => {
+      mediaQuery.removeEventListener('change', updateZoomScale);
+      window.removeEventListener('resize', updateZoomScale);
+    };
+  }, []);
+
   return (
     <div className="qmi-container" dir="ltr">
       {/* Fixed aspect ratio wrapper */}
@@ -477,18 +503,24 @@ export const QuestMapImage = memo(function QuestMapImage({
           </svg>
 
           {/* Bridge for stage 3→4 path (over water) */}
-          <img
-            src="/images/bridge.webp"
-            alt=""
-            className="qmi-bridge"
+          <div
+            className="qmi-bridge-wrapper"
             style={{
               left: '45.5%',
               top: '78.8125%',
-              width: '29.4445%',
-              transform: 'translate(-50%, -50%) rotate(-0.7577deg)',
             }}
-            draggable={false}
-          />
+          >
+            <img
+              src="/images/bridge.webp"
+              alt=""
+              className="qmi-bridge"
+              style={{
+                width: '29.4445vw',
+                transform: 'translate(-50%, -50%) rotate(-0.7577deg)',
+              }}
+              draggable={false}
+            />
+          </div>
 
           {/* Lesson markers along paths */}
           {stages.slice(0, -1).map((stage, index) => {
