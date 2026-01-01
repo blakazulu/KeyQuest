@@ -4,11 +4,11 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const acceptLanguage = request.headers.get('Accept-Language');
 
-  console.log('--- Middleware Debug ---');
+  console.log('--- Proxy Debug ---');
   console.log('Pathname:', pathname);
   console.log('Accept-Language:', acceptLanguage);
   console.log('Cookies:', request.cookies.getAll());
