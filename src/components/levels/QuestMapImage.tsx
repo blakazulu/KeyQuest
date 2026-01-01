@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useCallback } from 'react';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
 // Key character images
@@ -380,6 +380,59 @@ const StageHotspot = memo(function StageHotspot({
   return content;
 });
 
+// Clickable key character with swirl animation
+const ClickableKeyCharacter = memo(function ClickableKeyCharacter({
+  initialImage,
+  x,
+  y,
+}: {
+  initialImage: string;
+  x: number;
+  y: number;
+}) {
+  const [currentImage, setCurrentImage] = useState(initialImage);
+  const [animationState, setAnimationState] = useState<'idle' | 'swirl-out' | 'swirl-in'>('idle');
+
+  const handleClick = useCallback(() => {
+    if (animationState !== 'idle') return; // Prevent clicking during animation
+
+    // Start swirl-out animation
+    setAnimationState('swirl-out');
+
+    // After swirl-out completes, change image and swirl-in
+    setTimeout(() => {
+      // Pick a random different image
+      const otherImages = KEY_IMAGES.filter(img => img !== currentImage);
+      const newImage = otherImages[Math.floor(Math.random() * otherImages.length)];
+      setCurrentImage(newImage);
+      setAnimationState('swirl-in');
+
+      // After swirl-in completes, return to idle
+      setTimeout(() => {
+        setAnimationState('idle');
+      }, 400);
+    }, 400);
+  }, [animationState, currentImage]);
+
+  return (
+    <img
+      src={currentImage}
+      alt="Key character"
+      className={`qmi-lesson-key qmi-lesson-key-clickable ${
+        animationState === 'swirl-out' ? 'qmi-key-swirl-out' : ''
+      } ${
+        animationState === 'swirl-in' ? 'qmi-key-swirl-in' : ''
+      }`}
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+      }}
+      onClick={handleClick}
+      draggable={false}
+    />
+  );
+});
+
 // Lesson marker component
 const LessonMarker = memo(function LessonMarker({
   x,
@@ -602,16 +655,11 @@ export const QuestMapImage = memo(function QuestMapImage({
             if (!currentMarker || !stageKeyImages[index]) return null;
 
             return (
-              <img
+              <ClickableKeyCharacter
                 key={`key-lesson-${stage.id}`}
-                src={stageKeyImages[index]}
-                alt=""
-                className="qmi-lesson-key"
-                style={{
-                  left: `${currentMarker.x}%`,
-                  top: `${currentMarker.y}%`,
-                }}
-                draggable={false}
+                initialImage={stageKeyImages[index]}
+                x={currentMarker.x}
+                y={currentMarker.y}
               />
             );
           })}
