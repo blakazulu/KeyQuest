@@ -213,13 +213,16 @@ export function TypingArea({
         </div>
       )}
 
-      {/* Text display */}
-      <div className="mb-6 rounded-lg bg-surface-raised p-6">
-        <TextDisplay
-          characters={characters}
-          showCursor={status === 'running' || status === 'idle'}
-          className="text-center leading-relaxed"
-        />
+      {/* Text display - Monitor style */}
+      <div className="typing-monitor mb-6">
+        <div className="typing-monitor-screen">
+          <TextDisplay
+            characters={characters}
+            showCursor={status === 'running' || status === 'idle'}
+            className="text-center leading-relaxed"
+          />
+        </div>
+        <div className="typing-monitor-stand" />
       </div>
 
       {/* Stats panel */}

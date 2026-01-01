@@ -67,12 +67,12 @@ const Character = memo(function Character({ charState, showCursor }: CharacterPr
   // Handle space character display
   const displayChar = char === ' ' ? '\u00A0' : char; // Non-breaking space for visibility
 
-  // Build class names based on status
+  // Build class names based on status (optimized for dark monitor screen)
   const statusClasses: Record<CharacterState['status'], string> = {
-    pending: 'text-muted',
-    current: 'text-primary bg-primary-soft rounded-sm',
-    correct: 'text-success',
-    incorrect: 'text-error bg-error-soft rounded-sm underline decoration-2 decoration-error',
+    pending: 'text-slate-400',
+    current: 'text-white bg-indigo-500/30 rounded-sm',
+    correct: 'text-emerald-400',
+    incorrect: 'text-rose-400 bg-rose-500/20 rounded-sm underline decoration-2 decoration-rose-400',
   };
 
   return (
@@ -93,7 +93,7 @@ const Character = memo(function Character({ charState, showCursor }: CharacterPr
 function Cursor() {
   return (
     <span
-      className="cursor-blink absolute -bottom-0.5 left-0 h-0.5 w-full bg-primary"
+      className="cursor-blink absolute -bottom-0.5 left-0 h-0.5 w-full bg-white"
       aria-hidden="true"
     />
   );
