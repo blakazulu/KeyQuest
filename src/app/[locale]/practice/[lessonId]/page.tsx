@@ -7,6 +7,7 @@ import { getLesson, getNextLesson } from '@/data/lessons';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { LessonIntro, ExerciseRunner, LessonSummary } from '@/components/practice';
 import type { ExerciseResult, LessonResult } from '@/types/lesson';
+import type { LetterStats } from '@/hooks/useTypingEngine';
 
 type FlowPhase = 'intro' | 'practice' | 'summary';
 
@@ -26,6 +27,7 @@ export default function LessonPracticePage() {
 
   // Progress store actions
   const completeLesson = useProgressStore((s) => s.completeLesson);
+  const updateWeakLetter = useProgressStore((s) => s.updateWeakLetter);
   const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked);
 
   // Scroll to top on mount
@@ -53,7 +55,7 @@ export default function LessonPracticePage() {
 
   // Handle lesson completion
   const handleComplete = useCallback(
-    (results: ExerciseResult[], totalStats: { accuracy: number; wpm: number; timeSpent: number; errors: number }) => {
+    (results: ExerciseResult[], totalStats: { accuracy: number; wpm: number; timeSpent: number; errors: number; letterAccuracy: Record<string, LetterStats> }) => {
       if (!lesson) return;
 
       // Save to progress store
@@ -63,6 +65,14 @@ export default function LessonPracticePage() {
         totalStats.wpm,
         totalStats.timeSpent
       );
+
+      // Update weak letter tracking for each letter practiced
+      for (const [letter, stats] of Object.entries(totalStats.letterAccuracy)) {
+        if (stats.total > 0) {
+          const letterAccuracy = Math.round((stats.correct / stats.total) * 100);
+          updateWeakLetter(letter, letterAccuracy);
+        }
+      }
 
       // Create full lesson result
       const fullResult: LessonResult = {
@@ -90,7 +100,7 @@ export default function LessonPracticePage() {
       window.scrollTo({ top: 0, behavior: 'instant' });
       setPhase('summary');
     },
-    [lesson, lessonId, completeLesson]
+    [lesson, lessonId, completeLesson, updateWeakLetter]
   );
 
   // Handle restart

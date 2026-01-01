@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 6: Progress Persistence** - Complete progress tracking and weak letter detection
+  - Per-letter accuracy tracking in `useTypingEngine` via `letterAccuracy` stats
+  - Weak letter tracking integration with `updateWeakLetter()` using exponential moving average
+  - Session history tracking in `useProgressStore`
+  - Data migration support with version-based upgrades (currently v2)
+  - All progress auto-persisted to localStorage via Zustand persist middleware
 - **Page Transitions** - Custom animated transitions between pages using Framer Motion
   - Home page: Grand rise from below with subtle scale and glow effect
   - Levels/Quest Map: Zoom in with perspective tilt like approaching a treasure map

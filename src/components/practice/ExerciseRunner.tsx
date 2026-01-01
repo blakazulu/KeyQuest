@@ -1,9 +1,9 @@
 'use client';
 
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useRef } from 'react';
 import { TypingArea } from '@/components/typing';
-import type { Lesson, Exercise, ExerciseResult } from '@/types/lesson';
-import type { TypingStats } from '@/hooks/useTypingEngine';
+import type { Lesson, ExerciseResult } from '@/types/lesson';
+import type { TypingStats, LetterStats } from '@/hooks/useTypingEngine';
 
 interface ExerciseRunnerProps {
   lesson: Lesson;
@@ -13,6 +13,7 @@ interface ExerciseRunnerProps {
     wpm: number;
     timeSpent: number;
     errors: number;
+    letterAccuracy: Record<string, LetterStats>;
   }) => void;
 }
 
@@ -62,6 +63,9 @@ export const ExerciseRunner = memo(function ExerciseRunner({
   const [typingKey, setTypingKey] = useState(0);
   const [lastResult, setLastResult] = useState<ExerciseResult | null>(null);
 
+  // Aggregate letter accuracy across all exercises
+  const letterAccuracyRef = useRef<Record<string, LetterStats>>({});
+
   const currentExercise = lesson.exercises[currentExerciseIndex];
   const isLastExercise = currentExerciseIndex === lesson.exercises.length - 1;
 
@@ -76,6 +80,15 @@ export const ExerciseRunner = memo(function ExerciseRunner({
       totalCharacters: currentExercise.content.length,
       passed: stats.accuracy >= (currentExercise.targetAccuracy || lesson.passingAccuracy),
     };
+
+    // Merge letter accuracy from this exercise into aggregated stats
+    for (const [letter, exerciseStats] of Object.entries(stats.letterAccuracy)) {
+      const current = letterAccuracyRef.current[letter] || { correct: 0, total: 0 };
+      letterAccuracyRef.current[letter] = {
+        correct: current.correct + exerciseStats.correct,
+        total: current.total + exerciseStats.total,
+      };
+    }
 
     const newResults = [...exerciseResults, result];
     setExerciseResults(newResults);
@@ -100,6 +113,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
         wpm: Math.round(totalStats.wpm / newResults.length),
         timeSpent: Math.round(totalStats.timeSpent),
         errors: totalStats.errors,
+        letterAccuracy: { ...letterAccuracyRef.current },
       };
 
       // Small delay before completing

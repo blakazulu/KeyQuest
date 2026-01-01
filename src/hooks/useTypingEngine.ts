@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTypingStore } from '@/stores/useTypingStore';
 import { useKeyboardInput } from './useKeyboardInput';
 import { calculateWPM, calculateAccuracy, calculateNetWPM } from '@/lib/typing-utils';
@@ -9,6 +9,11 @@ export interface CharacterState {
   char: string;
   status: 'pending' | 'current' | 'correct' | 'incorrect';
   index: number;
+}
+
+export interface LetterStats {
+  correct: number;
+  total: number;
 }
 
 export interface TypingStats {
@@ -28,6 +33,8 @@ export interface TypingStats {
   charactersTyped: number;
   /** Total characters in target */
   totalCharacters: number;
+  /** Per-letter accuracy for weak letter tracking */
+  letterAccuracy: Record<string, LetterStats>;
 }
 
 export interface UseTypingEngineOptions {
@@ -99,6 +106,9 @@ export function useTypingEngine({
     start: storeStart,
   } = useTypingStore();
 
+  // Track per-letter accuracy for weak letter detection
+  const letterAccuracyRef = useRef<Record<string, LetterStats>>({});
+
   // Calculate current session status
   const status: TypingSessionStatus = useMemo(() => {
     if (isComplete) return 'completed';
@@ -134,6 +144,7 @@ export function useTypingEngine({
       elapsedTime,
       charactersTyped: currentPosition,
       totalCharacters: targetText.length,
+      letterAccuracy: { ...letterAccuracyRef.current },
     };
   }, [currentPosition, errors.length, elapsedTime, targetText.length]);
 
@@ -163,6 +174,16 @@ export function useTypingEngine({
       ? key === expected
       : key.toLowerCase() === expected.toLowerCase();
 
+    // Track per-letter accuracy (only for alphabetic characters)
+    const letterKey = expected.toLowerCase();
+    if (/^[a-z]$/.test(letterKey)) {
+      const current = letterAccuracyRef.current[letterKey] || { correct: 0, total: 0 };
+      letterAccuracyRef.current[letterKey] = {
+        correct: current.correct + (isCorrect ? 1 : 0),
+        total: current.total + 1,
+      };
+    }
+
     storeHandleKeyPress(key, isCorrect);
     onCharacterTyped?.(key, isCorrect);
 
@@ -187,6 +208,7 @@ export function useTypingEngine({
           elapsedTime: elapsed,
           charactersTyped: finalStats.currentPosition,
           totalCharacters: finalStats.targetText.length,
+          letterAccuracy: { ...letterAccuracyRef.current },
         });
       }, 0);
     }
@@ -226,6 +248,7 @@ export function useTypingEngine({
 
   const reset = useCallback((newText?: string) => {
     storeReset();
+    letterAccuracyRef.current = {}; // Clear per-letter tracking
     if (newText !== undefined) {
       setTargetText(newText);
     }
