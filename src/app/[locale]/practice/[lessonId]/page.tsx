@@ -135,6 +135,7 @@ export default function LessonPracticePage() {
           lesson={lesson}
           locale={locale}
           onStart={handleStart}
+          onBack={handleExit}
         />
       )}
 

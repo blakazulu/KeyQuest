@@ -10,6 +10,7 @@ interface LessonIntroProps {
   lesson: Lesson;
   locale: 'en' | 'he';
   onStart: () => void;
+  onBack: () => void;
 }
 
 // Difficulty badge colors
@@ -33,6 +34,7 @@ export const LessonIntro = memo(function LessonIntro({
   lesson,
   locale,
   onStart,
+  onBack,
 }: LessonIntroProps) {
   const startButtonRef = useRef<HTMLButtonElement>(null);
   const isRTL = locale === 'he';
@@ -65,6 +67,7 @@ export const LessonIntro = memo(function LessonIntro({
     startLesson: locale === 'he' ? 'התחל שיעור' : 'Start Lesson',
     pressEnter: locale === 'he' ? 'או לחץ Enter' : 'or press Enter',
     keysInThisLesson: locale === 'he' ? 'המקשים בשיעור זה' : 'Keys in this lesson',
+    backToMap: locale === 'he' ? 'חזרה למפה' : 'Back to Map',
   };
 
   // Always show keyboard with highlighted keys
@@ -110,6 +113,23 @@ export const LessonIntro = memo(function LessonIntro({
               {/* Left side - lesson info */}
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
+                  {/* Back to map button */}
+                  <button
+                    onClick={onBack}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                    aria-label={labels.backToMap}
+                  >
+                    <svg
+                      className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>{labels.backToMap}</span>
+                  </button>
+                  <span>·</span>
                   <span>{labels.stage} {lesson.stageId}</span>
                   <span>·</span>
                   <span>{labels.lesson} {lesson.lessonNumber}</span>
