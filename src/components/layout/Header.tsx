@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { XpPill } from './XpPill';
 
 export function Header() {
   const t = useTranslations('nav');
@@ -203,6 +204,9 @@ export function Header() {
           </div>
         )}
       </div>
+
+      {/* XP Pill - always visible */}
+      <XpPill />
     </>
   );
 }

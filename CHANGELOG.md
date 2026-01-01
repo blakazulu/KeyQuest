@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **XP awarded per exercise** - XP now adds up after each exercise (not just lesson completion)
+  - 5-10 XP per exercise based on accuracy (80% = 5 XP, 100% = 10 XP)
+  - XP pill animates immediately when each exercise is completed
+  - Added `addExerciseXp` action to progress store
+- **XP Pill** - Floating XP display always visible on all pages (top-right corner)
+  - Shows total XP with animated count-up when XP increases
+  - Purple glow effect and bounce animation on XP gain
+  - "+X XP" popup that floats up and fades out
+  - Positioned opposite the floating menu (top-right)
+  - Hydration-safe with proper SSR handling
+- **Phase 7: Dashboard** - Dynamic personal stats dashboard with real progress data
+  - `LevelCard` - Current stage display with progress bar and XP badge
+  - `StatCard` - Reusable stat card with trend indicators (up/down/same arrows)
+  - `StreakCard` - Practice streak display with animated flame icon and "at risk" warning
+  - `ProgressChart` - Tabbed bar chart showing last 10 sessions (toggle between Accuracy/WPM)
+  - `WeakLettersPanel` - Mini keyboard heatmap showing key mastery (green/yellow/red/gray)
+  - `ContinuePractice` - Next lesson CTA with stage info and shimmer button effect
+  - Trend calculation from session history (compares recent vs older sessions)
+  - Achievement preview section with dynamic unlock states
+  - Hydration-safe client rendering with loading skeleton
+  - Full RTL support for Hebrew
+  - Staggered fade-in animations for all dashboard elements
 - **Phase 6: Progress Persistence** - Complete progress tracking and weak letter detection
   - Per-letter accuracy tracking in `useTypingEngine` via `letterAccuracy` stats
   - Weak letter tracking integration with `updateWeakLetter()` using exponential moving average

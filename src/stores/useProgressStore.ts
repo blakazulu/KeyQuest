@@ -50,6 +50,7 @@ interface ProgressState {
     stars: number;
     isNewBest: boolean;
   };
+  addExerciseXp: (xpAmount: number) => void;
   updateWeakLetter: (letter: string, accuracy: number) => void;
   updateStreak: () => void;
   reset: () => void;
@@ -149,6 +150,12 @@ export const useProgressStore = create<ProgressState>()(
           stars: result.stars,
           isNewBest: result.isNewBest,
         };
+      },
+
+      addExerciseXp: (xpAmount) => {
+        set((state) => ({
+          totalXp: state.totalXp + xpAmount,
+        }));
       },
 
       updateWeakLetter: (letter, accuracy) => {

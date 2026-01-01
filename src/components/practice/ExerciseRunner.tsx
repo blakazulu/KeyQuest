@@ -3,6 +3,7 @@
 import { memo, useState, useCallback, useRef } from 'react';
 import { TypingArea } from '@/components/typing';
 import { ExerciseCompleteModal } from './ExerciseCompleteModal';
+import { useProgressStore } from '@/stores/useProgressStore';
 import type { Lesson, ExerciseResult } from '@/types/lesson';
 import type { TypingStats, LetterStats } from '@/hooks/useTypingEngine';
 
@@ -19,8 +20,12 @@ interface ExerciseRunnerProps {
   onExit: () => void;
 }
 
-// XP per exercise (can be adjusted based on performance)
-const XP_PER_EXERCISE = 10;
+// Calculate XP based on accuracy: 5-10 XP per exercise
+function calculateExerciseXp(accuracy: number): number {
+  const baseXp = 5;
+  const bonusXp = Math.max(0, (accuracy - 80) * 0.25); // 0-5 bonus based on accuracy above 80%
+  return Math.round(baseXp + bonusXp);
+}
 
 export const ExerciseRunner = memo(function ExerciseRunner({
   lesson,
@@ -33,6 +38,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
   const [phase, setPhase] = useState<'typing' | 'result'>('typing');
   const [typingKey, setTypingKey] = useState(0);
   const [lastResult, setLastResult] = useState<ExerciseResult | null>(null);
+  const [lastXpEarned, setLastXpEarned] = useState(0);
   const [pendingTotalStats, setPendingTotalStats] = useState<{
     accuracy: number;
     wpm: number;
@@ -40,6 +46,9 @@ export const ExerciseRunner = memo(function ExerciseRunner({
     errors: number;
     letterAccuracy: Record<string, LetterStats>;
   } | null>(null);
+
+  // Progress store action
+  const addExerciseXp = useProgressStore((s) => s.addExerciseXp);
 
   // Aggregate letter accuracy across all exercises
   const letterAccuracyRef = useRef<Record<string, LetterStats>>({});
@@ -63,6 +72,11 @@ export const ExerciseRunner = memo(function ExerciseRunner({
       totalCharacters: currentExercise.content.length,
       passed: stats.accuracy >= (currentExercise.targetAccuracy || lesson.passingAccuracy),
     };
+
+    // Calculate and award XP immediately
+    const xpEarned = calculateExerciseXp(stats.accuracy);
+    addExerciseXp(xpEarned);
+    setLastXpEarned(xpEarned);
 
     // Merge letter accuracy from this exercise into aggregated stats
     for (const [letter, exerciseStats] of Object.entries(stats.letterAccuracy)) {
@@ -102,7 +116,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
       // Store pending stats for when user clicks continue
       setPendingTotalStats(avgStats);
     }
-  }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy]);
+  }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy, addExerciseXp]);
 
   // Handle modal continue button
   const handleModalContinue = useCallback(() => {
@@ -165,7 +179,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
             result={lastResult}
             exerciseNumber={currentExerciseIndex + 1}
             totalExercises={lesson.exercises.length}
-            xpEarned={XP_PER_EXERCISE}
+            xpEarned={lastXpEarned}
             locale={locale}
             isLastExercise={isLastExercise}
             onContinue={handleModalContinue}
