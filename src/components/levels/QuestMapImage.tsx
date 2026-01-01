@@ -24,9 +24,9 @@ interface QuestMapProps {
 const stagePositions = [
   { x: 18, y: 18 },  // 1: Cottage (top-left)
   { x: 13, y: 52 },  // 2: Volcano (left-center)
-  { x: 13, y: 82 },  // 3: Cave (bottom-left)
+  { x: 17, y: 92 },  // 3: Cave (bottom-left)
   { x: 82, y: 82 },  // 4: Snowy mountain (bottom-right)
-  { x: 68, y: 52 },  // 5: Castle (middle-right)
+  { x: 74.7, y: 58 },  // 5: Castle (middle-right)
   { x: 82, y: 18 },  // 6: Treasure chest (top-right)
 ];
 
@@ -59,6 +59,18 @@ const bezierPoint = (
   };
 };
 
+// Custom coordinate overrides for stage 3→4 path (goes over bridge)
+// Only override the values the user specified, keep calculated values for the rest
+const stage3to4Overrides: Record<number, { x?: number; y?: number }> = {
+  1: { x: 30.608746, y: 87.99869 },       // Lesson 2
+  2: { x: 38.945471, y: 74 },             // Lesson 3
+  3: { y: 71.703704 },                    // Lesson 4
+  4: { x: 52.522634, y: 73.851852 },      // Lesson 5
+  5: { x: 60.511111 },                    // Lesson 6
+  6: { y: 86.703704 },                    // Lesson 7
+  7: { y: 88.518519 },                    // Lesson 8
+};
+
 // Generate control points for a curvy path between two stages
 const getControlPoints = (from: { x: number; y: number }, to: { x: number; y: number }, index: number) => {
   const dx = to.x - from.x;
@@ -79,8 +91,60 @@ const getControlPoints = (from: { x: number; y: number }, to: { x: number; y: nu
   };
 };
 
+// Get lesson positions with overrides applied (for path generation)
+const getStage3to4Positions = () => {
+  const from = stagePositions[2];
+  const to = stagePositions[3];
+  const { cp1, cp2 } = getControlPoints(from, to, 2);
+  const lessonCount = 8;
+
+  const positions = [];
+  for (let i = 0; i < lessonCount; i++) {
+    const t = (i + 1) / (lessonCount + 1);
+    const point = bezierPoint(from, cp1, cp2, to, t);
+
+    let x = point.x;
+    let y = point.y;
+    if (stage3to4Overrides[i]) {
+      const override = stage3to4Overrides[i];
+      if (override.x !== undefined) x = override.x;
+      if (override.y !== undefined) y = override.y;
+    }
+    positions.push({ x, y });
+  }
+  return positions;
+};
+
 // Generate SVG path for a single segment (curvy)
 const generateSegmentPath = (fromIndex: number, toIndex: number) => {
+  // Custom path for stage 3→4 that goes over the bridge
+  if (fromIndex === 2 && toIndex === 3) {
+    const from = stagePositions[fromIndex];
+    const to = stagePositions[toIndex];
+    const points = getStage3to4Positions();
+
+    // Create smooth curve through all points using quadratic bezier segments
+    let path = `M ${from.x} ${from.y}`;
+
+    // Curve to first lesson
+    path += ` Q ${(from.x + points[0].x) / 2} ${from.y}, ${points[0].x} ${points[0].y}`;
+
+    // Smooth curves through lesson points
+    for (let i = 0; i < points.length - 1; i++) {
+      const curr = points[i];
+      const next = points[i + 1];
+      const midX = (curr.x + next.x) / 2;
+      const midY = (curr.y + next.y) / 2;
+      path += ` Q ${curr.x} ${curr.y}, ${midX} ${midY}`;
+    }
+
+    // Final curve to last point and stage 4
+    const last = points[points.length - 1];
+    path += ` Q ${last.x} ${last.y}, ${to.x} ${to.y}`;
+
+    return path;
+  }
+
   const from = stagePositions[fromIndex];
   const to = stagePositions[toIndex];
   const { cp1, cp2 } = getControlPoints(from, to, fromIndex);
@@ -103,9 +167,19 @@ const getLessonMarkers = (
   for (let i = 0; i < lessonCount; i++) {
     const t = (i + 1) / (lessonCount + 1);
     const point = bezierPoint(from, cp1, cp2, to, t);
+
+    // Apply overrides for stage 3→4 path
+    let x = point.x;
+    let y = point.y;
+    if (fromIndex === 2 && toIndex === 3 && stage3to4Overrides[i]) {
+      const override = stage3to4Overrides[i];
+      if (override.x !== undefined) x = override.x;
+      if (override.y !== undefined) y = override.y;
+    }
+
     markers.push({
-      x: point.x,
-      y: point.y,
+      x,
+      y,
       completed: i < completedLessons,
       current: !isLocked && i === completedLessons,
       locked: isLocked,
@@ -354,6 +428,20 @@ export const QuestMapImage = memo(function QuestMapImage({
               );
             })}
           </svg>
+
+          {/* Bridge for stage 3→4 path (over water) */}
+          <img
+            src="/images/bridge.webp"
+            alt=""
+            className="qmi-bridge"
+            style={{
+              left: '45.5%',
+              top: '78.8125%',
+              width: '29.4445%',
+              transform: 'translate(-50%, -50%) rotate(-0.7577deg)',
+            }}
+            draggable={false}
+          />
 
           {/* Lesson markers along paths */}
           {stages.slice(0, -1).map((stage, index) => {

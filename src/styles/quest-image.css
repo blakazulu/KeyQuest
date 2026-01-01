@@ -499,6 +499,15 @@
   color: #F5E6D3;
 }
 
+/* === BRIDGE === */
+.qmi-bridge {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
 /* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
 
