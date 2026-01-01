@@ -14,6 +14,9 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // Check if we're on a lesson practice page (hide full header, show only pill)
+  const isLessonPage = pathname.match(/\/practice\/[^/]+$/);
+
   const navItems = [
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
@@ -75,10 +78,10 @@ export function Header() {
 
   return (
     <>
-      {/* Full header (fades out when scrolled) */}
+      {/* Full header (hidden on lesson pages, fades out when scrolled) */}
       <header
         className={`sticky top-0 z-50 w-full bg-transparent transition-all duration-300 ${
-          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          isLessonPage || isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <nav
@@ -128,10 +131,10 @@ export function Header() {
         </nav>
       </header>
 
-      {/* Floating pill (fades in when scrolled) */}
+      {/* Floating pill (always visible on lesson pages, fades in when scrolled otherwise) */}
       <div
         className={`floating-menu-container transition-all duration-300 ${
-          isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
+          isLessonPage || isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
         {/* Main floating button */}

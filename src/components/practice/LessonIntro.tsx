@@ -232,7 +232,7 @@ export const LessonIntro = memo(function LessonIntro({
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950"
+      className="flex items-center justify-center p-4"
       dir={isRTL ? 'rtl' : 'ltr'}
       role="region"
       aria-live="polite"
@@ -302,7 +302,7 @@ export const LessonIntro = memo(function LessonIntro({
                 {/* Keyboard with hands */}
                 <div dir="ltr" className="flex flex-col items-center gap-4">
                   {/* Hands and keyboard row */}
-                  <div className="flex items-start justify-center gap-4">
+                  <div className="flex items-start justify-center gap-4 w-full">
                     <LeftHand locale={locale} className="hidden md:flex" />
                     <Keyboard
                       highlightedKeys={highlightedKeys}

@@ -118,9 +118,9 @@ export const ExerciseRunner = memo(function ExerciseRunner({
   }, [currentExercise, exerciseResults, isLastExercise, lesson.passingAccuracy, onComplete]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-950">
+    <div className="flex flex-col">
       {/* Header with progress */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-b-2xl">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <div>
             <h1 className="font-semibold text-gray-800 dark:text-gray-200">
