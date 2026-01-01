@@ -79,9 +79,10 @@ export function Header() {
   return (
     <>
       {/* Full header (hidden on lesson pages, fades out when scrolled) */}
+      {!isLessonPage && (
       <header
         className={`sticky top-0 z-50 w-full bg-transparent transition-all duration-300 ${
-          isLessonPage || isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <nav
@@ -130,6 +131,7 @@ export function Header() {
           </div>
         </nav>
       </header>
+      )}
 
       {/* Floating pill (always visible on lesson pages, fades in when scrolled otherwise) */}
       <div

@@ -28,6 +28,11 @@ export default function LessonPracticePage() {
   const completeLesson = useProgressStore((s) => s.completeLesson);
   const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   // Redirect if lesson not found or locked
   useEffect(() => {
     if (!lesson) {
