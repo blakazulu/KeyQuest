@@ -21,28 +21,25 @@ const ExplanationKey = memo(function ExplanationKey({
   letter,
   finger,
   hasBump,
-  isHighlighted,
 }: {
   letter: string;
   finger: FingerPosition;
   hasBump?: boolean;
-  isHighlighted?: boolean;
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
       <div
         className={`
-          w-10 h-10 rounded-lg flex items-center justify-center
-          font-mono font-bold text-white text-sm
+          w-12 h-12 rounded-lg flex items-center justify-center
+          font-mono font-bold text-white text-lg
           shadow-md ${fingerColors[finger]}
-          ${hasBump ? 'ring-2 ring-white ring-offset-1 ring-offset-amber-50 dark:ring-offset-amber-900/20' : ''}
-          ${isHighlighted ? 'ring-2 ring-yellow-400 animate-pulse' : ''}
+          ${hasBump ? 'ring-2 ring-white ring-offset-2 ring-offset-amber-50 dark:ring-offset-amber-900/20' : ''}
         `}
       >
         {letter}
       </div>
       {hasBump && (
-        <div className="w-4 h-0.5 bg-gray-400 dark:bg-gray-500 rounded-full" title="Bump indicator" />
+        <div className="w-5 h-1 bg-gray-400 dark:bg-gray-500 rounded-full" title="Bump indicator" />
       )}
     </div>
   );
@@ -88,6 +85,12 @@ export const HomeRowExplanation = memo(function HomeRowExplanation({
     tip: 'תמיד תחזור לשורת הבית אחרי כל הקשה!',
     leftHand: 'יד שמאל',
     rightHand: 'יד ימין',
+    fingerNames: {
+      pinky: 'זרת',
+      ring: 'קמיצה',
+      middle: 'אמה',
+      index: 'אצבע',
+    },
   } : {
     title: 'The Home Row',
     subtitle: 'This is where your fingers rest',
@@ -95,49 +98,105 @@ export const HomeRowExplanation = memo(function HomeRowExplanation({
     tip: 'Always return here after pressing other keys!',
     leftHand: 'Left Hand',
     rightHand: 'Right Hand',
+    fingerNames: {
+      pinky: 'Pinky',
+      ring: 'Ring',
+      middle: 'Middle',
+      index: 'Index',
+    },
   };
 
   return (
-    <ExplanationCard icon="🏠" title={content.title}>
-      <div className="space-y-3">
-        <p className="text-slate-600 dark:text-slate-300 text-sm">
-          {content.subtitle}
-        </p>
-        <p className="text-slate-600 dark:text-slate-300 text-sm flex items-center gap-1.5">
-          <span>👆</span>
-          <span>{content.bumpTip}</span>
-        </p>
-
-        {/* Visual keys */}
-        <div dir="ltr" className="flex justify-center gap-6 py-2">
-          {/* Left hand */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-medium text-[#00D97E] mb-1.5">{content.leftHand}</span>
-            <div className="flex gap-1.5">
-              <ExplanationKey letter="A" finger="left-pinky" />
-              <ExplanationKey letter="S" finger="left-ring" />
-              <ExplanationKey letter="D" finger="left-middle" />
-              <ExplanationKey letter="F" finger="left-index" hasBump />
-            </div>
-          </div>
-          {/* Right hand */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-medium text-[#FFD60A] mb-1.5">{content.rightHand}</span>
-            <div className="flex gap-1.5">
-              <ExplanationKey letter="J" finger="right-index" hasBump />
-              <ExplanationKey letter="K" finger="right-middle" />
-              <ExplanationKey letter="L" finger="right-ring" />
-              <ExplanationKey letter=";" finger="right-pinky" />
-            </div>
-          </div>
+    <div className="p-5 bg-gradient-to-br from-slate-50 to-indigo-50/50 dark:from-slate-800/40 dark:to-indigo-900/20 rounded-2xl border-2 border-indigo-200 dark:border-indigo-700/50 shadow-lg shadow-indigo-100 dark:shadow-indigo-900/20">
+      <div className="flex items-center gap-6">
+        {/* Left side - Text content */}
+        <div className="flex-1 space-y-2">
+          <h3 className="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+            <span>🏠</span>
+            {content.title}
+          </h3>
+          <p className="text-slate-600 dark:text-slate-300 text-sm">
+            {content.subtitle}
+          </p>
+          <p className="text-slate-600 dark:text-slate-300 text-sm flex items-center gap-1">
+            <span>👆</span>
+            <span>{content.bumpTip}</span>
+          </p>
+          <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center gap-1">
+            <span>💡</span>
+            <span>{content.tip}</span>
+          </p>
         </div>
 
-        <p className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center gap-1.5">
-          <span>💡</span>
-          <span>{content.tip}</span>
-        </p>
+        {/* Right side - Visual keys */}
+        <div dir="ltr" className="flex-shrink-0 flex flex-col items-center gap-4">
+          <div className="flex items-center gap-6">
+            {/* Left hand keys */}
+            <div className="flex flex-col items-center">
+              <span className="text-sm font-medium text-[#00D97E] mb-2">
+                {content.leftHand}
+              </span>
+              <div className="flex gap-2">
+                <ExplanationKey letter="A" finger="left-pinky" />
+                <ExplanationKey letter="S" finger="left-ring" />
+                <ExplanationKey letter="D" finger="left-middle" />
+                <ExplanationKey letter="F" finger="left-index" hasBump />
+              </div>
+            </div>
+
+            {/* Right hand keys */}
+            <div className="flex flex-col items-center">
+              <span className="text-sm font-medium text-[#FFD60A] mb-2">
+                {content.rightHand}
+              </span>
+              <div className="flex gap-2">
+                <ExplanationKey letter="J" finger="right-index" hasBump />
+                <ExplanationKey letter="K" finger="right-middle" />
+                <ExplanationKey letter="L" finger="right-ring" />
+                <ExplanationKey letter=";" finger="right-pinky" />
+              </div>
+            </div>
+          </div>
+
+          {/* Finger color legend */}
+          <div className="flex gap-3 text-xs">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#FF6B9D]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.pinky}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#9D4EDD]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.ring}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#00B4D8]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.middle}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#00D97E]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.index}</span>
+            </span>
+            <span className="text-slate-300 dark:text-slate-600 mx-1">|</span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#FFD60A]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.index}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#FF6B35]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.middle}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#FF4757]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.ring}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#9D4EDD]" />
+              <span className="text-slate-600 dark:text-slate-300">{content.fingerNames.pinky}</span>
+            </span>
+          </div>
+        </div>
       </div>
-    </ExplanationCard>
+    </div>
   );
 });
 
