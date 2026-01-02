@@ -2893,13 +2893,71 @@ a[aria-disabled="true"],
   animation: calm-firefly 8s ease-in-out infinite;
 }
 
+/* Sun glow animation */
+@keyframes calm-sun-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 217, 61, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 35px rgba(255, 217, 61, 0.6));
+  }
+}
+
+.calm-sun-glow {
+  animation: calm-sun-glow 4s ease-in-out infinite;
+}
+
+/* Sun rays rotation */
+@keyframes calm-sun-rays {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.calm-sun-rays {
+  animation: calm-sun-rays 60s linear infinite;
+  transform-origin: center center;
+}
+
+/* Cloud floating animation */
+@keyframes calm-cloud-float {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(15px) translateY(-5px);
+  }
+  50% {
+    transform: translateX(25px) translateY(0);
+  }
+  75% {
+    transform: translateX(10px) translateY(5px);
+  }
+}
+
+.calm-cloud-float {
+  animation: calm-cloud-float 20s ease-in-out infinite;
+}
+
+.calm-cloud-float-delayed {
+  animation: calm-cloud-float 18s ease-in-out infinite;
+  animation-delay: -8s;
+}
+
 /* Reduced motion for calm mode */
 @media (prefers-reduced-motion: reduce) {
   .calm-bg-animate,
   .calm-bg-overlay-animate,
   .calm-orb-float,
   .calm-tree-grow,
-  .calm-firefly {
+  .calm-firefly,
+  .calm-sun-glow,
+  .calm-sun-rays,
+  .calm-cloud-float,
+  .calm-cloud-float-delayed {
     animation: none !important;
   }
 }
