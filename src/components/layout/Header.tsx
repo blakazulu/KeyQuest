@@ -19,6 +19,9 @@ export function Header() {
   // Exclude /practice/calm as it's a special mode with its own header
   const isLessonPage = pathname.match(/\/practice\/[^/]+$/) && !pathname.includes('/practice/calm');
 
+  // Hide everything on calm mode page - it has its own fullscreen UI
+  const isCalmModePage = pathname.includes('/practice/calm');
+
   const navItems = [
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
@@ -77,6 +80,11 @@ export function Header() {
       setIsMenuOpen(false);
     }
   }, [isScrolled]);
+
+  // Don't render anything on calm mode page
+  if (isCalmModePage) {
+    return null;
+  }
 
   return (
     <>

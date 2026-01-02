@@ -7,32 +7,26 @@ import { useCalmModeStore } from '@/stores/useCalmModeStore';
 interface CalmStatsProps {
   /** Total characters typed */
   charactersTyped: number;
-  /** Optional: WPM (shown on hover if enabled) */
+  /** WPM */
   wpm?: number;
-  /** Optional: Accuracy (shown on hover if enabled) */
+  /** Accuracy */
   accuracy?: number;
-  /** Whether to show detailed stats on hover */
-  showDetailsOnHover?: boolean;
   /** Additional CSS classes */
   className?: string;
 }
 
 /**
- * Minimal, unobtrusive stats display for Calm Mode.
- * Shows only essential info: characters typed and session time.
- * Optionally reveals WPM/accuracy on hover.
+ * Stats display for Calm Mode - always visible, clear and readable.
  */
 export function CalmStats({
   charactersTyped,
   wpm,
   accuracy,
-  showDetailsOnHover = true,
   className = '',
 }: CalmStatsProps) {
   const t = useTranslations('calmMode');
   const { getFormattedTime, status } = useCalmModeStore();
   const [time, setTime] = useState('0:00');
-  const [isHovered, setIsHovered] = useState(false);
 
   // Update time display every second
   useEffect(() => {
@@ -48,21 +42,15 @@ export function CalmStats({
     return () => clearInterval(interval);
   }, [status, getFormattedTime]);
 
-  const showDetails = showDetailsOnHover && isHovered && (wpm !== undefined || accuracy !== undefined);
-
   return (
     <div
       className={`
-        inline-flex items-center gap-3 px-4 py-2
-        bg-slate-800/40 dark:bg-slate-900/50
-        backdrop-blur-sm rounded-full
-        text-sm text-slate-300 dark:text-slate-400
-        transition-all duration-300
-        ${showDetails ? 'scale-105' : ''}
+        inline-flex items-center gap-6 px-6 py-3
+        bg-white/90 backdrop-blur-md rounded-2xl
+        border border-stone-300/50
+        shadow-lg shadow-stone-900/10
         ${className}
       `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       role="status"
       aria-live="polite"
       aria-label={t('stats.ariaLabel', {
@@ -70,40 +58,54 @@ export function CalmStats({
         time,
       })}
     >
-      {/* Characters count */}
-      <span className="flex items-center gap-1.5">
-        <span className="text-slate-400 dark:text-slate-500">{charactersTyped}</span>
-        <span className="text-slate-500 dark:text-slate-600 text-xs">
-          {t('stats.characters')}
+      {/* WPM - Primary stat */}
+      <div className="flex flex-col items-center">
+        <span className="text-2xl font-bold text-emerald-600 tabular-nums">
+          {Math.round(wpm || 0)}
         </span>
-      </span>
+        <span className="text-xs text-stone-500 uppercase tracking-wide">
+          {t('stats.wpm')}
+        </span>
+      </div>
 
       {/* Divider */}
-      <span className="text-slate-600 dark:text-slate-700">|</span>
+      <div className="w-px h-10 bg-stone-300/70" />
 
-      {/* Session time */}
-      <span className="flex items-center gap-1.5 tabular-nums">
-        <span className="text-slate-400 dark:text-slate-500">{time}</span>
-      </span>
+      {/* Accuracy */}
+      <div className="flex flex-col items-center">
+        <span className="text-2xl font-bold text-amber-600 tabular-nums">
+          {Math.round(accuracy || 0)}%
+        </span>
+        <span className="text-xs text-stone-500 uppercase tracking-wide">
+          {t('stats.accuracy')}
+        </span>
+      </div>
 
-      {/* Expanded details on hover */}
-      {showDetails && (
-        <>
-          <span className="text-slate-600 dark:text-slate-700">|</span>
-          <span className="flex items-center gap-3 text-xs">
-            {wpm !== undefined && (
-              <span className="text-slate-400 dark:text-slate-500">
-                {Math.round(wpm)} WPM
-              </span>
-            )}
-            {accuracy !== undefined && (
-              <span className="text-slate-400 dark:text-slate-500">
-                {Math.round(accuracy)}%
-              </span>
-            )}
-          </span>
-        </>
-      )}
+      {/* Divider */}
+      <div className="w-px h-10 bg-stone-300/70" />
+
+      {/* Time */}
+      <div className="flex flex-col items-center">
+        <span className="text-2xl font-bold text-stone-700 tabular-nums">
+          {time}
+        </span>
+        <span className="text-xs text-stone-500 uppercase tracking-wide">
+          {t('stats.time')}
+        </span>
+      </div>
+
+      {/* Divider */}
+      <div className="w-px h-10 bg-stone-300/70" />
+
+      {/* Characters */}
+      <div className="flex flex-col items-center">
+        <span className="text-2xl font-bold text-stone-700 tabular-nums">
+          {charactersTyped}
+        </span>
+        <span className="text-xs text-stone-500 uppercase tracking-wide">
+          {t('stats.characters')}
+        </span>
+      </div>
     </div>
   );
 }

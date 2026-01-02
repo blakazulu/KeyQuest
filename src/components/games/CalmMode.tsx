@@ -6,11 +6,9 @@ import { useTranslations } from 'next-intl';
 import { CalmBackground } from './CalmBackground';
 import { CalmTextDisplay } from './CalmTextDisplay';
 import { CalmStats } from './CalmStats';
-import { CalmControls, CalmKeyboardHints } from './CalmControls';
-import { Keyboard, CompactKeyboard } from '@/components/keyboard/Keyboard';
+import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
-import { useTypingEngine, type TypingStats } from '@/hooks/useTypingEngine';
-import { useKeyboardInput } from '@/hooks/useKeyboardInput';
+import { useTypingEngine } from '@/hooks/useTypingEngine';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { useCalmTextGenerator } from '@/hooks/useCalmTextGenerator';
 import { useCalmModeStore } from '@/stores/useCalmModeStore';
@@ -18,27 +16,28 @@ import { useProgressStore } from '@/stores/useProgressStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 
 interface CalmModeProps {
-  /** Locale for translations */
   locale?: 'en' | 'he';
 }
 
 /**
- * Main Calm Mode component.
- * Provides a stress-free, endless typing practice experience.
+ * Calm Mode - Immersive fullscreen typing practice.
  *
- * Features:
- * - No timer pressure, no pass/fail
- * - Endless text generation
- * - Soft, gentle visual feedback
- * - Pause/resume with Space
- * - Exit with Escape
- * - Optional keyboard display
- * - Silently tracks weak letters
+ * - Enters fullscreen immediately on load
+ * - Covers entire viewport (hides navbar, XP)
+ * - Top controls: pause, keyboard toggle, fullscreen toggle, close
+ * - Centered monitor with text
+ * - Full-width keyboard with hands
+ * - Stats at bottom
  */
 export function CalmMode({ locale = 'en' }: CalmModeProps) {
   const t = useTranslations('calmMode');
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // State
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   // Stores
   const {
@@ -47,7 +46,6 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     pause,
     resume,
     reset: resetSession,
-    showKeyboard: showKeyboardStore,
     updateCharacterCount,
   } = useCalmModeStore();
 
@@ -60,21 +58,14 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     text,
     isReady,
     checkAndAppend,
-    resetText,
   } = useCalmTextGenerator({
     focusWeakLetters,
-    onTextAppended: () => {
-      // Text was appended, update the typing engine
-    },
+    onTextAppended: () => {},
   });
 
-  // Track if user is actively typing (for auto-hide controls)
-  const [isTyping, setIsTyping] = useState(false);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   // Flash refs for keyboard
-  const flashCorrectRef = useRef<(key: string) => void>(() => { });
-  const flashWrongRef = useRef<(key: string) => void>(() => { });
+  const flashCorrectRef = useRef<(key: string) => void>(() => {});
+  const flashWrongRef = useRef<(key: string) => void>(() => {});
 
   // Handle character typed
   const handleCharacterTyped = useCallback((char: string, isCorrect: boolean) => {
@@ -83,20 +74,10 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     } else {
       flashWrongRef.current(char);
     }
-
-    // Mark as typing and reset timeout
-    setIsTyping(true);
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-    }, 1500);
   }, []);
 
   // Typing engine
   const {
-    status: engineStatus,
     characters,
     stats,
     cursorPosition,
@@ -107,7 +88,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     updateTargetText,
   } = useTypingEngine({
     onCharacterTyped: handleCharacterTyped,
-    allowBackspace: false, // No corrections in calm mode - just keep going
+    allowBackspace: false,
   });
 
   // Keyboard highlighting
@@ -129,17 +110,70 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
   flashCorrectRef.current = flashCorrect;
   flashWrongRef.current = flashWrong;
 
-  // Set target text when ready
-  useEffect(() => {
-    if (isReady && text) {
-      setTargetText(text);
+  // Fullscreen helpers
+  const enterFullscreen = useCallback(async () => {
+    try {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        await elem.requestFullscreen();
+      } else if ((elem as HTMLElement & { webkitRequestFullscreen?: () => Promise<void> }).webkitRequestFullscreen) {
+        await (elem as HTMLElement & { webkitRequestFullscreen: () => Promise<void> }).webkitRequestFullscreen();
+      }
+      setIsFullscreen(true);
+    } catch {
+      // Fullscreen may be blocked - continue anyway
     }
-  }, [isReady, text, setTargetText]);
+  }, []);
 
-  // Sync text updates to typing engine (without resetting position)
+  const exitFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if ((document as Document & { webkitExitFullscreen?: () => Promise<void> }).webkitExitFullscreen) {
+        await (document as Document & { webkitExitFullscreen: () => Promise<void> }).webkitExitFullscreen();
+      }
+      setIsFullscreen(false);
+    } catch {
+      // Ignore errors
+    }
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (isFullscreen) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
+    }
+  }, [isFullscreen, enterFullscreen, exitFullscreen]);
+
+  // Track fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  // Initialize: enter fullscreen and start practice immediately
+  useEffect(() => {
+    if (!hasInitialized && isReady && text) {
+      setHasInitialized(true);
+      enterFullscreen();
+      setTargetText(text);
+      start();
+      startEngine();
+      containerRef.current?.focus();
+    }
+  }, [hasInitialized, isReady, text, enterFullscreen, setTargetText, start, startEngine]);
+
+  // Sync text updates to typing engine
   useEffect(() => {
     if (text && cursorPosition > 0 && cursorPosition < text.length) {
-      // Use updateTargetText to preserve cursor position when text is appended
       updateTargetText(text);
     }
   }, [text, cursorPosition, updateTargetText]);
@@ -151,12 +185,12 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     }
   }, [cursorPosition, status, checkAndAppend]);
 
-  // Update character count in store
+  // Update character count
   useEffect(() => {
     updateCharacterCount(cursorPosition);
   }, [cursorPosition, updateCharacterCount]);
 
-  // Update weak letters periodically (every 50 characters)
+  // Update weak letters periodically
   const lastWeakLetterUpdateRef = useRef(0);
   useEffect(() => {
     if (
@@ -164,7 +198,6 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
       cursorPosition - lastWeakLetterUpdateRef.current >= 50 &&
       stats.letterAccuracy
     ) {
-      // Update weak letters with current letter accuracy
       Object.entries(stats.letterAccuracy).forEach(([letter, letterStats]) => {
         if (letterStats.total > 0) {
           const accuracy = (letterStats.correct / letterStats.total) * 100;
@@ -175,37 +208,29 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     }
   }, [cursorPosition, stats.letterAccuracy, updateWeakLetter]);
 
-  // Handle start
-  const handleStart = useCallback(() => {
-    if (status === 'idle') {
-      start();
-      startEngine();
-    } else if (status === 'paused') {
-      resume();
-      startEngine();
-    }
-  }, [status, start, startEngine, resume]);
-
-  // Handle pause
+  // Handle pause/resume
   const handlePause = useCallback(() => {
-    if (status === 'running') {
-      pause();
-      pauseEngine();
-    }
-  }, [status, pause, pauseEngine]);
+    pause();
+    pauseEngine();
+  }, [pause, pauseEngine]);
 
-  // Handle Space key for pause/resume
-  const handleSpace = useCallback(() => {
+  const handleResume = useCallback(() => {
+    resume();
+    startEngine();
+    containerRef.current?.focus();
+  }, [resume, startEngine]);
+
+  const togglePause = useCallback(() => {
     if (status === 'running') {
       handlePause();
     } else if (status === 'paused') {
-      handleStart();
+      handleResume();
     }
-  }, [status, handlePause, handleStart]);
+  }, [status, handlePause, handleResume]);
 
   // Handle exit
-  const handleExit = useCallback(() => {
-    // Update final weak letters before exiting
+  const handleExit = useCallback(async () => {
+    // Save weak letters
     if (stats.letterAccuracy) {
       Object.entries(stats.letterAccuracy).forEach(([letter, letterStats]) => {
         if (letterStats.total > 0) {
@@ -214,189 +239,262 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
         }
       });
     }
-
+    await exitFullscreen();
     resetSession();
     resetEngine();
-    router.push(`/${locale}/levels`);
-  }, [stats.letterAccuracy, updateWeakLetter, resetSession, resetEngine, router, locale]);
+    router.push(`/${locale}`);
+  }, [stats.letterAccuracy, updateWeakLetter, exitFullscreen, resetSession, resetEngine, router, locale]);
 
   // Keyboard shortcuts
-  useKeyboardInput({
-    onEnter: handleStart,
-    onEscape: status === 'running' ? handlePause : handleExit,
-    enabled: true,
-  });
-
-  // Handle Space separately (not in useKeyboardInput as it's a typing key)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle Space when paused (not during typing)
-      if (e.code === 'Space' && status === 'paused') {
+      if (e.key === 'Escape') {
         e.preventDefault();
-        handleStart();
+        handleExit();
+      } else if (e.code === 'Space' && status === 'paused') {
+        e.preventDefault();
+        handleResume();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [status, handleStart]);
+  }, [status, handleExit, handleResume]);
 
-  // Focus container on mount
-  useEffect(() => {
-    containerRef.current?.focus();
-  }, []);
-
-  // Cleanup typing timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, []);
+  // Loading state
+  if (!isReady || !text) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+        <CalmBackground />
+        <div className="text-stone-700 text-lg animate-pulse z-10">
+          {t('loading')}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       ref={containerRef}
-      className="min-h-screen flex flex-col focus:outline-none"
+      className="fixed inset-0 z-[9999] flex flex-col overflow-hidden focus:outline-none"
       tabIndex={0}
       role="application"
       aria-label={t('ariaLabel')}
     >
-      {/* Ambient background */}
+      {/* Calm background */}
       <CalmBackground />
 
-      {/* Header with controls */}
-      <header className="flex items-center justify-between p-4 sm:p-6">
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg sm:text-xl font-display text-slate-700 dark:text-slate-200">
-            {t('title')}
-          </h1>
-        </div>
+      {/* Top control bar */}
+      <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">
+        {/* Pause/Resume */}
+        <button
+          onClick={togglePause}
+          className="
+            flex items-center gap-2 px-4 py-2.5
+            bg-white/90 hover:bg-white
+            backdrop-blur-md rounded-xl
+            text-stone-700 hover:text-stone-900
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md shadow-stone-900/10
+            focus:outline-none focus:ring-2 focus:ring-stone-400/50
+          "
+          aria-label={status === 'running' ? t('controls.pause') : t('controls.resume')}
+        >
+          {status === 'running' ? (
+            <>
+              <PauseIcon />
+              <span>{t('controls.pause')}</span>
+            </>
+          ) : (
+            <>
+              <PlayIcon />
+              <span>{t('controls.resume')}</span>
+            </>
+          )}
+        </button>
 
-        <CalmControls
-          onExit={handleExit}
-          showKeyboardToggle={true}
-          autoHide={true}
-          isTyping={isTyping}
-        />
+        {/* Keyboard toggle */}
+        <button
+          onClick={() => setShowKeyboard(!showKeyboard)}
+          className={`
+            flex items-center gap-2 px-4 py-2.5
+            backdrop-blur-md rounded-xl
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md shadow-stone-900/10
+            focus:outline-none focus:ring-2 focus:ring-stone-400/50
+            ${showKeyboard
+              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              : 'bg-white/90 text-stone-700 hover:bg-white hover:text-stone-900'
+            }
+          `}
+          aria-label={showKeyboard ? t('controls.hideKeyboard') : t('controls.showKeyboard')}
+          aria-pressed={showKeyboard}
+        >
+          <KeyboardIcon />
+          <span className="hidden sm:inline">
+            {showKeyboard ? t('controls.hideKeyboard') : t('controls.showKeyboard')}
+          </span>
+        </button>
+
+        {/* Fullscreen toggle */}
+        <button
+          onClick={toggleFullscreen}
+          className="
+            flex items-center gap-2 px-4 py-2.5
+            bg-white/90 hover:bg-white
+            backdrop-blur-md rounded-xl
+            text-stone-700 hover:text-stone-900
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md shadow-stone-900/10
+            focus:outline-none focus:ring-2 focus:ring-stone-400/50
+          "
+          aria-label={isFullscreen ? t('exitFullscreen') : t('enterFullscreen')}
+        >
+          {isFullscreen ? <ExitFullscreenIcon /> : <EnterFullscreenIcon />}
+          <span className="hidden sm:inline">
+            {isFullscreen ? t('exitFullscreen') : t('enterFullscreen')}
+          </span>
+        </button>
+
+        {/* Close/Exit */}
+        <button
+          onClick={handleExit}
+          className="
+            flex items-center gap-2 px-4 py-2.5
+            bg-rose-600 hover:bg-rose-700
+            backdrop-blur-md rounded-xl
+            text-white
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md shadow-rose-900/20
+            focus:outline-none focus:ring-2 focus:ring-rose-400/50
+          "
+          aria-label={t('controls.exitAriaLabel')}
+        >
+          <CloseIcon />
+          <span>{t('exitCalmMode')}</span>
+          <span className="text-rose-200 text-xs">(ESC)</span>
+        </button>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 pb-8">
-        {/* Idle state - show start prompt */}
-        {status === 'idle' && (
-          <div className="text-center space-y-6 animate-fade-in">
-            <p className="text-slate-500 dark:text-slate-400 text-lg max-w-md">
-              {t('intro')}
-            </p>
+      {/* Paused overlay */}
+      {status === 'paused' && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-stone-900/60 backdrop-blur-sm"
+          role="dialog"
+          aria-label={t('pausedAriaLabel')}
+        >
+          <div className="text-center space-y-6 animate-fade-in bg-white/95 backdrop-blur-md rounded-3xl p-10 shadow-2xl">
+            <p className="text-4xl font-display text-stone-800">{t('paused')}</p>
+            <p className="text-stone-600">{t('pausedHint')}</p>
             <button
-              onClick={handleStart}
+              onClick={handleResume}
               className="
                 px-8 py-4 rounded-xl
-                bg-indigo-500/80 hover:bg-indigo-500
+                bg-emerald-600 hover:bg-emerald-700
                 text-white font-medium text-lg
                 transition-all duration-200
-                hover:scale-105 active:scale-95
-                focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2
-                focus:ring-offset-transparent
+                shadow-lg shadow-emerald-600/30
+                focus:outline-none focus:ring-2 focus:ring-emerald-400
               "
             >
-              {t('start')}
+              {t('resume')}
             </button>
-            <p className="text-slate-400 dark:text-slate-500 text-sm">
-              {t('startHint')}
-            </p>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Paused state overlay */}
-        {status === 'paused' && (
-          <div
-            className="
-              absolute inset-0 z-10
-              flex items-center justify-center
-              bg-slate-900/50 backdrop-blur-sm
-            "
-            role="dialog"
-            aria-label={t('pausedAriaLabel')}
-          >
-            <div className="text-center space-y-6 animate-fade-in">
-              <p className="text-2xl font-display text-white">
-                {t('paused')}
-              </p>
-              <p className="text-slate-300">
-                {t('pausedHint')}
-              </p>
-              <button
-                onClick={handleStart}
-                className="
-                  px-8 py-3 rounded-xl
-                  bg-indigo-500/80 hover:bg-indigo-500
-                  text-white font-medium
-                  transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-indigo-400
-                "
-              >
-                {t('resume')}
-              </button>
-            </div>
+      {/* Main content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 gap-6 z-10 overflow-hidden">
+        {/* Monitor with text */}
+        <div className="typing-monitor w-full max-w-3xl flex-shrink-0">
+          <div className="typing-monitor-screen">
+            <CalmTextDisplay
+              characters={characters}
+              showCursor={status === 'running'}
+              className="text-center text-xl sm:text-2xl leading-relaxed"
+            />
           </div>
-        )}
+          <div className="typing-monitor-stand" />
+        </div>
 
-        {/* Typing area - shown when running or paused */}
-        {(status === 'running' || status === 'paused') && (
-          <div className="w-full space-y-8">
-            {/* Text display */}
-            <div className="typing-monitor max-w-3xl mx-auto">
-              <div className="typing-monitor-screen">
-                <CalmTextDisplay
-                  characters={characters}
-                  showCursor={status === 'running'}
-                  className="text-center text-xl sm:text-2xl leading-relaxed"
-                />
-              </div>
-              <div className="typing-monitor-stand" />
-            </div>
-
-            {/* Visual keyboard (optional) */}
-            {showKeyboardStore && (
-              <div className="mt-6 opacity-80">
-                <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
-                  <Keyboard
-                    highlightedKey={highlightedKey}
-                    pressedKeys={pressedKeys}
-                    correctKey={correctKey}
-                    wrongKey={wrongKey}
-                    showFingerColors={true}
-                    showHomeRow={true}
-                    baseSize={44}
-                  />
-                </HandsWithKeyboard>
-              </div>
-            )}
+        {/* Keyboard with hands */}
+        {showKeyboard && (
+          <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
+            <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
+              <Keyboard
+                highlightedKey={highlightedKey}
+                pressedKeys={pressedKeys}
+                correctKey={correctKey}
+                wrongKey={wrongKey}
+                showFingerColors={true}
+                showHomeRow={true}
+                baseSize={48}
+              />
+            </HandsWithKeyboard>
           </div>
         )}
       </main>
 
-      {/* Footer with stats */}
-      {(status === 'running' || status === 'paused') && (
-        <footer className="flex items-center justify-center p-4 sm:p-6">
-          <CalmStats
-            charactersTyped={cursorPosition}
-            wpm={stats.wpm}
-            accuracy={stats.accuracy}
-            showDetailsOnHover={true}
-          />
-        </footer>
-      )}
-
-      {/* Keyboard hints (shown during idle) */}
-      {status === 'idle' && (
-        <footer className="flex items-center justify-center p-4">
-          <CalmKeyboardHints />
-        </footer>
-      )}
+      {/* Stats at bottom */}
+      <footer className="flex-shrink-0 flex items-center justify-center p-4 sm:p-6 z-10">
+        <CalmStats
+          charactersTyped={cursorPosition}
+          wpm={stats.wpm}
+          accuracy={stats.accuracy}
+        />
+      </footer>
     </div>
+  );
+}
+
+// Icons
+function PauseIcon() {
+  return (
+    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function KeyboardIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
+function EnterFullscreenIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+    </svg>
+  );
+}
+
+function ExitFullscreenIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4m0 5H4m0 0l5-5m5 5h5m0 0V4m0 5l5-5M9 15v5m0-5H4m0 0l5 5m5-5h5m0 0v5m0-5l5 5" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
   );
 }

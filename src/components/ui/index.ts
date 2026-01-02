@@ -24,3 +24,6 @@ export type { ToggleProps, ToggleSize } from './Toggle';
 // Game Components
 export { LevelCard } from './LevelCard';
 export type { LevelCardProps, LevelStatus } from './LevelCard';
+
+// Decorative Components
+export { FloatingKeys } from './FloatingKeys';
