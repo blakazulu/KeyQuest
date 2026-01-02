@@ -37,6 +37,27 @@ export const CalmTextDisplay = memo(function CalmTextDisplay({
     );
   }
 
+  // Group characters into words to prevent mid-word breaks
+  const words: CharacterState[][] = [];
+  let currentWord: CharacterState[] = [];
+
+  characters.forEach((charState) => {
+    if (charState.char === ' ') {
+      if (currentWord.length > 0) {
+        words.push(currentWord);
+        currentWord = [];
+      }
+      // Add space as its own "word" to preserve spacing
+      words.push([charState]);
+    } else {
+      currentWord.push(charState);
+    }
+  });
+  // Don't forget the last word
+  if (currentWord.length > 0) {
+    words.push(currentWord);
+  }
+
   return (
     <div
       className={`calm-typing-text select-none ${className}`}
@@ -44,13 +65,18 @@ export const CalmTextDisplay = memo(function CalmTextDisplay({
       role="textbox"
       aria-label="Type the text shown at your own pace"
       aria-readonly="true"
+      style={{ wordBreak: 'keep-all' }}
     >
-      {characters.map((charState, index) => (
-        <CalmCharacter
-          key={index}
-          charState={charState}
-          showCursor={showCursor && charState.status === 'current'}
-        />
+      {words.map((word, wordIndex) => (
+        <span key={wordIndex} className="inline-block whitespace-nowrap">
+          {word.map((charState) => (
+            <CalmCharacter
+              key={charState.index}
+              charState={charState}
+              showCursor={showCursor && charState.status === 'current'}
+            />
+          ))}
+        </span>
       ))}
     </div>
   );

@@ -4,8 +4,8 @@
 
 ### Tech Stack
 
-| Layer                | Choice                         | Rationale                                                             |
-| -------------------- | ------------------------------ | --------------------------------------------------------------------- |
+| Layer                      | Choice                         | Rationale                                                             |
+| -------------------------- | ------------------------------ | --------------------------------------------------------------------- |
 | **Framework**        | Next.js 14 (App Router)        | SSR for landing page SEO, excellent React foundation, easy deployment |
 | **Language**         | TypeScript                     | Type safety crucial for complex game state, better DX                 |
 | **Styling**          | Tailwind CSS                   | Rapid development, consistent design system, responsive built-in      |
@@ -31,15 +31,15 @@
 
 ### Design System Requirements
 
-| Requirement | Implementation |
-|-------------|----------------|
-| **Use CSS tokens** | Always use `var(--color-*)`, `var(--space-*)`, `var(--radius-*)` etc. instead of hardcoded values |
-| **Use component classes** | Prefer `.btn-primary`, `.card`, `.progress-bar` etc. over inline Tailwind for common patterns |
-| **Follow color system** | Use semantic colors (`--color-primary`, `--color-success`, `--color-error`) not raw colors |
-| **Respect dark mode** | All components must work in both light and dark modes |
-| **Animation classes** | Use `.animate-shake`, `.animate-pop`, `.animate-pulse-glow` for consistent motion |
-| **Keyboard styling** | Use `.keyboard-key`, `.finger-*` classes for visual keyboard |
-| **Gamification UI** | Use `.streak-badge`, `.achievement-badge`, `.xp-ring`, `.rank-*` for game elements |
+| Requirement                     | Implementation                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Use CSS tokens**        | Always use `var(--color-*)`, `var(--space-*)`, `var(--radius-*)` etc. instead of hardcoded values |
+| **Use component classes** | Prefer `.btn-primary`, `.card`, `.progress-bar` etc. over inline Tailwind for common patterns     |
+| **Follow color system**   | Use semantic colors (`--color-primary`, `--color-success`, `--color-error`) not raw colors        |
+| **Respect dark mode**     | All components must work in both light and dark modes                                                   |
+| **Animation classes**     | Use `.animate-shake`, `.animate-pop`, `.animate-pulse-glow` for consistent motion                 |
+| **Keyboard styling**      | Use `.keyboard-key`, `.finger-*` classes for visual keyboard                                        |
+| **Gamification UI**       | Use `.streak-badge`, `.achievement-badge`, `.xp-ring`, `.rank-*` for game elements              |
 
 ### Migration Note
 
@@ -84,7 +84,7 @@ The website MUST comply with WCAG 2.2 Level AA guidelines:
 | Color contrast        | Minimum 4.5:1 for text, 3:1 for large text                   |
 | Focus indicators      | Visible focus states on all interactive elements             |
 | Text resizing         | Support up to 200% zoom without loss of functionality        |
-| Motion preferences    | Respect `prefers-reduced-motion`                             |
+| Motion preferences    | Respect `prefers-reduced-motion`                           |
 | Error identification  | Clear error messages with suggestions                        |
 | Skip links            | Skip to main content link                                    |
 | Alt text              | All images have descriptive alt text                         |
@@ -92,33 +92,33 @@ The website MUST comply with WCAG 2.2 Level AA guidelines:
 
 #### Keyboard Navigation Requirements
 
-| Context         | Keys                | Action                              |
-| --------------- | ------------------- | ----------------------------------- |
+| Context         | Keys                    | Action                              |
+| --------------- | ----------------------- | ----------------------------------- |
 | Global          | `Tab` / `Shift+Tab` | Navigate between focusable elements |
 | Global          | `Enter` / `Space`   | Activate buttons and links          |
-| Global          | `Escape`            | Close modals, cancel actions        |
-| Practice screen | `Enter`             | Start lesson / Next task            |
-| Practice screen | `Escape`            | Pause / Exit practice               |
-| Practice screen | `Tab`               | Skip to next interactive area       |
-| Summary screen  | `Enter`             | Continue to next lesson             |
-| Summary screen  | `R`                 | Restart current lesson              |
-| Levels page     | `Arrow keys`        | Navigate between levels             |
-| Modal dialogs   | `Tab` trapped       | Focus stays within modal            |
+| Global          | `Escape`              | Close modals, cancel actions        |
+| Practice screen | `Enter`               | Start lesson / Next task            |
+| Practice screen | `Escape`              | Pause / Exit practice               |
+| Practice screen | `Tab`                 | Skip to next interactive area       |
+| Summary screen  | `Enter`               | Continue to next lesson             |
+| Summary screen  | `R`                   | Restart current lesson              |
+| Levels page     | `Arrow keys`          | Navigate between levels             |
+| Modal dialogs   | `Tab` trapped         | Focus stays within modal            |
 
 #### ARIA Labels & Live Regions
 
-| Component          | ARIA Implementation                                        |
-| ------------------ | ---------------------------------------------------------- |
+| Component          | ARIA Implementation                                            |
+| ------------------ | -------------------------------------------------------------- |
 | Typing area        | `role="textbox"`, `aria-label="Type the text shown above"` |
-| Current character  | `aria-current="true"` on active character                  |
-| Error feedback     | `aria-live="polite"` for mistake announcements             |
-| WPM/Accuracy stats | `aria-live="polite"` for periodic updates                  |
-| Progress indicator | `role="progressbar"`, `aria-valuenow`, `aria-valuemax`     |
-| Lesson complete    | `aria-live="assertive"` for completion announcement        |
-| Next task button   | `aria-label="Continue to next task"`                       |
-| Restart button     | `aria-label="Restart current lesson"`                      |
-| Level cards        | `aria-label="Stage X: [name], Y lessons, [status]"`        |
-| Keyboard visual    | `aria-hidden="true"` (decorative, not for screen readers)  |
+| Current character  | `aria-current="true"` on active character                    |
+| Error feedback     | `aria-live="polite"` for mistake announcements               |
+| WPM/Accuracy stats | `aria-live="polite"` for periodic updates                    |
+| Progress indicator | `role="progressbar"`, `aria-valuenow`, `aria-valuemax`   |
+| Lesson complete    | `aria-live="assertive"` for completion announcement          |
+| Next task button   | `aria-label="Continue to next task"`                         |
+| Restart button     | `aria-label="Restart current lesson"`                        |
+| Level cards        | `aria-label="Stage X: [name], Y lessons, [status]"`          |
+| Keyboard visual    | `aria-hidden="true"` (decorative, not for screen readers)    |
 | Language switcher  | `aria-label="Select language"`, `aria-expanded`            |
 | Achievement popup  | `role="alert"`, `aria-live="assertive"`                    |
 
@@ -264,14 +264,14 @@ typing-learning/
 **Goal**: Working Next.js app with basic navigation
 **Status**: [x] COMPLETED
 
-| #   | Task                        | Status | Description                                                        |
-| --- | --------------------------- | ------ | ------------------------------------------------------------------ |
+| #   | Task                        | Status | Description                                                          |
+| --- | --------------------------- | ------ | -------------------------------------------------------------------- |
 | 1.1 | Initialize Next.js project  | [x]    | `npx create-next-app@latest` with TypeScript, Tailwind, App Router |
-| 1.2 | Configure project structure | [x]    | Create folder structure as defined above                           |
-| 1.3 | Setup Zustand               | [x]    | Install and create empty store files                               |
-| 1.4 | Create base layout          | [x]    | Header, main area, basic navigation                                |
-| 1.5 | Create placeholder pages    | [x]    | Landing, Practice, Dashboard, Levels (empty shells)                |
-| 1.6 | Setup Framer Motion         | [x]    | Install and configure                                              |
+| 1.2 | Configure project structure | [x]    | Create folder structure as defined above                             |
+| 1.3 | Setup Zustand               | [x]    | Install and create empty store files                                 |
+| 1.4 | Create base layout          | [x]    | Header, main area, basic navigation                                  |
+| 1.5 | Create placeholder pages    | [x]    | Landing, Practice, Dashboard, Levels (empty shells)                  |
+| 1.6 | Setup Framer Motion         | [x]    | Install and configure                                                |
 
 **Deliverable**: Navigable app shell with all routes working
 
@@ -282,15 +282,15 @@ typing-learning/
 **Goal**: Support English (LTR) and Hebrew (RTL) languages
 **Status**: [x] COMPLETED
 
-| #     | Task                     | Status | Description                                            |
-| ----- | ------------------------ | ------ | ------------------------------------------------------ |
-| 1.5.1 | Install next-intl        | [x]    | Add i18n library for Next.js App Router                |
-| 1.5.2 | Configure i18n routing   | [x]    | Setup `/en` and `/he` locale prefixes                  |
-| 1.5.3 | Create translation files | [x]    | `messages/en.json` and `messages/he.json`              |
+| #     | Task                     | Status | Description                                              |
+| ----- | ------------------------ | ------ | -------------------------------------------------------- |
+| 1.5.1 | Install next-intl        | [x]    | Add i18n library for Next.js App Router                  |
+| 1.5.2 | Configure i18n routing   | [x]    | Setup `/en` and `/he` locale prefixes                |
+| 1.5.3 | Create translation files | [x]    | `messages/en.json` and `messages/he.json`            |
 | 1.5.4 | Setup RTL support        | [x]    | Dynamic `dir="rtl"` for Hebrew, Tailwind RTL utilities |
-| 1.5.5 | Create language switcher | [x]    | UI component to toggle between EN/HE                   |
-| 1.5.6 | Translate existing UI    | [x]    | Landing, Dashboard, Levels pages                       |
-| 1.5.7 | Update layout for RTL    | [x]    | Ensure header, navigation work in both directions      |
+| 1.5.5 | Create language switcher | [x]    | UI component to toggle between EN/HE                     |
+| 1.5.6 | Translate existing UI    | [x]    | Landing, Dashboard, Levels pages                         |
+| 1.5.7 | Update layout for RTL    | [x]    | Ensure header, navigation work in both directions        |
 
 **Notes**:
 
@@ -307,32 +307,32 @@ typing-learning/
 **Goal**: Establish font system, metadata, and full search engine optimization (SEO, AEO, GEO)
 **Status**: [x] COMPLETED
 
-| #      | Task                               | Status | Description                                                 |
-| ------ | ---------------------------------- | ------ | ----------------------------------------------------------- |
-| 1.6.1  | Install Google Fonts               | [x]    | Add Baloo 2 (fun layer) and Nunito (UI layer) via next/font |
+| #      | Task                               | Status | Description                                                     |
+| ------ | ---------------------------------- | ------ | --------------------------------------------------------------- |
+| 1.6.1  | Install Google Fonts               | [x]    | Add Baloo 2 (fun layer) and Nunito (UI layer) via next/font     |
 | 1.6.2  | Configure font CSS variables       | [x]    | Setup `--font-display` (Baloo 2) and `--font-body` (Nunito) |
 | 1.6.3  | Create typography utility classes  | [x]    | `.font-display`, `.font-body` with appropriate weights      |
-| 1.6.4  | Apply fonts to existing components | [x]    | Logo/titles use Baloo 2, body/buttons use Nunito            |
-| 1.6.5  | Setup metadata configuration       | [x]    | Title templates, Open Graph, Twitter cards per page         |
-| 1.6.6  | Add structured data (JSON-LD)      | [x]    | Organization, WebSite, and educational content schemas      |
-| 1.6.7  | Create robots.txt                  | [x]    | Allow crawling, point to sitemap                            |
-| 1.6.8  | Generate sitemap.xml               | [x]    | Dynamic sitemap with all locale routes                      |
-| 1.6.9  | Add favicon set                    | [x]    | Multiple sizes, apple-touch-icon, manifest.json             |
-| 1.6.10 | Setup canonical URLs               | [x]    | Prevent duplicate content across locales                    |
-| 1.6.11 | Add FAQ schema (AEO)               | [x]    | Structured FAQ data for voice assistants and AI             |
-| 1.6.12 | Add speakable schema (AEO)         | [x]    | Mark content suitable for text-to-speech                    |
-| 1.6.13 | Question-based headings (AEO)      | [x]    | Use "How to...", "What is..." format for key content        |
-| 1.6.14 | Content structure for GEO          | [x]    | Clear, scannable, citation-friendly content layout          |
-| 1.6.15 | Entity definitions (GEO)           | [x]    | Clear definitions of typing terms and concepts              |
+| 1.6.4  | Apply fonts to existing components | [x]    | Logo/titles use Baloo 2, body/buttons use Nunito                |
+| 1.6.5  | Setup metadata configuration       | [x]    | Title templates, Open Graph, Twitter cards per page             |
+| 1.6.6  | Add structured data (JSON-LD)      | [x]    | Organization, WebSite, and educational content schemas          |
+| 1.6.7  | Create robots.txt                  | [x]    | Allow crawling, point to sitemap                                |
+| 1.6.8  | Generate sitemap.xml               | [x]    | Dynamic sitemap with all locale routes                          |
+| 1.6.9  | Add favicon set                    | [x]    | Multiple sizes, apple-touch-icon, manifest.json                 |
+| 1.6.10 | Setup canonical URLs               | [x]    | Prevent duplicate content across locales                        |
+| 1.6.11 | Add FAQ schema (AEO)               | [x]    | Structured FAQ data for voice assistants and AI                 |
+| 1.6.12 | Add speakable schema (AEO)         | [x]    | Mark content suitable for text-to-speech                        |
+| 1.6.13 | Question-based headings (AEO)      | [x]    | Use "How to...", "What is..." format for key content            |
+| 1.6.14 | Content structure for GEO          | [x]    | Clear, scannable, citation-friendly content layout              |
+| 1.6.15 | Entity definitions (GEO)           | [x]    | Clear definitions of typing terms and concepts                  |
 
 **Final Font System**:
 
-| Language    | Role              | Font                 | Usage                                          | Weights                       |
-| ----------- | ----------------- | -------------------- | ---------------------------------------------- | ----------------------------- |
-| **English** | Fun + Game Layer  | Baloo 2              | Logo, level titles, game modes, achievements   | SemiBold (600), Bold (700)    |
-| **English** | Core UI + Reading | Nunito               | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500), SemiBold (600) |
-| **Hebrew**  | Fun + Game Layer  | Varela Round         | Logo, level titles, game modes, achievements   | Regular (400)                 |
-| **Hebrew**  | Core UI + Reading | Heebo                | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500)   |
+| Language          | Role              | Font         | Usage                                          | Weights                                     |
+| ----------------- | ----------------- | ------------ | ---------------------------------------------- | ------------------------------------------- |
+| **English** | Fun + Game Layer  | Baloo 2      | Logo, level titles, game modes, achievements   | SemiBold (600), Bold (700)                  |
+| **English** | Core UI + Reading | Nunito       | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500), SemiBold (600) |
+| **Hebrew**  | Fun + Game Layer  | Varela Round | Logo, level titles, game modes, achievements   | Regular (400)                               |
+| **Hebrew**  | Core UI + Reading | Heebo        | Body text, instructions, buttons, menus, stats | Regular (400), Medium (500)                 |
 
 **Typography Guidelines**:
 
@@ -346,14 +346,14 @@ typing-learning/
 
 **UI Element Mapping**:
 
-| UI Element   | English          | Hebrew       |
-| ------------ | ---------------- | ------------ |
-| Logo         | Baloo 2 Bold     | Varela Round |
-| Level Title  | Baloo 2          | Varela Round |
+| UI Element   | English          | Hebrew        |
+| ------------ | ---------------- | ------------- |
+| Logo         | Baloo 2 Bold     | Varela Round  |
+| Level Title  | Baloo 2          | Varela Round  |
 | Body Text    | Nunito Regular   | Heebo Regular |
-| Buttons      | Nunito SemiBold  | Heebo Medium |
-| Stats        | Nunito           | Heebo        |
-| Achievements | Baloo 2 SemiBold | Varela Round |
+| Buttons      | Nunito SemiBold  | Heebo Medium  |
+| Stats        | Nunito           | Heebo         |
+| Achievements | Baloo 2 SemiBold | Varela Round  |
 
 **SEO Files to Create**:
 
@@ -380,20 +380,20 @@ typing-learning/
 **Goal**: Character-by-character typing with real-time feedback
 **Status**: [x] COMPLETED
 
-| #    | Task                           | Status | Description                                                               |
-| ---- | ------------------------------ | ------ | ------------------------------------------------------------------------- |
+| #    | Task                             | Status | Description                                                               |
+| ---- | -------------------------------- | ------ | ------------------------------------------------------------------------- |
 | 2.1  | Create `useKeyboardInput` hook | [x]    | Capture keystrokes, handle special keys (backspace, etc.)                 |
 | 2.2  | Create `useTypingEngine` hook  | [x]    | Core logic: compare input to target, track position, errors               |
 | 2.3  | Build `TextDisplay` component  | [x]    | Show target text with character-level styling (correct/incorrect/current) |
 | 2.4  | Build `TypingArea` component   | [x]    | Invisible input that captures keystrokes                                  |
-| 2.5  | Build `Cursor` component       | [x]    | Blinking cursor at current position (respect `prefers-reduced-motion`)    |
+| 2.5  | Build `Cursor` component       | [x]    | Blinking cursor at current position (respect `prefers-reduced-motion`)  |
 | 2.6  | Create `useTypingStore`        | [x]    | Store current session state (input, errors, position)                     |
-| 2.7  | Implement WPM calculation      | [x]    | Real-time words-per-minute tracking                                       |
-| 2.8  | Implement accuracy calculation | [x]    | Percentage of correct keystrokes                                          |
+| 2.7  | Implement WPM calculation        | [x]    | Real-time words-per-minute tracking                                       |
+| 2.8  | Implement accuracy calculation   | [x]    | Percentage of correct keystrokes                                          |
 | 2.9  | Build `Stats` component        | [x]    | Display live WPM and accuracy                                             |
-| 2.10 | Add ARIA live regions          | [x]    | Announce errors, stats updates to screen readers                          |
-| 2.11 | Add keyboard shortcuts         | [x]    | `Enter` to start, `Escape` to pause                                       |
-| 2.12 | Integration test               | [x]    | Combine all into working typing experience + 71 unit tests                |
+| 2.10 | Add ARIA live regions            | [x]    | Announce errors, stats updates to screen readers                          |
+| 2.11 | Add keyboard shortcuts           | [x]    | `Enter` to start, `Escape` to pause                                   |
+| 2.12 | Integration test                 | [x]    | Combine all into working typing experience + 71 unit tests                |
 
 **Accessibility requirements for this phase**:
 
@@ -411,15 +411,15 @@ typing-learning/
 **Goal**: On-screen keyboard showing finger placement and key highlights
 **Status**: [x] COMPLETED
 
-| #   | Task                          | Status | Description                                                          |
-| --- | ----------------------------- | ------ | -------------------------------------------------------------------- |
-| 3.1 | Design keyboard layout data   | [x]    | Define key positions, sizes, finger assignments                      |
+| #   | Task                            | Status | Description                                                          |
+| --- | ------------------------------- | ------ | -------------------------------------------------------------------- |
+| 3.1 | Design keyboard layout data     | [x]    | Define key positions, sizes, finger assignments                      |
 | 3.2 | Build `Key` component         | [x]    | Single key with states (default, highlight, pressed, correct, wrong) |
 | 3.3 | Build `Keyboard` component    | [x]    | Full QWERTY layout using Key components                              |
-| 3.4 | Add finger color coding       | [x]    | Color keys by which finger should press them                         |
+| 3.4 | Add finger color coding         | [x]    | Color keys by which finger should press them                         |
 | 3.5 | Build `FingerGuide` component | [x]    | Visual hand showing which finger to use                              |
-| 3.6 | Connect to typing engine      | [x]    | Highlight next key, show pressed keys                                |
-| 3.7 | Add key press animations      | [x]    | Subtle press animation on keystroke                                  |
+| 3.6 | Connect to typing engine        | [x]    | Highlight next key, show pressed keys                                |
+| 3.7 | Add key press animations        | [x]    | Subtle press animation on keystroke                                  |
 
 **Deliverable**: Interactive keyboard that shows what to press and responds to input
 
@@ -440,9 +440,10 @@ typing-learning/
 | 4.6 | Create Stage 5 content         | [x]    | Sentence collections (easy, funny, neutral)                  |
 | 4.7 | Create Stage 6 content         | [x]    | Fluency challenges (longer texts, emails, etc.)              |
 | 4.8 | Build lesson progression logic | [x]    | Track completion, unlock next lessons                        |
-| 4.9 | Build `useProgressStore`       | [x]    | Store user progress through lessons                          |
+| 4.9 | Build `useProgressStore`     | [x]    | Store user progress through lessons                          |
 
 **Additional Deliverables**:
+
 - Quest map with background image (`map.webp`) and interactive overlays
 - Custom stage positions aligned to map landmarks
 - Bridge image for water crossing between stages 3-4
@@ -483,15 +484,18 @@ typing-learning/
 **Deliverable**: End-to-end practice flow from level selection to completion
 
 **Components Created**:
+
 - `LessonSelectionModal` - Modal overlay for selecting lessons within a stage
 - `LessonIntro` - Pre-practice screen showing lesson info and new keys
 - `ExerciseRunner` - Multi-exercise flow with progress tracking
 - `LessonSummary` - Results screen with stars, XP, and navigation
 
 **Routes Added**:
+
 - `/practice/[lessonId]` - Dynamic route for practicing specific lessons
 
 **Integration**:
+
 - Quest map now opens lesson modal on stage click
 - Levels page connected to `useProgressStore` for real progress
 - Progress automatically saved after lesson completion
@@ -503,16 +507,17 @@ typing-learning/
 **Goal**: Save and load user progress
 **Status**: [x] COMPLETED
 
-| #   | Task                       | Status | Description                                         |
-| --- | -------------------------- | ------ | --------------------------------------------------- |
-| 6.1 | Create storage utilities   | [x]    | Zustand persist middleware with error handling      |
-| 6.2 | Implement progress saving  | [x]    | Auto-save after each lesson via Zustand persist     |
-| 6.3 | Implement progress loading | [x]    | Auto-load on app start via Zustand persist          |
-| 6.4 | Build weak letter tracking | [x]    | Per-letter accuracy tracking integrated in typing   |
-| 6.5 | Store session history      | [x]    | SessionResult[] tracked in useProgressStore         |
-| 6.6 | Add data migration support | [x]    | Version-based migration in persist config           |
+| #   | Task                       | Status | Description                                       |
+| --- | -------------------------- | ------ | ------------------------------------------------- |
+| 6.1 | Create storage utilities   | [x]    | Zustand persist middleware with error handling    |
+| 6.2 | Implement progress saving  | [x]    | Auto-save after each lesson via Zustand persist   |
+| 6.3 | Implement progress loading | [x]    | Auto-load on app start via Zustand persist        |
+| 6.4 | Build weak letter tracking | [x]    | Per-letter accuracy tracking integrated in typing |
+| 6.5 | Store session history      | [x]    | SessionResult[] tracked in useProgressStore       |
+| 6.6 | Add data migration support | [x]    | Version-based migration in persist config         |
 
 **Implementation Notes**:
+
 - Uses Zustand's `persist` middleware for localStorage with automatic error handling
 - `useProgressStore` persisted to `keyquest-progress` key
 - `useSettingsStore` persisted to `keyquest-settings` key
@@ -529,18 +534,19 @@ typing-learning/
 **Goal**: Personal dashboard showing stats and progress
 **Status**: [x] COMPLETED
 
-| #   | Task                         | Status | Description                                       |
-| --- | ---------------------------- | ------ | ------------------------------------------------- |
-| 7.1 | Build dashboard layout       | [x]    | Grid layout for stats cards                       |
-| 7.2 | Create current level display | [x]    | Show stage and lesson progress                    |
-| 7.3 | Create accuracy display      | [x]    | Average accuracy with trend                       |
-| 7.4 | Create WPM display           | [x]    | Average speed with trend                          |
-| 7.5 | Create streak display        | [x]    | Current and best practice streak                  |
-| 7.6 | Build progress chart         | [x]    | Tabbed bar chart (Accuracy/WPM toggle)            |
-| 7.7 | Build weak letters section   | [x]    | Mini keyboard heatmap with mastery colors         |
-| 7.8 | Add "Continue Practice" CTA  | [x]    | Quick access to next lesson with stage info       |
+| #   | Task                         | Status | Description                                 |
+| --- | ---------------------------- | ------ | ------------------------------------------- |
+| 7.1 | Build dashboard layout       | [x]    | Grid layout for stats cards                 |
+| 7.2 | Create current level display | [x]    | Show stage and lesson progress              |
+| 7.3 | Create accuracy display      | [x]    | Average accuracy with trend                 |
+| 7.4 | Create WPM display           | [x]    | Average speed with trend                    |
+| 7.5 | Create streak display        | [x]    | Current and best practice streak            |
+| 7.6 | Build progress chart         | [x]    | Tabbed bar chart (Accuracy/WPM toggle)      |
+| 7.7 | Build weak letters section   | [x]    | Mini keyboard heatmap with mastery colors   |
+| 7.8 | Add "Continue Practice" CTA  | [x]    | Quick access to next lesson with stage info |
 
 **Components Created**:
+
 - `StatCard` - Reusable stat card with icon, value, trend arrow
 - `LevelCard` - Current stage with progress bar and XP badge
 - `StreakCard` - Streak display with animated flame, "at risk" warning
@@ -549,6 +555,7 @@ typing-learning/
 - `ContinuePractice` - Next lesson CTA with shimmer button effect
 
 **Features**:
+
 - Trend calculation from session history (compares recent vs older performance)
 - Achievement preview with dynamic unlock states
 - Hydration-safe rendering with loading skeleton
@@ -562,16 +569,36 @@ typing-learning/
 ### Phase 8: First Game Mode - Calm Mode
 
 **Goal**: Relaxed practice mode with no pressure
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #   | Task                     | Status | Description                                |
 | --- | ------------------------ | ------ | ------------------------------------------ |
-| 8.1 | Design Calm Mode UI      | [ ]    | Clean, minimal, soothing design            |
-| 8.2 | Build CalmMode component | [ ]    | No timer, no scoring pressure              |
-| 8.3 | Add ambient background   | [ ]    | Subtle gradient or pattern                 |
-| 8.4 | Implement endless mode   | [ ]    | Continuous text generation                 |
-| 8.5 | Add pause/resume         | [ ]    | Allow breaks without losing progress       |
-| 8.6 | Create gentle feedback   | [ ]    | Soft visual cues for errors (no harsh red) |
+| 8.1 | Design Calm Mode UI      | [x]    | Clean, minimal, soothing design            |
+| 8.2 | Build CalmMode component | [x]    | No timer, no scoring pressure              |
+| 8.3 | Add ambient background   | [x]    | Cheerful illustrated landscape with SVG    |
+| 8.4 | Implement endless mode   | [x]    | Continuous text generation with weak letter targeting |
+| 8.5 | Add pause/resume         | [x]    | Allow breaks without losing progress       |
+| 8.6 | Create gentle feedback   | [x]    | Soft visual cues for errors (amber, not red) |
+
+**Components Created**:
+- `CalmMode` - Main component with fullscreen immersive experience
+- `CalmBackground` - Cheerful illustrated SVG background (sun, clouds, hills, trees)
+- `CalmTextDisplay` - Gentle text display with soft colors
+- `CalmStats` - Minimal stats display (characters, WPM, accuracy on hover)
+- `useCalmTextGenerator` - Hook for endless text generation with weak letter focus
+- `useCalmModeStore` - Zustand store for calm mode session state
+
+**Features**:
+- Immediate fullscreen on page load
+- Top control bar (pause/resume, keyboard toggle, fullscreen toggle, exit)
+- Centered monitor with text display
+- Full-width keyboard with hand guides (toggleable)
+- Endless text generation that auto-appends as you type
+- Weak letter targeting (40% chance to include struggling keys)
+- XP and history NOT saved to remove performance pressure
+- Silently tracks weak letters for adaptive learning
+- Full bilingual support (English/Hebrew)
+- Full WCAG accessibility with ARIA labels and keyboard navigation
 
 **Deliverable**: Stress-free typing practice mode
 
@@ -586,7 +613,7 @@ typing-learning/
 | ---- | ------------------------------ | ------ | -------------------------------------------------------- |
 | 9.1  | Design point system            | [ ]    | Points for accuracy, speed bonuses, streak bonuses       |
 | 9.2  | Implement point calculation    | [ ]    | Calculate and award points after lessons                 |
-| 9.3  | Create rank system             | [ ]    | Beginner → Intermediate → Proficient → Master            |
+| 9.3  | Create rank system             | [ ]    | Beginner → Intermediate → Proficient → Master         |
 | 9.4  | Build rank display component   | [ ]    | Show current rank with progress to next                  |
 | 9.5  | Design achievements            | [ ]    | Define 10-15 achievements (100 keystrokes perfect, etc.) |
 | 9.6  | Implement achievement tracking | [ ]    | Check conditions, unlock achievements                    |
@@ -667,22 +694,22 @@ typing-learning/
 **Goal**: Production-ready quality with full WCAG 2.2 / SEO / AEO / GEO compliance
 **Status**: [ ] Not Started
 
-| #     | Task                          | Status | Description                                          |
-| ----- | ----------------------------- | ------ | ---------------------------------------------------- |
-| 13.1  | Add sound effects             | [ ]    | Key press sounds, success/error sounds (toggleable)  |
+| #     | Task                          | Status | Description                                            |
+| ----- | ----------------------------- | ------ | ------------------------------------------------------ |
+| 13.1  | Add sound effects             | [ ]    | Key press sounds, success/error sounds (toggleable)    |
 | 13.2  | Improve animations            | [ ]    | Polish transitions, respect `prefers-reduced-motion` |
-| 13.3  | Add keyboard shortcuts        | [ ]    | Navigation shortcuts for power users                 |
-| 13.4  | Implement dark mode           | [ ]    | Toggle between light/dark themes                     |
-| 13.5  | WCAG 2.2 audit                | [ ]    | Run axe-core, fix all Level AA violations            |
-| 13.6  | Screen reader testing         | [ ]    | Test with NVDA/VoiceOver, add ARIA live regions      |
-| 13.7  | Skip links & focus management | [ ]    | Skip to content, focus trapping in modals            |
-| 13.8  | Color contrast audit          | [ ]    | Verify 4.5:1 ratio for all text                      |
-| 13.9  | Mobile optimization           | [ ]    | Ensure all pages work on tablet                      |
-| 13.10 | Performance audit             | [ ]    | Core Web Vitals, <16ms keystroke response            |
-| 13.11 | SEO audit                     | [ ]    | Meta tags, structured data, sitemap, robots.txt      |
-| 13.12 | AEO optimization              | [ ]    | FAQ schema, speakable content, question headings     |
-| 13.13 | GEO optimization              | [ ]    | Clear structure, authoritative content               |
-| 13.14 | Error boundaries              | [ ]    | Graceful error handling throughout                   |
+| 13.3  | Add keyboard shortcuts        | [ ]    | Navigation shortcuts for power users                   |
+| 13.4  | Implement dark mode           | [ ]    | Toggle between light/dark themes                       |
+| 13.5  | WCAG 2.2 audit                | [ ]    | Run axe-core, fix all Level AA violations              |
+| 13.6  | Screen reader testing         | [ ]    | Test with NVDA/VoiceOver, add ARIA live regions        |
+| 13.7  | Skip links & focus management | [ ]    | Skip to content, focus trapping in modals              |
+| 13.8  | Color contrast audit          | [ ]    | Verify 4.5:1 ratio for all text                        |
+| 13.9  | Mobile optimization           | [ ]    | Ensure all pages work on tablet                        |
+| 13.10 | Performance audit             | [ ]    | Core Web Vitals, <16ms keystroke response              |
+| 13.11 | SEO audit                     | [ ]    | Meta tags, structured data, sitemap, robots.txt        |
+| 13.12 | AEO optimization              | [ ]    | FAQ schema, speakable content, question headings       |
+| 13.13 | GEO optimization              | [ ]    | Clear structure, authoritative content                 |
+| 13.14 | Error boundaries              | [ ]    | Graceful error handling throughout                     |
 
 **Tools to use**:
 
@@ -716,8 +743,8 @@ typing-learning/
 
 ## Milestone Summary
 
-| Milestone        | Phases | Description                                                  |
-| ---------------- | ------ | ------------------------------------------------------------ |
+| Milestone              | Phases | Description                                                  |
+| ---------------------- | ------ | ------------------------------------------------------------ |
 | **MVP**          | 1-8    | Functional typing tutor with progress tracking and Calm Mode |
 | **Full Product** | 1-14   | Complete gamified learning platform                          |
 

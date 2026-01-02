@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Calm Mode text stability** - Text no longer regenerates when weak letters change during typing
+- **Calm Mode keyboard sync** - Keyboard now correctly highlights the current letter to type
+- **Word wrapping in typing displays** - Words no longer break mid-word onto separate lines in both Calm Mode and Practice lessons
+
 ### Added
 - **Phase 8: Calm Mode** - Immersive fullscreen typing practice at `/practice/calm`
   - **Immediate fullscreen** - Enters fullscreen mode automatically on page load

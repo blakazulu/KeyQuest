@@ -83,7 +83,7 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 7 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 8 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
 **Completed**:
 - Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
@@ -95,8 +95,9 @@ Currently at **Phase 7 COMPLETE** of a 14-phase implementation plan. See `/docs/
 - Phase 5: Practice Flow (lesson selection modal, intro, exercise runner, summary)
 - Phase 6: Progress Persistence (localStorage, weak letter tracking, session history)
 - Phase 7: Dashboard (stats cards, progress chart, weak letters keyboard, continue CTA)
+- Phase 8: Calm Mode (stress-free typing practice, endless text, fullscreen immersive experience)
 
-**Next**: Phase 8 (Calm Mode)
+**Next**: Phase 9 (Gamification System)
 
 **Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
 

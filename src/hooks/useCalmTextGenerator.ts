@@ -86,7 +86,10 @@ export function useCalmTextGenerator(
   // Track if we've already appended at this threshold
   const lastAppendPositionRef = useRef(0);
 
-  // Build generator config
+  // Track if initial text has been generated
+  const hasInitializedRef = useRef(false);
+
+  // Build generator config - use ref for weakLetters to avoid regeneration
   const getConfig = useCallback(
     (chunkSize: number): TextGeneratorConfig => ({
       chunkSize,
@@ -96,13 +99,21 @@ export function useCalmTextGenerator(
     [focusWeakLetters, weakLetters]
   );
 
-  // Generate initial text on mount
+  // Generate initial text ONLY on mount (not when weakLetters changes)
   useEffect(() => {
-    const initialText = generateCalmText(getConfig(initialChunkSize));
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+
+    const initialText = generateCalmText({
+      chunkSize: initialChunkSize,
+      weakLetters: focusWeakLetters ? weakLetters : {},
+      focusWeakLetters,
+    });
     setText(initialText);
     setIsReady(true);
     lastAppendPositionRef.current = 0;
-  }, [getConfig, initialChunkSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   // Append more text
   const appendMoreText = useCallback(() => {
@@ -137,6 +148,7 @@ export function useCalmTextGenerator(
     setText(freshText);
     setCurrentPosition(0);
     lastAppendPositionRef.current = 0;
+    // Don't reset hasInitializedRef - this is an intentional reset, not a re-mount
   }, [getConfig, initialChunkSize]);
 
   return {

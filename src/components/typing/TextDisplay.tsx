@@ -37,6 +37,27 @@ export const TextDisplay = memo(function TextDisplay({
     );
   }
 
+  // Group characters into words to prevent mid-word line breaks
+  const words: CharacterState[][] = [];
+  let currentWord: CharacterState[] = [];
+
+  characters.forEach((charState) => {
+    if (charState.char === ' ') {
+      if (currentWord.length > 0) {
+        words.push(currentWord);
+        currentWord = [];
+      }
+      // Add space as its own "word" to preserve spacing
+      words.push([charState]);
+    } else {
+      currentWord.push(charState);
+    }
+  });
+  // Don't forget the last word
+  if (currentWord.length > 0) {
+    words.push(currentWord);
+  }
+
   return (
     <div
       className={`typing-text select-none ${className}`}
@@ -45,12 +66,16 @@ export const TextDisplay = memo(function TextDisplay({
       aria-label="Type the text shown"
       aria-readonly="true"
     >
-      {characters.map((charState, index) => (
-        <Character
-          key={index}
-          charState={charState}
-          showCursor={showCursor && charState.status === 'current'}
-        />
+      {words.map((word, wordIndex) => (
+        <span key={wordIndex} className="inline-block whitespace-nowrap">
+          {word.map((charState) => (
+            <Character
+              key={charState.index}
+              charState={charState}
+              showCursor={showCursor && charState.status === 'current'}
+            />
+          ))}
+        </span>
       ))}
     </div>
   );
