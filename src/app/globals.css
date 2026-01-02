@@ -2741,3 +2741,106 @@ a[aria-disabled="true"],
     opacity: 1;
   }
 }
+
+/* ============================================
+   CALM MODE - Relaxed Typing Practice
+   ============================================ */
+
+/* Calm mode specific colors */
+:root {
+  --color-calm-error: #FCD34D;
+  --color-calm-error-dark: #FBBF24;
+  --color-calm-success: #86EFAC;
+  --color-calm-success-dark: #6EE7B7;
+  --color-calm-pending: #94A3B8;
+  --color-calm-pending-dark: #64748B;
+}
+
+/* Calm mode text display */
+.calm-typing-text {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  letter-spacing: 0.05em;
+  line-height: 2.5;
+  min-height: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  color: #e0e7ff;
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+/* Calm background gradient animation */
+@keyframes calm-bg-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.calm-bg-animate {
+  background-size: 200% 200%;
+  animation: calm-bg-shift 20s ease-in-out infinite;
+}
+
+/* Calm overlay gradient animation */
+@keyframes calm-overlay-shift {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.calm-bg-overlay-animate {
+  animation: calm-overlay-shift 15s ease-in-out infinite;
+}
+
+/* Floating orb animation for calm background */
+@keyframes calm-orb-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-25px) translateX(5px);
+  }
+}
+
+.calm-orb-float {
+  animation: calm-orb-float 12s ease-in-out infinite;
+}
+
+/* Fade in animation */
+@keyframes calm-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: calm-fade-in 0.3s ease-out;
+}
+
+/* Reduced motion for calm mode */
+@media (prefers-reduced-motion: reduce) {
+  .calm-bg-animate,
+  .calm-bg-overlay-animate,
+  .calm-orb-float {
+    animation: none !important;
+  }
+}

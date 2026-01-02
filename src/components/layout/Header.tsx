@@ -16,12 +16,13 @@ export function Header() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Check if we're on a lesson practice page (hide full header, show only pill)
-  const isLessonPage = pathname.match(/\/practice\/[^/]+$/);
+  // Exclude /practice/calm as it's a special mode with its own header
+  const isLessonPage = pathname.match(/\/practice\/[^/]+$/) && !pathname.includes('/practice/calm');
 
   const navItems = [
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
-    { href: '/practice' as const, label: t('practice'), icon: '⌨️' },
+    { href: '/practice/calm' as const, label: t('calmMode'), icon: '🧘' },
     { href: '/dashboard' as const, label: t('dashboard'), icon: '📊' },
   ];
 

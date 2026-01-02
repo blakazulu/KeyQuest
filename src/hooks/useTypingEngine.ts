@@ -71,6 +71,8 @@ export interface UseTypingEngineReturn {
   reset: (newText?: string) => void;
   /** Set the target text */
   setTargetText: (text: string) => void;
+  /** Update target text without resetting position (for endless mode) */
+  updateTargetText: (text: string) => void;
 }
 
 /**
@@ -101,6 +103,7 @@ export function useTypingEngine({
     isComplete,
     isPaused,
     setTargetText,
+    updateTargetText,
     handleKeyPress: storeHandleKeyPress,
     handleBackspace: storeHandleBackspace,
     reset: storeReset,
@@ -268,5 +271,6 @@ export function useTypingEngine({
     pause,
     reset,
     setTargetText,
+    updateTargetText,
   };
 }

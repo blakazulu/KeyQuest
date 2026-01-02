@@ -18,6 +18,7 @@ interface TypingState {
 
   // Actions
   setTargetText: (text: string) => void;
+  updateTargetText: (text: string) => void; // Updates text without resetting position
   handleKeyPress: (key: string, isCorrectOverride?: boolean) => void;
   handleBackspace: () => void;
   start: () => void;
@@ -49,6 +50,9 @@ export const useTypingStore = create<TypingState>((set, get) => ({
     isComplete: false,
     isPaused: false,
   }),
+
+  // Updates target text without resetting position (for endless/calm mode)
+  updateTargetText: (text) => set({ targetText: text }),
 
   handleKeyPress: (key, isCorrectOverride) => {
     const { targetText, currentPosition, errors, startTime, isComplete, isPaused } = get();

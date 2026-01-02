@@ -4,6 +4,12 @@ import { persist } from 'zustand/middleware';
 type AgeGroup = 'child' | 'teen' | 'adult';
 type Theme = 'light' | 'dark' | 'system';
 
+interface CalmModeSettings {
+  showKeyboard: boolean;
+  focusWeakLetters: boolean;
+  showSubtleStats: boolean;
+}
+
 interface SettingsState {
   ageGroup: AgeGroup;
   theme: Theme;
@@ -12,6 +18,7 @@ interface SettingsState {
   showKeyboard: boolean;
   showFingerGuide: boolean;
   fontSize: 'small' | 'medium' | 'large';
+  calmModeSettings: CalmModeSettings;
 
   // Actions
   setAgeGroup: (group: AgeGroup) => void;
@@ -21,6 +28,7 @@ interface SettingsState {
   toggleKeyboard: () => void;
   toggleFingerGuide: () => void;
   setFontSize: (size: 'small' | 'medium' | 'large') => void;
+  updateCalmModeSettings: (settings: Partial<CalmModeSettings>) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -33,6 +41,11 @@ export const useSettingsStore = create<SettingsState>()(
       showKeyboard: true,
       showFingerGuide: true,
       fontSize: 'medium',
+      calmModeSettings: {
+        showKeyboard: true,
+        focusWeakLetters: true,
+        showSubtleStats: true,
+      },
 
       setAgeGroup: (ageGroup) => set({ ageGroup }),
       setTheme: (theme) => set({ theme }),
@@ -41,6 +54,13 @@ export const useSettingsStore = create<SettingsState>()(
       toggleKeyboard: () => set({ showKeyboard: !get().showKeyboard }),
       toggleFingerGuide: () => set({ showFingerGuide: !get().showFingerGuide }),
       setFontSize: (fontSize) => set({ fontSize }),
+      updateCalmModeSettings: (settings) =>
+        set({
+          calmModeSettings: {
+            ...get().calmModeSettings,
+            ...settings,
+          },
+        }),
     }),
     {
       name: 'keyquest-settings',

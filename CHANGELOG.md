@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 8: Calm Mode** - Stress-free endless typing practice at `/practice/calm`
+  - No timers, no pass/fail, no score pressure - just peaceful practice
+  - Endless text generation that auto-appends as you type
+  - Weak letter targeting (40% chance to include words with struggling keys)
+  - Gentle visual feedback: amber for errors instead of harsh red, no shake animation
+  - Soft gradient animated background with floating particles
+  - Optional visual keyboard with finger guidance
+  - Subtle stats display (characters typed, time, WPM on hover)
+  - Keyboard shortcuts: Enter to start, Space to resume, Escape to pause/exit
+  - XP and history NOT saved to remove performance pressure
+  - Silently tracks weak letters for adaptive learning
+  - New components: CalmMode, CalmTextDisplay, CalmStats, CalmControls, CalmBackground
+  - New hooks: useCalmTextGenerator, useCalmModeStore
+  - Word pool data optimized for calm practice (calmModeWords.ts)
+  - Full bilingual support (English/Hebrew)
+  - Calm Mode nav link added to header
+  - Calm mode settings in useSettingsStore (showKeyboard, focusWeakLetters, showSubtleStats)
+  - Full WCAG accessibility with ARIA labels and keyboard navigation
 - **XP awarded per exercise** - XP now adds up after each exercise (not just lesson completion)
   - 5-10 XP per exercise based on accuracy (80% = 5 XP, 100% = 10 XP)
   - XP pill animates immediately when each exercise is completed

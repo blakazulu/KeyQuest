@@ -7,6 +7,7 @@
     "home": "Home",
     "levels": "Levels",
     "practice": "Practice",
+    "calmMode": "Calm Mode",
     "dashboard": "Dashboard",
     "menu": "Menu",
     "openMenu": "Open menu",
@@ -197,5 +198,44 @@
     "switch": "Switch language",
     "en": "English",
     "he": "Hebrew"
+  },
+  "calmMode": {
+    "meta": {
+      "title": "Calm Mode - Stress-Free Typing Practice",
+      "description": "Practice touch typing at your own pace with no pressure, no timers, and gentle feedback. Perfect for relaxed practice sessions."
+    },
+    "title": "Calm Mode",
+    "intro": "Take a breath. Type at your own pace. No pressure, no timers - just you and the keyboard.",
+    "start": "Begin Practice",
+    "startHint": "Press Enter to start",
+    "paused": "Paused",
+    "pausedHint": "Press Space or Enter to resume, Escape to exit",
+    "resume": "Resume",
+    "ariaLabel": "Calm typing practice area",
+    "pausedAriaLabel": "Practice paused dialog",
+    "controls": {
+      "toolbar": "Calm mode controls",
+      "pause": "Pause",
+      "resume": "Resume",
+      "exit": "Exit",
+      "showKeyboard": "Show Keyboard",
+      "hideKeyboard": "Hide Keyboard",
+      "exitConfirm": "Exit practice?",
+      "exitAriaLabel": "Exit calm mode practice"
+    },
+    "stats": {
+      "characters": "Characters",
+      "time": "Time",
+      "wpm": "WPM",
+      "accuracy": "Accuracy",
+      "ariaLabel": "Typing statistics: {characters} characters in {time}",
+      "detailedAriaLabel": "Typing statistics: {characters} characters, {wpm} words per minute, {accuracy}% accuracy"
+    },
+    "hints": {
+      "shortcuts": "Enter to start | Esc to pause | Space to resume",
+      "escape": "Esc to pause",
+      "space": "Space to resume",
+      "enter": "Enter to start"
+    }
   }
 }

@@ -7,6 +7,7 @@
     "home": "בית",
     "levels": "שלבים",
     "practice": "תרגול",
+    "calmMode": "מצב רגוע",
     "dashboard": "לוח בקרה",
     "menu": "תפריט",
     "openMenu": "פתח תפריט",
@@ -197,5 +198,44 @@
     "switch": "החלף שפה",
     "en": "אנגלית",
     "he": "עברית"
+  },
+  "calmMode": {
+    "meta": {
+      "title": "מצב רגוע - תרגול הקלדה ללא לחץ",
+      "description": "תרגלו הקלדה עיוורת בקצב שלכם ללא לחץ, ללא שעונים, ועם משוב עדין. מושלם לאימונים רגועים."
+    },
+    "title": "מצב רגוע",
+    "intro": "קחו נשימה. הקלידו בקצב שלכם. ללא לחץ, ללא שעונים - רק אתם והמקלדת.",
+    "start": "התחל תרגול",
+    "startHint": "לחצו Enter להתחלה",
+    "paused": "מושהה",
+    "pausedHint": "לחצו רווח או Enter להמשך, Escape ליציאה",
+    "resume": "המשך",
+    "ariaLabel": "אזור תרגול הקלדה רגוע",
+    "pausedAriaLabel": "חלון תרגול מושהה",
+    "controls": {
+      "toolbar": "פקדי מצב רגוע",
+      "pause": "השהה",
+      "resume": "המשך",
+      "exit": "יציאה",
+      "showKeyboard": "הצג מקלדת",
+      "hideKeyboard": "הסתר מקלדת",
+      "exitConfirm": "לצאת מהתרגול?",
+      "exitAriaLabel": "יציאה ממצב רגוע"
+    },
+    "stats": {
+      "characters": "תווים",
+      "time": "זמן",
+      "wpm": "מ״ל",
+      "accuracy": "דיוק",
+      "ariaLabel": "סטטיסטיקות הקלדה: {characters} תווים ב-{time}",
+      "detailedAriaLabel": "סטטיסטיקות הקלדה: {characters} תווים, {wpm} מילים לדקה, {accuracy}% דיוק"
+    },
+    "hints": {
+      "shortcuts": "Enter להתחלה | Esc להשהייה | רווח להמשך",
+      "escape": "Esc להשהייה",
+      "space": "רווח להמשך",
+      "enter": "Enter להתחלה"
+    }
   }
 }
