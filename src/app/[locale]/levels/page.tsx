@@ -6,6 +6,7 @@ import { QuestMapImage } from '@/components/levels/QuestMapImage';
 import { LessonSelectionModal } from '@/components/levels/LessonSelectionModal';
 import { FloatingMenu } from '@/components/layout/FloatingMenu';
 import { useProgressStore } from '@/stores/useProgressStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { stages as allStages, getStage } from '@/data/lessons';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
@@ -22,8 +23,35 @@ export default function LevelsPage() {
   const getLessonProgress = useProgressStore((s) => s.getLessonProgress);
   const completedLessons = useProgressStore((s) => s.completedLessons);
 
+  // Settings store for assessment
+  const initialAssessment = useSettingsStore((s) => s.initialAssessment);
+
   // Compute stage statuses from progress store
   const stages = useMemo(() => {
+    // Find if user has any lessons in progress
+    const stageWithProgress = allStages.find((stage) => {
+      const hasProgress = stage.lessons.some((l) => completedLessons.includes(l.id));
+      const isCompleted = isStageCompleted(stage.id);
+      return hasProgress && !isCompleted;
+    });
+
+    // Determine which stage should be marked as current
+    let currentStageId: number | null = null;
+
+    if (stageWithProgress) {
+      // If user has started a stage, that's the current one
+      currentStageId = stageWithProgress.id;
+    } else if (initialAssessment?.recommendedStage && completedLessons.length === 0) {
+      // If user has assessment but no lessons completed, recommended stage is current
+      currentStageId = initialAssessment.recommendedStage;
+    } else {
+      // Otherwise, first unlocked non-completed stage is current
+      const firstUnlocked = allStages.find(
+        (s) => isStageUnlocked(s.id) && !isStageCompleted(s.id)
+      );
+      currentStageId = firstUnlocked?.id ?? null;
+    }
+
     return allStages.map((stage) => {
       // Count completed lessons in this stage
       const completedCount = stage.lessons.filter(
@@ -35,12 +63,7 @@ export default function LevelsPage() {
       if (isStageCompleted(stage.id)) {
         status = 'completed';
       } else if (isStageUnlocked(stage.id)) {
-        status = completedCount > 0 ? 'current' : 'available';
-      }
-
-      // For display, treat 'available' as 'current' for first unlocked stage
-      if (status === 'available' && completedCount === 0) {
-        status = 'current';
+        status = stage.id === currentStageId ? 'current' : 'available';
       }
 
       return {
@@ -52,7 +75,7 @@ export default function LevelsPage() {
         status,
       };
     });
-  }, [allStages, locale, completedLessons, isStageCompleted, isStageUnlocked]);
+  }, [allStages, locale, completedLessons, isStageCompleted, isStageUnlocked, initialAssessment]);
 
   // Get the selected stage data for the modal
   const selectedStage = useMemo(() => {
