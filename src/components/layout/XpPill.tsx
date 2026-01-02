@@ -2,15 +2,82 @@
 
 import { memo, useEffect, useState, useRef, useMemo } from 'react';
 import { useProgressStore, type XpEvent } from '@/stores/useProgressStore';
+import { useSettingsStore, type AvatarId, type AgeGroup } from '@/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { getLesson } from '@/data/lessons';
 import { getAchievement, achievements } from '@/data/achievements';
 
+// Mini avatar component for the pill
+function MiniAvatar({ avatarId, ageGroup }: { avatarId: AvatarId; ageGroup: AgeGroup }) {
+  // Age-specific avatar colors
+  const ageColors: Record<AgeGroup, string[]> = {
+    child: [
+      'from-pink-400 to-pink-500',
+      'from-purple-400 to-purple-500',
+      'from-cyan-400 to-cyan-500',
+      'from-yellow-400 to-yellow-500',
+      'from-green-400 to-green-500',
+      'from-orange-400 to-orange-500',
+      'from-blue-400 to-blue-500',
+      'from-red-400 to-red-500',
+    ],
+    teen: [
+      'from-indigo-500 to-purple-600',
+      'from-cyan-500 to-blue-600',
+      'from-emerald-500 to-teal-600',
+      'from-orange-500 to-red-600',
+      'from-pink-500 to-rose-600',
+      'from-violet-500 to-purple-600',
+      'from-sky-500 to-indigo-600',
+      'from-amber-500 to-orange-600',
+    ],
+    adult: [
+      'from-slate-500 to-slate-600',
+      'from-blue-500 to-blue-600',
+      'from-emerald-500 to-emerald-600',
+      'from-amber-500 to-amber-600',
+      'from-rose-500 to-rose-600',
+      'from-cyan-500 to-cyan-600',
+      'from-purple-500 to-purple-600',
+      'from-teal-500 to-teal-600',
+    ],
+  };
+
+  const colorIndex = (avatarId - 1) % 8;
+  const bgColor = ageColors[ageGroup][colorIndex];
+
+  // Simple face expressions per avatar
+  const faces = [
+    { eyes: '•  •', mouth: '‿' },   // Happy
+    { eyes: '◠  ◠', mouth: '‿' },   // Cheerful
+    { eyes: '•  •', mouth: '◡' },   // Smile
+    { eyes: '◠  ◠', mouth: 'ᴗ' },   // Joy
+    { eyes: '•  •', mouth: '◡' },   // Content
+    { eyes: '◕  ◕', mouth: '‿' },   // Bright
+    { eyes: '•  ◠', mouth: '‿' },   // Wink
+    { eyes: '◠  ◠', mouth: '◡' },   // Grin
+  ];
+
+  const face = faces[(avatarId - 1) % 8];
+
+  return (
+    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${bgColor} flex items-center justify-center shadow-md border-2 border-white dark:border-gray-700`}>
+      <div className="text-white text-[8px] font-bold leading-none text-center">
+        <div className="tracking-tighter">{face.eyes}</div>
+        <div className="-mt-0.5">{face.mouth}</div>
+      </div>
+    </div>
+  );
+}
+
 export const XpPill = memo(function XpPill() {
   const totalXp = useProgressStore((s) => s.totalXp);
   const xpHistory = useProgressStore((s) => s.xpHistory);
   const userAchievements = useProgressStore((s) => s.achievements);
+  const userName = useSettingsStore((s) => s.userName);
+  const userAvatar = useSettingsStore((s) => s.userAvatar);
+  const ageGroup = useSettingsStore((s) => s.ageGroup);
   const [displayXp, setDisplayXp] = useState(totalXp);
   const [isAnimating, setIsAnimating] = useState(false);
   const [xpGain, setXpGain] = useState(0);
@@ -157,67 +224,89 @@ export const XpPill = memo(function XpPill() {
         </div>
       )}
 
-      {/* Main pill - now a button */}
-      <button
-        ref={pillRef}
-        onClick={() => setIsPopupOpen(!isPopupOpen)}
+      {/* Main pill - split into profile link and XP button */}
+      <div
         className={`
-          flex items-center gap-2.5 px-5 py-3
+          flex items-center
           bg-white/95 dark:bg-gray-800/95 backdrop-blur-md
           rounded-full shadow-lg
           border-2 border-purple-200 dark:border-purple-700
-          transition-all duration-300 cursor-pointer
+          transition-all duration-300
           ${isAnimating
             ? 'scale-115 shadow-[0_0_30px_rgba(147,51,234,0.6)] border-purple-400 dark:border-purple-500'
-            : 'scale-100 hover:shadow-xl hover:border-purple-300 dark:hover:border-purple-600'
+            : 'scale-100'
           }
         `}
-        aria-expanded={isPopupOpen}
-        aria-haspopup="true"
-        aria-label={`Total XP: ${displayXp}. ${isPopupOpen ? 'Close' : 'View'} XP history`}
       >
-        {/* Star icon with glow when animating */}
-        <span
-          className={`
-            text-2xl transition-all duration-300
-            ${isAnimating ? 'animate-bounce scale-125' : ''}
-          `}
-          style={{
-            filter: isAnimating ? 'drop-shadow(0 0 8px rgba(147, 51, 234, 0.8))' : undefined
-          }}
+        {/* Profile link - Avatar and Name */}
+        <Link
+          href="/profile"
+          className="flex items-center gap-2 ps-2 pe-2.5 py-2 rounded-s-full hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+          aria-label={`${userName || 'Guest'} - View profile`}
         >
-          ⭐
-        </span>
+          <MiniAvatar avatarId={userAvatar} ageGroup={ageGroup} />
+          {userName && (
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-200 max-w-20 truncate">
+              {userName}
+            </span>
+          )}
+        </Link>
 
-        {/* XP Value */}
-        <span
-          className={`
-            font-display font-bold tabular-nums
-            transition-all duration-300
-            ${isAnimating
-              ? 'text-purple-600 dark:text-purple-400 text-2xl'
-              : 'text-gray-800 dark:text-gray-100 text-xl'
-            }
-          `}
+        {/* Separator */}
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
+
+        {/* XP button - opens dropdown */}
+        <button
+          ref={pillRef}
+          onClick={() => setIsPopupOpen(!isPopupOpen)}
+          className="flex items-center gap-2 ps-2.5 pe-3 py-2 rounded-e-full hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
+          aria-expanded={isPopupOpen}
+          aria-haspopup="true"
+          aria-label={`Total XP: ${displayXp}. ${isPopupOpen ? 'Close' : 'View'} XP history`}
         >
-          {displayXp.toLocaleString()}
-        </span>
+          {/* Star icon with glow when animating */}
+          <span
+            className={`
+              text-xl transition-all duration-300
+              ${isAnimating ? 'animate-bounce scale-125' : ''}
+            `}
+            style={{
+              filter: isAnimating ? 'drop-shadow(0 0 8px rgba(147, 51, 234, 0.8))' : undefined
+            }}
+          >
+            ⭐
+          </span>
 
-        {/* XP label */}
-        <span className="text-sm font-bold text-purple-500 dark:text-purple-400">
-          XP
-        </span>
+          {/* XP Value */}
+          <span
+            className={`
+              font-display font-bold tabular-nums
+              transition-all duration-300
+              ${isAnimating
+                ? 'text-purple-600 dark:text-purple-400 text-xl'
+                : 'text-gray-800 dark:text-gray-100 text-lg'
+              }
+            `}
+          >
+            {displayXp.toLocaleString()}
+          </span>
 
-        {/* Dropdown arrow */}
-        <svg
-          className={`w-4 h-4 text-purple-400 transition-transform duration-200 ${isPopupOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          {/* XP label */}
+          <span className="text-xs font-bold text-purple-500 dark:text-purple-400">
+            XP
+          </span>
+
+          {/* Dropdown arrow */}
+          <svg
+            className={`w-4 h-4 text-purple-400 transition-transform duration-200 ${isPopupOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
 
       {/* XP History Popup */}
       {isPopupOpen && (

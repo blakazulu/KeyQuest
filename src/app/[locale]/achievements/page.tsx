@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useProgressStore } from '@/stores/useProgressStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { achievements, achievementCategories } from '@/data/achievements';
 import { AchievementCard, RankDisplay } from '@/components/gamification';
 import type { AchievementCategory } from '@/types/achievement';
@@ -89,6 +90,10 @@ function ResetConfirmModal({
               <span className="text-red-500">✕</span>
               {locale === 'he' ? 'כל הסטטיסטיקות' : 'All statistics'}
             </li>
+            <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <span className="text-red-500">✕</span>
+              {locale === 'he' ? 'פרופיל המשתמש (שם ואווטר)' : 'User profile (name and avatar)'}
+            </li>
           </ul>
 
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
@@ -156,15 +161,23 @@ export default function AchievementsPage() {
   const userAchievements = useProgressStore((s) => s.achievements);
   const totalXp = useProgressStore((s) => s.totalXp);
   const checkAndUnlockAchievements = useProgressStore((s) => s.checkAndUnlockAchievements);
-  const reset = useProgressStore((s) => s.reset);
+  const resetProgress = useProgressStore((s) => s.reset);
 
-  // Handle reset
+  // Settings store
+  const resetOnboarding = useSettingsStore((s) => s.resetOnboarding);
+  const setUserName = useSettingsStore((s) => s.setUserName);
+  const setUserAvatar = useSettingsStore((s) => s.setUserAvatar);
+
+  // Handle reset - resets both progress and profile
   const handleReset = useCallback(() => {
-    reset();
+    resetProgress();
+    resetOnboarding();
+    setUserName('');
+    setUserAvatar(1);
     setShowResetModal(false);
     // Force page refresh to show empty state
     window.location.reload();
-  }, [reset]);
+  }, [resetProgress, resetOnboarding, setUserName, setUserAvatar]);
 
   useEffect(() => {
     setIsHydrated(true);

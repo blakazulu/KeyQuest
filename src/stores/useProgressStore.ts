@@ -13,7 +13,8 @@ import {
   getRecommendedLessons,
   getKeyMastery,
 } from '@/lib/lessonProgression';
-import { getLesson } from '@/data/lessons';
+import { getLesson, getFirstLesson } from '@/data/lessons';
+import { useSettingsStore } from './useSettingsStore';
 import { getRankProgress, checkRankUp } from '@/data/ranks';
 import { calculateXpEnhanced, type XpBreakdown } from '@/lib/xpCalculation';
 import {
@@ -518,11 +519,40 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       isLessonUnlocked: (lessonId: string) => {
-        return isLessonUnlocked(lessonId, get().completedLessons);
+        // Check if unlocked via normal progression
+        if (isLessonUnlocked(lessonId, get().completedLessons)) {
+          return true;
+        }
+
+        // Check if unlocked via assessment - first lesson of each stage up to recommended
+        const { initialAssessment } = useSettingsStore.getState();
+        if (initialAssessment?.recommendedStage) {
+          const lesson = getLesson(lessonId);
+          if (lesson && lesson.stageId <= initialAssessment.recommendedStage) {
+            // First lesson of unlocked stages is always available
+            const firstLesson = getFirstLesson(lesson.stageId);
+            if (firstLesson && firstLesson.id === lessonId) {
+              return true;
+            }
+          }
+        }
+
+        return false;
       },
 
       isStageUnlocked: (stageId: number) => {
-        return isStageUnlocked(stageId, get().completedLessons);
+        // Check if unlocked via normal progression
+        if (isStageUnlocked(stageId, get().completedLessons)) {
+          return true;
+        }
+
+        // Check if unlocked via assessment
+        const { initialAssessment } = useSettingsStore.getState();
+        if (initialAssessment?.recommendedStage) {
+          return stageId <= initialAssessment.recommendedStage;
+        }
+
+        return false;
       },
 
       isStageCompleted: (stageId: number) => {

@@ -1,6 +1,9 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import {
   OrganizationJsonLd,
   WebsiteJsonLd,
@@ -9,9 +12,37 @@ import {
   SpeakableJsonLd,
 } from '@/components/seo/JsonLd';
 import { Button, FloatingKeys } from '@/components/ui';
+import { OnboardingModal } from '@/components/onboarding';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 export default function Home() {
   const t = useTranslations('home');
+  const locale = useLocale() as 'en' | 'he';
+  const router = useRouter();
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  const hasCompletedOnboarding = useSettingsStore((state) => state.hasCompletedOnboarding);
+
+  // Handle hydration
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  const handleStartClick = () => {
+    if (!isHydrated) return;
+
+    if (hasCompletedOnboarding) {
+      router.push(`/${locale}/levels`);
+    } else {
+      setShowOnboarding(true);
+    }
+  };
+
+  const handleCloseOnboarding = () => {
+    setShowOnboarding(false);
+  };
 
   // FAQ items for JSON-LD schema
   const faqItems = [
@@ -102,15 +133,14 @@ export default function Home() {
             />
             {/* CTA Button on image */}
             <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
-              <Link href="/levels">
-                <Button
-                  variant="game"
-                  size="lg"
-                  className="text-lg px-12 btn-rainbow"
-                >
-                  {t('startQuest')}
-                </Button>
-              </Link>
+              <Button
+                variant="game"
+                size="lg"
+                className="text-lg px-12 btn-rainbow"
+                onClick={handleStartClick}
+              >
+                {t('startQuest')}
+              </Button>
             </div>
             {/* Wavy bottom edge */}
             <div className="absolute bottom-0 left-0 right-0 h-36 overflow-hidden">
@@ -242,6 +272,11 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <OnboardingModal locale={locale} onClose={handleCloseOnboarding} />
+      )}
     </>
   );
 }

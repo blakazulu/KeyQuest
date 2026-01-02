@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 10: Onboarding Flow** - First-time user experience with profile selection and typing assessment
+  - **Profile Selection** - Choose age group (Child 6-12, Teen 13-17, Adult 18+) with illustrated character cards
+  - **Keyboard Assessment Test** - 30-second typing test to evaluate user's current level
+  - **Smart Recommendations** - Suggests starting stage based on WPM and accuracy results
+  - **Stage Unlocking** - Stages up to recommended level are unlocked based on assessment results
+  - **Skip Confirmation** - "Are you sure?" dialog when skipping onboarding
+  - **Onboarding Modal** - Multi-step modal with step indicator and smooth transitions
+  - **Settings Store Enhancement** - Added `hasCompletedOnboarding` flag and `initialAssessment` storage
+  - **Store Migration** - Existing users (v1) are marked as onboarding complete to skip modal
+  - Full bilingual support (English/Hebrew) for all onboarding UI
+  - Full WCAG accessibility with focus trapping, keyboard navigation, and ARIA labels
+
+- **Profile Page** at `/profile` - View and manage user profile
+  - **User Avatar Selection** - 8 unique animated avatars with different expressions
+  - **Editable Name** - Set or change your display name
+  - **Age Group Selection** - Change learning mode (Child/Teen/Adult) anytime
+  - **Assessment Results Display** - View WPM, accuracy, and recommended stage from typing test
+  - **Retake Assessment** - Option to reset onboarding and retake the typing test
+  - **Quick Stats** - Total XP, lessons completed, current streak
+  - **Settings Store v3** - Added `userName` and `userAvatar` fields with migration
+  - Navigation link added to header menu
+  - Full bilingual support (English/Hebrew)
+
 - **Phase 9: Gamification System** - Points, achievements, ranks, and enhanced streaks
   - **Rank System** - 4 ranks with XP thresholds (Beginner 0-499, Intermediate 500-1999, Proficient 2000-4999, Master 5000+)
   - **15 Achievements** across 6 categories (milestone, speed, accuracy, streak, dedication, mastery)

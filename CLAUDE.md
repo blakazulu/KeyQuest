@@ -46,7 +46,9 @@ src/
 │   ├── layout/    # Header, LanguageSwitcher
 │   ├── typing/    # Typing engine components (Phase 2)
 │   ├── keyboard/  # Visual keyboard (Phase 3)
+│   ├── practice/  # Exercise runner, lesson components (Phase 5)
 │   ├── gamification/  # Rank, achievements, XP (Phase 9)
+│   ├── onboarding/    # Profile selection, keyboard test (Phase 10)
 │   ├── games/     # Game modes (Phase 12)
 │   └── ui/        # Shared UI components
 ├── stores/        # Zustand state stores
@@ -84,7 +86,7 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 9 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 10 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
 **Completed**:
 - Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
@@ -98,10 +100,11 @@ Currently at **Phase 9 COMPLETE** of a 14-phase implementation plan. See `/docs/
 - Phase 7: Dashboard (stats cards, progress chart, weak letters keyboard, continue CTA)
 - Phase 8: Calm Mode (stress-free typing practice, endless text, fullscreen immersive experience)
 - Phase 9: Gamification System (ranks, 15 achievements, enhanced XP with bonuses, streak recovery)
+- Phase 10: Onboarding Flow (profile selection, typing assessment, stage recommendation)
 
-**Next**: Phase 10 (Landing Page)
+**Next**: Phase 11 (Adaptive Learning)
 
-**Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
+**Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched during Phase 13.
 
 ## Key Requirements
 
