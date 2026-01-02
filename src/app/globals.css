@@ -266,6 +266,30 @@ body {
 }
 
 /* ============================================
+   INTERACTIVE ELEMENTS - Cursor Pointer
+   ============================================ */
+button,
+a,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+label[for],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+button:disabled,
+a[aria-disabled="true"],
+[role="button"][aria-disabled="true"],
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* ============================================
    CUSTOM SCROLLBAR
    ============================================ */
 ::-webkit-scrollbar {
