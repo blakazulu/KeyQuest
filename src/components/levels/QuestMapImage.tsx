@@ -221,7 +221,8 @@ const getLessonMarkers = (
   toIndex: number,
   lessonCount: number,
   completedLessons: number,
-  isLocked: boolean
+  isLocked: boolean,
+  isCurrent: boolean  // Only mark lessons as "current" in the current stage
 ) => {
   const from = stagePositions[fromIndex];
   const to = stagePositions[toIndex];
@@ -250,7 +251,7 @@ const getLessonMarkers = (
       x,
       y,
       completed: i < completedLessons,
-      current: !isLocked && i === completedLessons,
+      current: isCurrent && i === completedLessons,  // Only current in current stage
       locked: isLocked,
       index: i,
     });
@@ -630,7 +631,8 @@ export const QuestMapImage = memo(function QuestMapImage({
               index + 1,
               stage.lessons,
               stage.completedLessons || 0,
-              stage.status === 'locked'
+              stage.status === 'locked',
+              stage.status === 'current'  // Only show current lesson marker on current stage
             );
 
             return markers.map((marker, markerIndex) => (
@@ -646,15 +648,17 @@ export const QuestMapImage = memo(function QuestMapImage({
             ));
           })}
 
-          {/* Key character above current lesson */}
+          {/* Key character above current lesson - only show on current stage */}
           {stages.slice(0, -1).map((stage, index) => {
-            if (stage.status === 'locked') return null;
+            // Only show key on the CURRENT stage, not all unlocked stages
+            if (stage.status !== 'current') return null;
             const markers = getLessonMarkers(
               index,
               index + 1,
               stage.lessons,
               stage.completedLessons || 0,
-              false
+              false,
+              true  // This is the current stage
             );
             const currentMarker = markers.find(m => m.current);
             if (!currentMarker || !stageKeyImages[index]) return null;
