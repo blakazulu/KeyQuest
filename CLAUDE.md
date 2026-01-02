@@ -46,12 +46,13 @@ src/
 │   ├── layout/    # Header, LanguageSwitcher
 │   ├── typing/    # Typing engine components (Phase 2)
 │   ├── keyboard/  # Visual keyboard (Phase 3)
+│   ├── gamification/  # Rank, achievements, XP (Phase 9)
 │   ├── games/     # Game modes (Phase 12)
 │   └── ui/        # Shared UI components
 ├── stores/        # Zustand state stores
 ├── hooks/         # Custom React hooks
 ├── lib/           # Utility functions
-├── data/          # Static content (lessons, etc.)
+├── data/          # Static content (lessons, achievements, ranks)
 └── types/         # TypeScript type definitions
 messages/          # Translation files (en.json, he.json)
 ```
@@ -83,7 +84,7 @@ import { useProgressStore } from '@/stores/useProgressStore';
 
 ## Implementation Status
 
-Currently at **Phase 8 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
+Currently at **Phase 9 COMPLETE** of a 14-phase implementation plan. See `/docs/IMPLEMENTATION_PLAN.md` for the full roadmap.
 
 **Completed**:
 - Phase 1: Project foundation, navigation, placeholder pages, Zustand stores, dark mode
@@ -96,8 +97,9 @@ Currently at **Phase 8 COMPLETE** of a 14-phase implementation plan. See `/docs/
 - Phase 6: Progress Persistence (localStorage, weak letter tracking, session history)
 - Phase 7: Dashboard (stats cards, progress chart, weak letters keyboard, continue CTA)
 - Phase 8: Calm Mode (stress-free typing practice, endless text, fullscreen immersive experience)
+- Phase 9: Gamification System (ranks, 15 achievements, enhanced XP with bonuses, streak recovery)
 
-**Next**: Phase 9 (Gamification System)
+**Next**: Phase 10 (Landing Page)
 
 **Note**: Existing UI (Header, Landing Page) uses old styling. Migrate to design system tokens when touched or during Phase 10/13.
 

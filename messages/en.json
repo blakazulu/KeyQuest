@@ -9,6 +9,7 @@
     "practice": "Practice",
     "calmMode": "Calm Mode",
     "dashboard": "Dashboard",
+    "achievements": "Achievements",
     "menu": "Menu",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
@@ -240,6 +241,59 @@
       "escape": "Esc to pause",
       "space": "Space to resume",
       "enter": "Enter to start"
+    }
+  },
+  "gamification": {
+    "rank": {
+      "title": "Rank",
+      "progress": "progress to next rank",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "proficient": "Proficient",
+      "master": "Master",
+      "xpToNext": "{xp} XP to next rank"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "subtitle": "Track your typing milestones and earn rewards",
+      "unlocked": "Unlocked!",
+      "locked": "Locked",
+      "progress": "{percent}% complete",
+      "totalXp": "Total XP",
+      "noAchievements": "No achievements in this category",
+      "categories": {
+        "all": "All",
+        "milestone": "Milestones",
+        "speed": "Speed",
+        "accuracy": "Accuracy",
+        "streak": "Streaks",
+        "dedication": "Dedication",
+        "mastery": "Mastery",
+        "secret": "Secrets"
+      },
+      "popup": {
+        "unlocked": "Achievement Unlocked!",
+        "xpBonus": "+{xp} XP Bonus",
+        "close": "Close",
+        "pressEscape": "Press Esc to close"
+      }
+    },
+    "streak": {
+      "atRisk": "At risk!",
+      "recovered": "Streak saved!",
+      "practiceToday": "Practice today to keep your streak"
+    },
+    "xp": {
+      "breakdown": {
+        "title": "XP Earned",
+        "base": "Base XP",
+        "stars": "Star Bonus",
+        "accuracy": "Perfect Accuracy",
+        "speed": "Speed Bonus",
+        "streak": "Streak Bonus",
+        "total": "Total",
+        "bonuses": "bonuses"
+      }
     }
   }
 }

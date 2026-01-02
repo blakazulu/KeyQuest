@@ -27,6 +27,7 @@ export function Header() {
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
     { href: '/practice/calm' as const, label: t('calmMode'), icon: '🧘' },
     { href: '/dashboard' as const, label: t('dashboard'), icon: '📊' },
+    { href: '/achievements' as const, label: t('achievements'), icon: '🏆' },
   ];
 
   // Track scroll position

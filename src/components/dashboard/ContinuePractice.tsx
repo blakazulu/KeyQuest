@@ -112,7 +112,7 @@ export const ContinuePractice = memo(function ContinuePractice({
     >
       <div className="flex flex-col sm:flex-row items-center gap-4">
         {/* Icon */}
-        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
           <span className="text-3xl">{stage?.icon || '📚'}</span>
         </div>
 

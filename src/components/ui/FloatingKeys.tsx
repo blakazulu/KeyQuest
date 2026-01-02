@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useProgressStore } from '@/stores/useProgressStore';
 
 const KEY_IMAGES = [
   '/images/key/key1.png',
@@ -46,6 +47,7 @@ function getRandomImage(excludeImage?: string): string {
 export function FloatingKeys() {
   const [currentKey, setCurrentKey] = useState<FloatingKey | null>(null);
   const [keyCounter, setKeyCounter] = useState(0);
+  const incrementHomeKeyClicks = useProgressStore((s) => s.incrementHomeKeyClicks);
 
   const spawnNewKey = useCallback((excludeImage?: string, excludeTop?: number) => {
     const { side, top } = getRandomPosition(excludeTop);
@@ -65,6 +67,9 @@ export function FloatingKeys() {
   const handleClick = useCallback(() => {
     if (!currentKey || currentKey.isExiting) return;
 
+    // Track click for secret achievements
+    incrementHomeKeyClicks();
+
     // Mark as clicked for the pop animation
     setCurrentKey((prev) => prev ? { ...prev, wasClicked: true, isExiting: true } : null);
 
@@ -72,7 +77,7 @@ export function FloatingKeys() {
     setTimeout(() => {
       spawnNewKey(currentKey.image, currentKey.top);
     }, 300);
-  }, [currentKey, spawnNewKey]);
+  }, [currentKey, spawnNewKey, incrementHomeKeyClicks]);
 
   useEffect(() => {
     // Initial spawn after a short delay

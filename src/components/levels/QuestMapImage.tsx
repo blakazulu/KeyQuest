@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useState, useCallback } from 'react';
 import type { LevelStatus } from '@/components/ui/LevelCard';
+import { useProgressStore } from '@/stores/useProgressStore';
 
 // Key character images
 const KEY_IMAGES = [
@@ -392,9 +393,13 @@ const ClickableKeyCharacter = memo(function ClickableKeyCharacter({
 }) {
   const [currentImage, setCurrentImage] = useState(initialImage);
   const [animationState, setAnimationState] = useState<'idle' | 'swirl-out' | 'swirl-in'>('idle');
+  const incrementLevelsKeyClicks = useProgressStore((s) => s.incrementLevelsKeyClicks);
 
   const handleClick = useCallback(() => {
     if (animationState !== 'idle') return; // Prevent clicking during animation
+
+    // Track click for secret achievements
+    incrementLevelsKeyClicks();
 
     // Start swirl-out animation
     setAnimationState('swirl-out');
@@ -412,7 +417,7 @@ const ClickableKeyCharacter = memo(function ClickableKeyCharacter({
         setAnimationState('idle');
       }, 400);
     }, 400);
-  }, [animationState, currentImage]);
+  }, [animationState, currentImage, incrementLevelsKeyClicks]);
 
   return (
     <img

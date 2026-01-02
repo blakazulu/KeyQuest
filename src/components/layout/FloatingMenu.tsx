@@ -16,8 +16,9 @@ export function FloatingMenu() {
   const navItems = [
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
-    { href: '/practice' as const, label: t('practice'), icon: '⌨️' },
+    { href: '/practice/calm' as const, label: t('calmMode'), icon: '🧘' },
     { href: '/dashboard' as const, label: t('dashboard'), icon: '📊' },
+    { href: '/achievements' as const, label: t('achievements'), icon: '🏆' },
   ];
 
   // Close menu when clicking outside

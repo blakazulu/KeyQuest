@@ -9,6 +9,7 @@
     "practice": "תרגול",
     "calmMode": "מצב רגוע",
     "dashboard": "לוח בקרה",
+    "achievements": "הישגים",
     "menu": "תפריט",
     "openMenu": "פתח תפריט",
     "closeMenu": "סגור תפריט"
@@ -240,6 +241,59 @@
       "escape": "Esc להשהייה",
       "space": "רווח להמשך",
       "enter": "Enter להתחלה"
+    }
+  },
+  "gamification": {
+    "rank": {
+      "title": "דרגה",
+      "progress": "התקדמות לדרגה הבאה",
+      "beginner": "מתחיל",
+      "intermediate": "מתקדם",
+      "proficient": "מיומן",
+      "master": "מאסטר",
+      "xpToNext": "{xp} XP לדרגה הבאה"
+    },
+    "achievements": {
+      "title": "הישגים",
+      "subtitle": "עקבו אחר אבני הדרך שלכם בהקלדה וצברו פרסים",
+      "unlocked": "נפתח!",
+      "locked": "נעול",
+      "progress": "{percent}% הושלם",
+      "totalXp": "סה\"כ XP",
+      "noAchievements": "אין הישגים בקטגוריה זו",
+      "categories": {
+        "all": "הכל",
+        "milestone": "אבני דרך",
+        "speed": "מהירות",
+        "accuracy": "דיוק",
+        "streak": "רצף",
+        "dedication": "מסירות",
+        "mastery": "שליטה",
+        "secret": "סודות"
+      },
+      "popup": {
+        "unlocked": "הישג נפתח!",
+        "xpBonus": "+{xp} XP בונוס",
+        "close": "סגור",
+        "pressEscape": "לחצו Esc לסגירה"
+      }
+    },
+    "streak": {
+      "atRisk": "בסכנה!",
+      "recovered": "הרצף נשמר!",
+      "practiceToday": "תרגלו היום כדי לשמור על הרצף"
+    },
+    "xp": {
+      "breakdown": {
+        "title": "XP שנצבר",
+        "base": "XP בסיס",
+        "stars": "בונוס כוכבים",
+        "accuracy": "דיוק מושלם",
+        "speed": "בונוס מהירות",
+        "streak": "בונוס רצף",
+        "total": "סה\"כ",
+        "bonuses": "בונוסים"
+      }
     }
   }
 }

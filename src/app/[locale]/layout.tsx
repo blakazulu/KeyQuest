@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
 import { Header } from '@/components/layout/Header';
 import { Clouds } from '@/components/layout/Clouds';
+import { AchievementToast } from '@/components/gamification/AchievementToast';
 
 type Props = {
   children: React.ReactNode;
@@ -63,6 +64,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Clouds />
       <NextIntlClientProvider messages={messages}>
         <Header />
+        <AchievementToast />
         <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 pt-0">
           {children}
         </main>

@@ -56,8 +56,8 @@ export const LevelCard = memo(function LevelCard({
         shadow-lg shadow-gray-300/20 dark:shadow-black/30
         border border-white/80 dark:border-gray-700
         backdrop-blur-sm
-        bg-gradient-to-br from-white via-purple-50 to-indigo-100
-        dark:from-gray-800 dark:via-gray-800 dark:to-purple-900/30
+        bg-gradient-to-br from-white via-orange-50 to-amber-100
+        dark:from-gray-800 dark:via-gray-800 dark:to-orange-900/30
         transition-all duration-500
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
       `}
@@ -66,7 +66,7 @@ export const LevelCard = memo(function LevelCard({
     >
       <div className="flex items-start gap-4">
         {/* Stage Icon */}
-        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+        <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
           <span className="text-3xl">{stageIcon}</span>
         </div>
 
@@ -97,7 +97,7 @@ export const LevelCard = memo(function LevelCard({
             {/* Progress Bar */}
             <div className="h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-1000 ease-out"
+                className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${stageProgressPercent}%` }}
                 role="progressbar"
                 aria-valuenow={stageProgressPercent}

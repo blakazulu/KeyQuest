@@ -217,7 +217,7 @@ export const ExerciseCompleteModal = memo(function ExerciseCompleteModal({
 
           {/* XP Badge */}
           <div
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full text-sm font-bold shadow-lg shadow-purple-500/30 animate-[bounceIn_0.4s_ease-out_0.3s_both]"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-500/30 animate-[bounceIn_0.4s_ease-out_0.3s_both]"
             aria-label={`Earned ${xpEarned} XP`}
           >
             <span className="text-base">⭐</span>
@@ -246,7 +246,7 @@ export const ExerciseCompleteModal = memo(function ExerciseCompleteModal({
                 e.preventDefault(); // Prevent Space from triggering button
               }
             }}
-            className="flex-[2] py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-[2] py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
           >
             {labels.continue} →
           </button>

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Phase 9: Gamification System** - Points, achievements, ranks, and enhanced streaks
+  - **Rank System** - 4 ranks with XP thresholds (Beginner 0-499, Intermediate 500-1999, Proficient 2000-4999, Master 5000+)
+  - **15 Achievements** across 6 categories (milestone, speed, accuracy, streak, dedication, mastery)
+  - **Enhanced XP Calculation** with speed bonus (+10% per 10 WPM above 30, max +50%) and streak bonus (+5% per day, max +25%)
+  - **Graceful Streak Recovery** - Miss 1 day: -1 streak, Miss 2 days: -50%, Miss 3+: reset
+  - **Achievement Popup** - Toast notification on unlock with auto-dismiss and keyboard dismiss (Escape)
+  - **Achievements Page** at `/achievements` with category filters and progress tracking
+  - **Rank Display** and **Rank Badge** components for showing current rank
+  - **XP Breakdown** component showing detailed XP earned (base, star, accuracy, speed, streak bonuses)
+  - **Achievement Card** component with rarity-based styling (common, rare, epic, legendary)
+  - Navigation link to achievements page in header
+  - Full bilingual support (English/Hebrew) for all gamification UI
+  - Store migration v2 -> v3 with backward compatibility
+  - Tracks perfect lessons and 3-star lessons for achievement conditions
+
 ### Fixed
 - **Calm Mode text stability** - Text no longer regenerates when weak letters change during typing
 - **Calm Mode keyboard sync** - Keyboard now correctly highlights the current letter to type

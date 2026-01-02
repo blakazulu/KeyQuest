@@ -150,7 +150,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
           <div className="flex-1 max-w-xs">
             <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-500"
                 style={{ width: `${((currentExerciseIndex + (phase === 'result' ? 1 : 0)) / lesson.exercises.length) * 100}%` }}
               />
             </div>
