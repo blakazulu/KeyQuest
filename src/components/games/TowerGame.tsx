@@ -278,12 +278,21 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     getNextWord(0);
   }, [getNextWord]);
 
-  // Scroll container to keep top of tower visible
+  // Scroll container to keep top of tower visible, or show ground when short
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Scroll to top to show the newest blocks (flex-col-reverse puts them at top)
-    containerRef.current.scrollTop = 0;
+    const container = containerRef.current;
+    const containerHeight = container.clientHeight;
+    const scrollHeight = container.scrollHeight;
+
+    // If content fits in container, scroll to bottom to show ground
+    // If content overflows, scroll to top to show newest blocks
+    if (scrollHeight <= containerHeight) {
+      container.scrollTop = scrollHeight; // Show ground
+    } else {
+      container.scrollTop = 0; // Show top of tower
+    }
   }, [blocks.length]);
 
   const nextChar = currentWord[typedChars.length]?.toLowerCase();
@@ -383,7 +392,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
 
               <div
                 ref={towerRef}
-                className={`flex flex-col-reverse items-center mx-auto py-4 ${
+                className={`flex flex-col-reverse items-center mx-auto pt-4 ${
                   shakeTower ? 'animate-shake' : ''
                 }`}
               >
