@@ -36,7 +36,6 @@
 | **Use CSS tokens**        | Always use `var(--color-*)`, `var(--space-*)`, `var(--radius-*)` etc. instead of hardcoded values |
 | **Use component classes** | Prefer `.btn-primary`, `.card`, `.progress-bar` etc. over inline Tailwind for common patterns     |
 | **Follow color system**   | Use semantic colors (`--color-primary`, `--color-success`, `--color-error`) not raw colors        |
-| **Respect dark mode**     | All components must work in both light and dark modes                                             |
 | **Animation classes**     | Use `.animate-shake`, `.animate-pop`, `.animate-pulse-glow` for consistent motion                 |
 | **Keyboard styling**      | Use `.keyboard-key`, `.finger-*` classes for visual keyboard                                      |
 | **Gamification UI**       | Use `.streak-badge`, `.achievement-badge`, `.xp-ring`, `.rank-*` for game elements                |
@@ -752,17 +751,16 @@ typing-learning/
 | 13.1  | Add sound effects             | [ ]    | Key press sounds, success/error sounds (toggleable)  |
 | 13.2  | Improve animations            | [ ]    | Polish transitions, respect `prefers-reduced-motion` |
 | 13.3  | Add keyboard shortcuts        | [ ]    | Navigation shortcuts for power users                 |
-| 13.4  | Implement dark mode           | [ ]    | Toggle between light/dark themes                     |
-| 13.5  | WCAG 2.2 audit                | [ ]    | Run axe-core, fix all Level AA violations            |
-| 13.6  | Screen reader testing         | [ ]    | Test with NVDA/VoiceOver, add ARIA live regions      |
-| 13.7  | Skip links & focus management | [ ]    | Skip to content, focus trapping in modals            |
-| 13.8  | Color contrast audit          | [ ]    | Verify 4.5:1 ratio for all text                      |
-| 13.9  | Minimum width enforcement     | [ ]    | 1028px min-width, show "keyboard required" message   |
-| 13.10 | Performance audit             | [ ]    | Core Web Vitals, <16ms keystroke response            |
-| 13.11 | SEO audit                     | [ ]    | Meta tags, structured data, sitemap, robots.txt      |
-| 13.12 | AEO optimization              | [ ]    | FAQ schema, speakable content, question headings     |
-| 13.13 | GEO optimization              | [ ]    | Clear structure, authoritative content               |
-| 13.14 | Error boundaries              | [ ]    | Graceful error handling throughout                   |
+| 13.4  | WCAG 2.2 audit                | [ ]    | Run axe-core, fix all Level AA violations            |
+| 13.5  | Screen reader testing         | [ ]    | Test with NVDA/VoiceOver, add ARIA live regions      |
+| 13.6  | Skip links & focus management | [ ]    | Skip to content, focus trapping in modals            |
+| 13.7  | Color contrast audit          | [ ]    | Verify 4.5:1 ratio for all text                      |
+| 13.8  | Minimum width enforcement     | [ ]    | 1028px min-width, show "keyboard required" message   |
+| 13.9  | Performance audit             | [ ]    | Core Web Vitals, <16ms keystroke response            |
+| 13.10 | SEO audit                     | [ ]    | Meta tags, structured data, sitemap, robots.txt      |
+| 13.11 | AEO optimization              | [ ]    | FAQ schema, speakable content, question headings     |
+| 13.12 | GEO optimization              | [ ]    | Clear structure, authoritative content               |
+| 13.13 | Error boundaries              | [ ]    | Graceful error handling throughout                   |
 
 **Tools to use**:
 
