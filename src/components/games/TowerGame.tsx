@@ -81,6 +81,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const blockIdRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const towerRef = useRef<HTMLDivElement>(null);
+  const groundRef = useRef<HTMLDivElement>(null);
   const flashCorrectRef = useRef<(key: string) => void>(() => {});
   const flashWrongRef = useRef<(key: string) => void>(() => {});
 
@@ -278,20 +279,22 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     getNextWord(0);
   }, [getNextWord]);
 
-  // Scroll container to keep top of tower visible, or show ground when short
+  // Scroll to keep top of tower visible, or show ground when short
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !towerRef.current) return;
 
     const container = containerRef.current;
+    const blockHeight = 30; // Approximate height per block
+    const groundHeight = 32;
+    const towerHeight = blocks.length * blockHeight + groundHeight;
     const containerHeight = container.clientHeight;
-    const scrollHeight = container.scrollHeight;
 
-    // If content fits in container, scroll to bottom to show ground
-    // If content overflows, scroll to top to show newest blocks
-    if (scrollHeight <= containerHeight) {
-      container.scrollTop = scrollHeight; // Show ground
+    if (towerHeight > containerHeight) {
+      // Tower overflows - scroll to show top (newest blocks)
+      container.scrollTop = 0;
     } else {
-      container.scrollTop = 0; // Show top of tower
+      // Tower fits - scroll to show ground at bottom
+      groundRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }, [blocks.length]);
 
@@ -388,7 +391,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
             {/* Tower container - flex-col-reverse so blocks stack from bottom */}
             <div className="min-h-full flex flex-col-reverse">
               {/* Ground - scrolls with tower */}
-              <div className="w-full h-8 bg-gradient-to-t from-amber-800 to-amber-600 flex-shrink-0" />
+              <div ref={groundRef} className="w-full h-8 bg-gradient-to-t from-amber-800 to-amber-600 flex-shrink-0" />
 
               <div
                 ref={towerRef}
