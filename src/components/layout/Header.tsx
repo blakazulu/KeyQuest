@@ -29,6 +29,7 @@ export function Header() {
     { href: '/dashboard' as const, label: t('dashboard'), icon: '📊' },
     { href: '/achievements' as const, label: t('achievements'), icon: '🏆' },
     { href: '/profile' as const, label: t('profile'), icon: '👤' },
+    { href: '/settings' as const, label: t('settings'), icon: '⚙️' },
   ];
 
   // Track scroll position

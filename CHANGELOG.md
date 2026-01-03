@@ -7,11 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Phase 14: Settings & Preferences Page** - Comprehensive settings at `/settings`
+  - **Display** - Font size selector (Small/Medium/Large)
+  - **Sound Settings** - Sound effects toggle and volume slider (0-100%)
+  - **Practice Preferences** - Toggle visual keyboard and finger guide for lessons
+  - **Calm Mode Defaults** - Default settings for keyboard, weak letter focus, and stats overlay in Calm Mode
+  - **Data Management** - Export progress as JSON backup file, link to Profile for reset
+  - New reusable components: `SettingsSection`, `SettingRow`, `FontSizeSelector`, `VolumeSlider`
+  - `SettingsProvider` component applies font size settings globally
+  - Settings link added to header navigation
+  - Full bilingual support (English/Hebrew) with RTL layout
+  - Full WCAG accessibility with proper ARIA labels and keyboard navigation
+
 ### Fixed
 - **Achievements now unlock from onboarding assessment** - WPM-based achievements (Speed Demon, Lightning Fingers, Turbo Typer) now properly trigger from initial typing assessment results
 - **Hebrew translation for "Stage" in profile page** - Assessment recommended stage now shows "שלב" in Hebrew instead of hardcoded "Stage"
 
-### Added
+### Added (Phase 11)
 - **Phase 11: Adaptive Learning System** - Personalized practice based on performance
   - **Letter History Tracking** - Records accuracy history per letter (last 20 sessions) for trend analysis
   - **Letter Analytics Engine** - Detects improving, declining, and stable letter trends

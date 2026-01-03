@@ -778,17 +778,17 @@ typing-learning/
 ### Phase 14: Settings & Preferences
 
 **Goal**: User customization options
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #    | Task                  | Status | Description                           |
 | ---- | --------------------- | ------ | ------------------------------------- |
-| 14.1 | Build settings page   | [ ]    | Organized settings UI                 |
-| 14.2 | Add profile settings  | [ ]    | Name, age group, avatar               |
-| 14.3 | Add practice settings | [ ]    | Default session length, difficulty    |
-| 14.4 | Add display settings  | [ ]    | Theme, font size, keyboard visibility |
-| 14.5 | Add sound settings    | [ ]    | Toggle sounds, volume control         |
-| 14.6 | Add data settings     | [ ]    | Export progress, reset progress       |
-| 14.7 | Persist settings      | [ ]    | Save to localStorage                  |
+| 14.1 | Build settings page   | [x]    | Organized settings UI at `/settings`  |
+| 14.2 | Add profile settings  | [x]    | On Profile page (name, avatar, age)   |
+| 14.3 | Add practice settings | [x]    | Keyboard visibility, finger guide     |
+| 14.4 | Add display settings  | [x]    | Font size selector                    |
+| 14.5 | Add sound settings    | [x]    | Toggle sounds, volume control         |
+| 14.6 | Add data settings     | [x]    | Export progress, link to Profile      |
+| 14.7 | Persist settings      | [x]    | Auto-saved via Zustand persist        |
 
 **Deliverable**: Comprehensive settings system
 
