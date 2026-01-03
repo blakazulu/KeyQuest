@@ -134,7 +134,7 @@ The website MUST comply with WCAG 2.2 Level AA guidelines:
 | Canonical URLs  | Prevent duplicate content              |
 | Open Graph      | Social sharing meta tags               |
 | Performance     | Core Web Vitals (LCP, FID, CLS)        |
-| Mobile-first    | Responsive design, mobile-friendly     |
+| Min width       | 1028px (keyboard required)             |
 
 ### AEO (Answer Engine Optimization)
 
@@ -342,7 +342,7 @@ typing-learning/
 - **Never mix playful + serious fonts in the same sentence**
 - Display fonts are for standalone elements (titles, badges, scores)
 - Body fonts are for readable content (paragraphs, buttons, labels)
-- Works well across desktop, tablet, and mobile
+- Works well on desktop and large tablets (min-width: 1028px)
 
 **UI Element Mapping**:
 
@@ -757,7 +757,7 @@ typing-learning/
 | 13.6  | Screen reader testing         | [ ]    | Test with NVDA/VoiceOver, add ARIA live regions      |
 | 13.7  | Skip links & focus management | [ ]    | Skip to content, focus trapping in modals            |
 | 13.8  | Color contrast audit          | [ ]    | Verify 4.5:1 ratio for all text                      |
-| 13.9  | Mobile optimization           | [ ]    | Ensure all pages work on tablet                      |
+| 13.9  | Minimum width enforcement     | [ ]    | 1028px min-width, show "keyboard required" message   |
 | 13.10 | Performance audit             | [ ]    | Core Web Vitals, <16ms keystroke response            |
 | 13.11 | SEO audit                     | [ ]    | Meta tags, structured data, sitemap, robots.txt      |
 | 13.12 | AEO optimization              | [ ]    | FAQ schema, speakable content, question headings     |
@@ -813,7 +813,6 @@ These are documented for future reference but not part of initial implementation
 - **Phase 18**: Additional UI languages (Arabic, Russian, etc.)
 - **Phase 19**: Multiplayer challenges
 - **Phase 20**: Parent/teacher dashboard
-- **Phase 21**: Mobile app (React Native)
 
 **Note on i18n**:
 
