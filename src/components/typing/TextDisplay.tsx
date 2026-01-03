@@ -1,7 +1,8 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { CharacterState } from '@/hooks/useTypingEngine';
+import { isHebrewChar } from '@/data/keyboard-layout';
 
 interface TextDisplayProps {
   /** Array of character states from useTypingEngine */
@@ -58,10 +59,18 @@ export const TextDisplay = memo(function TextDisplay({
     words.push(currentWord);
   }
 
+  // Detect if text is primarily Hebrew for RTL support
+  const isRTL = useMemo(() => {
+    const letterChars = characters.filter((c) => /\S/.test(c.char));
+    if (letterChars.length === 0) return false;
+    const hebrewCount = letterChars.filter((c) => isHebrewChar(c.char)).length;
+    return hebrewCount > letterChars.length / 2;
+  }, [characters]);
+
   return (
     <div
       className={`typing-text select-none ${className}`}
-      dir="ltr"
+      dir={isRTL ? 'rtl' : 'ltr'}
       role="textbox"
       aria-label="Type the text shown"
       aria-readonly="true"
@@ -114,11 +123,12 @@ const Character = memo(function Character({ charState, showCursor }: CharacterPr
 
 /**
  * Blinking cursor indicator shown at the current typing position.
+ * Uses logical properties (start-0) for RTL support.
  */
 function Cursor() {
   return (
     <span
-      className="cursor-blink absolute -bottom-0.5 left-0 h-0.5 w-full bg-white"
+      className="cursor-blink absolute -bottom-0.5 start-0 h-0.5 w-full bg-white"
       aria-hidden="true"
     />
   );

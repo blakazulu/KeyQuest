@@ -10,6 +10,7 @@ import { SettingsSection } from '@/components/settings/SettingsSection';
 import { SettingRow } from '@/components/settings/SettingRow';
 import { FontSizeSelector } from '@/components/settings/FontSizeSelector';
 import { VolumeSlider } from '@/components/settings/VolumeSlider';
+import { LayoutSelector } from '@/components/settings/LayoutSelector';
 
 // Translations
 const translations = {
@@ -41,6 +42,15 @@ const translations = {
       keyboardDesc: 'Display an on-screen keyboard during lessons',
       fingerGuide: 'Show Finger Guide',
       fingerGuideDesc: 'Highlight which finger to use for each key',
+    },
+
+    // Keyboard Layout
+    layout: {
+      title: 'Keyboard Layout',
+      setting: 'Typing Layout',
+      settingDesc: 'Choose the keyboard layout for typing practice',
+      qwerty: 'QWERTY (English)',
+      hebrew: 'Hebrew (עברית)',
     },
 
     // Calm Mode Defaults
@@ -96,6 +106,15 @@ const translations = {
       fingerGuideDesc: 'הדגש באיזו אצבע להשתמש לכל מקש',
     },
 
+    // Keyboard Layout
+    layout: {
+      title: 'פריסת מקלדת',
+      setting: 'פריסה להקלדה',
+      settingDesc: 'בחר את פריסת המקלדת לתרגול הקלדה',
+      qwerty: 'QWERTY (אנגלית)',
+      hebrew: 'עברית',
+    },
+
     // Calm Mode Defaults
     calmMode: {
       title: 'ברירות מחדל למצב רגוע',
@@ -140,6 +159,12 @@ const PracticeIcon = () => (
   </svg>
 );
 
+const LayoutIcon = () => (
+  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>
+);
+
 const CalmIcon = () => (
   <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -171,6 +196,8 @@ export default function SettingsPage() {
   const toggleKeyboard = useSettingsStore((s) => s.toggleKeyboard);
   const showFingerGuide = useSettingsStore((s) => s.showFingerGuide);
   const toggleFingerGuide = useSettingsStore((s) => s.toggleFingerGuide);
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
+  const setKeyboardLayout = useSettingsStore((s) => s.setKeyboardLayout);
   const calmModeSettings = useSettingsStore((s) => s.calmModeSettings);
   const updateCalmModeSettings = useSettingsStore((s) => s.updateCalmModeSettings);
 
@@ -301,6 +328,17 @@ export default function SettingsPage() {
             onChange={toggleFingerGuide}
             label={t.practice.fingerGuide}
             hideLabel
+          />
+        </SettingRow>
+      </SettingsSection>
+
+      {/* Keyboard Layout */}
+      <SettingsSection title={t.layout.title} icon={<LayoutIcon />}>
+        <SettingRow label={t.layout.setting} description={t.layout.settingDesc} block>
+          <LayoutSelector
+            value={keyboardLayout}
+            onChange={setKeyboardLayout}
+            labels={{ qwerty: t.layout.qwerty, hebrew: t.layout.hebrew }}
           />
         </SettingRow>
       </SettingsSection>

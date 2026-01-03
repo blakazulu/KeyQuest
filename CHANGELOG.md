@@ -8,6 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 16: Hebrew Keyboard Layout** - Full Hebrew typing practice support
+  - **Hebrew SI-1452 Keyboard Layout** - Complete Hebrew keyboard with finger mappings
+    - Home row: ש ד ג כ (left) | ח ל ך ף (right)
+    - All 27 Hebrew letters with proper finger assignments
+  - **Keyboard Layout Toggle** - Switch between QWERTY and Hebrew in Settings
+    - New "Keyboard Layout" section in Practice Preferences
+    - Persisted to localStorage with settings store v5 migration
+  - **Per-Layout Assessments** - Each layout has its own typing assessment
+    - Switching layouts prompts new assessment for that layout
+    - Stage unlocking based on layout-specific assessment results
+    - Progress store v7 migration for layout achievements
+  - **Per-Layout Achievements** - Achievements tracked separately per keyboard layout
+    - QWERTY achievements don't affect Hebrew achievements and vice versa
+    - Existing achievements migrated to QWERTY layout
+  - **Onboarding Layout Selection** - Choose keyboard layout during onboarding
+    - Layout selector after avatar selection in profile step
+    - Typing test uses selected layout
+  - **Hebrew Curriculum** - 6 stages with 29 lessons
+    - Stage 1: Home Row (5 lessons) - ש ד ג כ ע י ח ל
+    - Stage 2: Top Row (5 lessons) - ק ר א ט ו ן ם פ
+    - Stage 3: Bottom Row (5 lessons) - ז ס ב ה נ מ צ ת ץ
+    - Stage 4: Words (5 lessons) - Common Hebrew vocabulary
+    - Stage 5: Sentences (5 lessons) - Complete sentences
+    - Stage 6: Mastery (4 lessons) - Speed and accuracy challenges
+  - **Hebrew Word Pools** - Words for games and Calm Mode
+    - Short, medium, and long word categories
+    - Hebrew phrases and sentences
+  - **RTL Text Support** - Fixed right-to-left display in all typing components
+    - Dynamic text direction based on content detection
+    - Logical CSS properties for cursor positioning
+  - **Game Hebrew Support** - All game modes work with Hebrew
+    - Race Game: Hebrew race texts
+    - Target Game: Hebrew letter targets
+    - Tower Game: Hebrew word blocks
+    - Daily Challenge: Hebrew challenge sentences
+    - Calm Mode: Hebrew text generation
+  - **Hebrew Letter Tracking** - Accuracy tracking for Hebrew characters
+    - Extended regex to match Unicode range U+05D0-U+05EA
+  - **Settings in FloatingMenu** - Added Settings link to the floating navigation menu
+
 - **Phase 13: Polish, Accessibility & Compliance** - Production-ready accessibility features (COMPLETED)
   - **Skip Link** - "Skip to main content" link for keyboard users (WCAG 2.4.1)
   - **Minimum Width Guard** - Friendly overlay for screens < 1028px requiring keyboard

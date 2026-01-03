@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
@@ -13,10 +14,15 @@ import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { TowerBackground } from './GameBackgrounds';
 
-// Word lists by difficulty
-const SHORT_WORDS = ['cat', 'dog', 'sun', 'run', 'big', 'top', 'hat', 'red', 'box', 'cup'];
-const MEDIUM_WORDS = ['house', 'water', 'green', 'happy', 'tower', 'block', 'build', 'stack', 'climb'];
-const LONG_WORDS = ['building', 'elephant', 'mountain', 'keyboard', 'champion', 'practice', 'strength'];
+// Word lists by difficulty - English
+const SHORT_WORDS_EN = ['cat', 'dog', 'sun', 'run', 'big', 'top', 'hat', 'red', 'box', 'cup'];
+const MEDIUM_WORDS_EN = ['house', 'water', 'green', 'happy', 'tower', 'block', 'build', 'stack', 'climb'];
+const LONG_WORDS_EN = ['building', 'elephant', 'mountain', 'keyboard', 'champion', 'practice', 'strength'];
+
+// Word lists by difficulty - Hebrew
+const SHORT_WORDS_HE = ['אם', 'אב', 'יד', 'גב', 'זה', 'כן', 'לא', 'מה', 'כי', 'דג'];
+const MEDIUM_WORDS_HE = ['בית', 'ספר', 'ילד', 'שמש', 'מים', 'לחם', 'שלום', 'תודה', 'בקר'];
+const LONG_WORDS_HE = ['מחשב', 'מקלדת', 'הקלדה', 'כתיבה', 'לימוד', 'תרגול', 'ניצחון'];
 
 const BLOCK_COLORS = [
   'from-red-400 to-red-600',
@@ -36,7 +42,12 @@ interface Block {
   wobble: number; // random wobble offset
 }
 
-function getRandomWord(height: number): string {
+function getRandomWord(height: number, layout: 'qwerty' | 'hebrew'): string {
+  // Select word pools based on layout
+  const SHORT_WORDS = layout === 'hebrew' ? SHORT_WORDS_HE : SHORT_WORDS_EN;
+  const MEDIUM_WORDS = layout === 'hebrew' ? MEDIUM_WORDS_HE : MEDIUM_WORDS_EN;
+  const LONG_WORDS = layout === 'hebrew' ? LONG_WORDS_HE : LONG_WORDS_EN;
+
   // Increase difficulty as tower grows
   if (height < 5) {
     return SHORT_WORDS[Math.floor(Math.random() * SHORT_WORDS.length)];
@@ -98,6 +109,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const addExerciseXp = useProgressStore((s) => s.addExerciseXp);
   const towerMaxHeightRecord = useGameStore((s) => s.towerMaxHeight);
   const recordTowerResult = useGameStore((s) => s.recordTowerResult);
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
 
   // Keyboard highlight
   const {
@@ -112,6 +124,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     targetText: currentWord,
     currentPosition: typedChars.length,
     trackPressedKeys: gameState === 'building',
+    layout: keyboardLayout,
   });
 
   // Update refs with current flash functions
@@ -120,10 +133,10 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
 
   // Get next word - accepts height parameter to avoid stale closure
   const getNextWord = useCallback((height: number) => {
-    const word = getRandomWord(height);
+    const word = getRandomWord(height, keyboardLayout);
     setCurrentWord(word);
     setTypedChars('');
-  }, []);
+  }, [keyboardLayout]);
 
   // Add a block
   const addBlock = useCallback(() => {
@@ -182,8 +195,8 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
       if (newTyped.length === currentWord.length) {
         addBlock();
       }
-    } else if (/[a-z]/i.test(key)) {
-      // Wrong key
+    } else if (/[a-z\u05D0-\u05EA]/i.test(key)) {
+      // Wrong key (Latin or Hebrew letter)
       flashWrongRef.current(key);
       playError();
 
@@ -524,6 +537,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
           <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
             <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
+                layout={keyboardLayout}
                 highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}

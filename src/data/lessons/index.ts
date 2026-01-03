@@ -1,6 +1,6 @@
 /**
  * Lesson Content Index
- * Exports all stages and provides curriculum utilities
+ * Exports all stages and provides curriculum utilities for both QWERTY and Hebrew layouts.
  */
 
 import { stage1 } from './stage1';
@@ -9,7 +9,9 @@ import { stage3 } from './stage3';
 import { stage4 } from './stage4';
 import { stage5 } from './stage5';
 import { stage6 } from './stage6';
+import { hebrewStages, getHebrewStage, getHebrewLesson, getAllHebrewLessons, getNextHebrewLesson, getFirstHebrewLesson } from './hebrew';
 import type { Stage, Lesson, Exercise } from '@/types/lesson';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 /**
  * All stages in order
@@ -152,5 +154,80 @@ export const curriculumStats = {
   stageNames: stages.map((s) => ({ id: s.id, name: s.name, icon: s.icon })),
 };
 
+// ============================================
+// Layout-aware functions for multi-layout support
+// ============================================
+
+/**
+ * Get stages for a specific keyboard layout
+ */
+export function getStagesForLayout(layout: KeyboardLayoutType = 'qwerty'): Stage[] {
+  return layout === 'hebrew' ? hebrewStages : stages;
+}
+
+/**
+ * Get a stage by ID for a specific layout
+ */
+export function getStageForLayout(stageId: number, layout: KeyboardLayoutType = 'qwerty'): Stage | undefined {
+  return layout === 'hebrew' ? getHebrewStage(stageId) : getStage(stageId);
+}
+
+/**
+ * Get a lesson by ID for a specific layout
+ */
+export function getLessonForLayout(lessonId: string, layout: KeyboardLayoutType = 'qwerty'): Lesson | undefined {
+  return layout === 'hebrew' ? getHebrewLesson(lessonId) : getLesson(lessonId);
+}
+
+/**
+ * Get all lessons for a specific layout
+ */
+export function getAllLessonsForLayout(layout: KeyboardLayoutType = 'qwerty'): Lesson[] {
+  return layout === 'hebrew' ? getAllHebrewLessons() : getAllLessons();
+}
+
+/**
+ * Get the next lesson for a specific layout
+ */
+export function getNextLessonForLayout(currentLessonId: string, layout: KeyboardLayoutType = 'qwerty'): Lesson | undefined {
+  return layout === 'hebrew' ? getNextHebrewLesson(currentLessonId) : getNextLesson(currentLessonId);
+}
+
+/**
+ * Get the first lesson of a stage for a specific layout
+ */
+export function getFirstLessonForLayout(stageId: number, layout: KeyboardLayoutType = 'qwerty'): Lesson | undefined {
+  return layout === 'hebrew' ? getFirstHebrewLesson(stageId) : getFirstLesson(stageId);
+}
+
+/**
+ * Get total lesson count for a specific layout
+ */
+export function getTotalLessonCountForLayout(layout: KeyboardLayoutType = 'qwerty'): number {
+  const layoutStages = getStagesForLayout(layout);
+  return layoutStages.reduce((sum, stage) => sum + stage.lessons.length, 0);
+}
+
+/**
+ * Get total XP for a specific layout
+ */
+export function getTotalXpForLayout(layout: KeyboardLayoutType = 'qwerty'): number {
+  const layoutStages = getStagesForLayout(layout);
+  return layoutStages.reduce((sum, stage) => sum + stage.totalXp, 0);
+}
+
+/**
+ * Get curriculum stats for a specific layout
+ */
+export function getCurriculumStatsForLayout(layout: KeyboardLayoutType = 'qwerty') {
+  const layoutStages = getStagesForLayout(layout);
+  return {
+    totalStages: layoutStages.length,
+    totalLessons: getTotalLessonCountForLayout(layout),
+    totalXp: getTotalXpForLayout(layout),
+    stageNames: layoutStages.map((s) => ({ id: s.id, name: s.name, icon: s.icon })),
+  };
+}
+
 // Re-export individual stages for direct import
-export { stage1, stage2, stage3, stage4, stage5, stage6 };
+export { stage1, stage2, stage3, stage4, stage5, stage6, hebrewStages };

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { AgeGroup, AvatarId } from '@/stores/useSettingsStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface ProfileSelectorProps {
   locale: 'en' | 'he';
@@ -29,6 +31,9 @@ const translations = {
     namePlaceholder: "What's your name?",
     nameOptional: '(optional)',
     chooseAvatar: 'Choose your avatar',
+    chooseLayout: 'Keyboard Layout',
+    layoutQwerty: 'QWERTY (English)',
+    layoutHebrew: 'Hebrew (עברית)',
     continue: 'Continue',
   },
   he: {
@@ -51,6 +56,9 @@ const translations = {
     namePlaceholder: 'מה שמך?',
     nameOptional: '(אופציונלי)',
     chooseAvatar: 'בחר את האווטר שלך',
+    chooseLayout: 'פריסת מקלדת',
+    layoutQwerty: 'QWERTY (אנגלית)',
+    layoutHebrew: 'עברית (Hebrew)',
     continue: 'המשך',
   },
 };
@@ -192,8 +200,10 @@ export function ProfileSelector({ locale, onSelect }: ProfileSelectorProps) {
   const [selectedAge, setSelectedAge] = useState<AgeGroup | null>(null);
   const [userName, setUserName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarId>(1);
+  const [selectedLayout, setSelectedLayout] = useState<KeyboardLayoutType>('qwerty');
   const [focusedIndex, setFocusedIndex] = useState(0);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const setKeyboardLayout = useSettingsStore((s) => s.setKeyboardLayout);
 
   // Keyboard navigation for age groups
   useEffect(() => {
@@ -232,6 +242,8 @@ export function ProfileSelector({ locale, onSelect }: ProfileSelectorProps) {
 
   const handleContinue = () => {
     if (selectedAge) {
+      // Set the keyboard layout before continuing to the typing test
+      setKeyboardLayout(selectedLayout);
       onSelect(selectedAge, userName.trim(), selectedAvatar);
     }
   };
@@ -289,6 +301,43 @@ export function ProfileSelector({ locale, onSelect }: ProfileSelectorProps) {
                 onClick={() => setSelectedAvatar(avatar.id)}
               />
             ))}
+          </div>
+        </div>
+
+        {/* Keyboard layout selection */}
+        <div className="mb-6">
+          <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+            {t.chooseLayout}
+          </h4>
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={() => setSelectedLayout('qwerty')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all
+                ${selectedLayout === 'qwerty'
+                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-300'
+                }
+              `}
+              aria-pressed={selectedLayout === 'qwerty'}
+            >
+              <span className="text-lg">🔤</span>
+              <span className="font-medium">{t.layoutQwerty}</span>
+            </button>
+            <button
+              onClick={() => setSelectedLayout('hebrew')}
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all
+                ${selectedLayout === 'hebrew'
+                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-300'
+                }
+              `}
+              aria-pressed={selectedLayout === 'hebrew'}
+            >
+              <span className="text-lg">🔤</span>
+              <span className="font-medium">{t.layoutHebrew}</span>
+            </button>
           </div>
         </div>
 

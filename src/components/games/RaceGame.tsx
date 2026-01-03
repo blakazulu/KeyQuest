@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTypingEngine, type CharacterState } from '@/hooks/useTypingEngine';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
@@ -14,7 +15,7 @@ import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { RaceBackground } from './GameBackgrounds';
 
 // Sample race texts (short sentences for racing)
-const RACE_TEXTS = [
+const RACE_TEXTS_ENGLISH = [
   'The quick brown fox jumps over the lazy dog.',
   'Speed is the essence of victory in every race.',
   'Type fast and accurate to win the championship.',
@@ -27,8 +28,23 @@ const RACE_TEXTS = [
   'Cross the finish line first with perfect accuracy.',
 ];
 
-function getRandomText(): string {
-  return RACE_TEXTS[Math.floor(Math.random() * RACE_TEXTS.length)];
+// Hebrew race texts
+const RACE_TEXTS_HEBREW = [
+  'הקלדה מהירה היא המפתח להצלחה בכל תחרות.',
+  'כל הקשה על המקלדת מקרבת אותך לקו הסיום.',
+  'מהירות ודיוק הם סוד הניצחון במירוץ.',
+  'דהור דרך המילים כמו נהג אלופים.',
+  'הניצחון מחכה למי שמקליד ללא פחד.',
+  'האצבעות המהירות ביותר מקלידות בדיוק.',
+  'שרוף גומי על כביש המקלדת היום.',
+  'עקוף את המתחרים עם הקלדה מושלמת.',
+  'חצה את קו הסיום ראשון עם דיוק מושלם.',
+  'כל מילה מביאה אותך צעד קדימה.',
+];
+
+function getRandomText(layout: 'qwerty' | 'hebrew'): string {
+  const texts = layout === 'hebrew' ? RACE_TEXTS_HEBREW : RACE_TEXTS_ENGLISH;
+  return texts[Math.floor(Math.random() * texts.length)];
 }
 
 function formatTime(ms: number): string {
@@ -74,6 +90,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const addExerciseXp = useProgressStore((s) => s.addExerciseXp);
   const raceBestTime = useGameStore((s) => s.raceBestTime);
   const recordRaceResult = useGameStore((s) => s.recordRaceResult);
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
 
   // Refs for flash functions (defined before hooks that use them)
   const flashCorrectRef = useRef<(key: string) => void>(() => {});
@@ -119,6 +136,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
     targetText: targetText,
     currentPosition: cursorPosition,
     trackPressedKeys: gameState === 'racing',
+    layout: keyboardLayout,
   });
 
   // Update refs with current flash functions
@@ -162,7 +180,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
 
   // Initialize game
   const initGame = useCallback(() => {
-    const text = getRandomText();
+    const text = getRandomText(keyboardLayout);
     setTargetText(text);
     setEngineText(text);
     setGameState('ready');
@@ -171,7 +189,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
     setCurrentTime(0);
     setResults(null);
     resetEngine();
-  }, [setEngineText, resetEngine]);
+  }, [setEngineText, resetEngine, keyboardLayout]);
 
   // Start racing
   const startRace = useCallback(() => {
@@ -408,6 +426,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
           <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
             <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
+                layout={keyboardLayout}
                 highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getKeyData, getFingerForKey, type Finger } from '@/data/keyboard-layout';
+import { getFingerForKey, type Finger, type KeyboardLayoutType } from '@/data/keyboard-layout';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 interface UseKeyboardHighlightOptions {
   /** The target text being typed */
@@ -8,6 +9,8 @@ interface UseKeyboardHighlightOptions {
   currentPosition: number;
   /** Whether to track pressed keys */
   trackPressedKeys?: boolean;
+  /** Keyboard layout to use (defaults to settings store value) */
+  layout?: KeyboardLayoutType;
 }
 
 interface UseKeyboardHighlightReturn {
@@ -35,19 +38,24 @@ export function useKeyboardHighlight({
   targetText,
   currentPosition,
   trackPressedKeys = true,
+  layout: layoutProp,
 }: UseKeyboardHighlightOptions): UseKeyboardHighlightReturn {
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
   const [correctKey, setCorrectKey] = useState<string | undefined>();
   const [wrongKey, setWrongKey] = useState<string | undefined>();
+
+  // Get layout from settings if not provided
+  const settingsLayout = useSettingsStore((s) => s.keyboardLayout);
+  const layout = layoutProp ?? settingsLayout;
 
   // Get the current character to highlight
   const highlightedKey = currentPosition < targetText.length
     ? targetText[currentPosition]
     : undefined;
 
-  // Get the finger for the highlighted key
+  // Get the finger for the highlighted key (using the appropriate layout)
   const activeFinger = highlightedKey
-    ? getFingerForKey(highlightedKey)
+    ? getFingerForKey(highlightedKey, layout)
     : undefined;
 
   // Track key presses

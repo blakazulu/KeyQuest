@@ -1,7 +1,8 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { CharacterState } from '@/hooks/useTypingEngine';
+import { isHebrewChar } from '@/data/keyboard-layout';
 
 interface CalmTextDisplayProps {
   /** Array of character states from useTypingEngine */
@@ -58,10 +59,18 @@ export const CalmTextDisplay = memo(function CalmTextDisplay({
     words.push(currentWord);
   }
 
+  // Detect if text is primarily Hebrew for RTL support
+  const isRTL = useMemo(() => {
+    const letterChars = characters.filter((c) => /\S/.test(c.char));
+    if (letterChars.length === 0) return false;
+    const hebrewCount = letterChars.filter((c) => isHebrewChar(c.char)).length;
+    return hebrewCount > letterChars.length / 2;
+  }, [characters]);
+
   return (
     <div
       className={`calm-typing-text select-none ${className}`}
-      dir="ltr"
+      dir={isRTL ? 'rtl' : 'ltr'}
       role="textbox"
       aria-label="Type the text shown at your own pace"
       aria-readonly="true"
@@ -122,12 +131,13 @@ const CalmCharacter = memo(function CalmCharacter({
 });
 
 /**
- * Gentle blinking cursor with slower animation
+ * Gentle blinking cursor with slower animation.
+ * Uses logical properties (start-0) for RTL support.
  */
 function CalmCursor() {
   return (
     <span
-      className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-indigo-300/80 dark:bg-indigo-400/80 animate-pulse"
+      className="absolute -bottom-0.5 start-0 h-0.5 w-full bg-indigo-300/80 dark:bg-indigo-400/80 animate-pulse"
       aria-hidden="true"
     />
   );

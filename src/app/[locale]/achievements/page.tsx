@@ -157,8 +157,9 @@ export default function AchievementsPage() {
   const [activeCategory, setActiveCategory] = useState<AchievementCategory | 'all'>('all');
   const [showResetModal, setShowResetModal] = useState(false);
 
-  // Progress store
-  const userAchievements = useProgressStore((s) => s.achievements);
+  // Progress store - use layout-specific achievements
+  const getAchievementsForLayout = useProgressStore((s) => s.getAchievementsForLayout);
+  const userAchievements = useMemo(() => getAchievementsForLayout(), [getAchievementsForLayout]);
   const totalXp = useProgressStore((s) => s.totalXp);
   const checkAndUnlockAchievements = useProgressStore((s) => s.checkAndUnlockAchievements);
   const resetProgress = useProgressStore((s) => s.reset);

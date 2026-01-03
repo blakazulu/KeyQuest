@@ -206,9 +206,10 @@ export function useTypingEngine({
       ? key === expected
       : key.toLowerCase() === expected.toLowerCase();
 
-    // Track per-letter accuracy (only for alphabetic characters)
+    // Track per-letter accuracy (for Latin a-z and Hebrew א-ת characters)
     const letterKey = expected.toLowerCase();
-    if (/^[a-z]$/.test(letterKey)) {
+    // Match Latin letters (a-z) and Hebrew letters (U+05D0-U+05EA: Aleph to Tav)
+    if (/^[a-z\u05D0-\u05EA]$/.test(letterKey)) {
       const current = letterAccuracyRef.current[letterKey] || { correct: 0, total: 0 };
       letterAccuracyRef.current[letterKey] = {
         correct: current.correct + (isCorrect ? 1 : 0),

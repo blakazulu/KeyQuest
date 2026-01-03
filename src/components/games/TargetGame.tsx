@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
@@ -18,7 +19,12 @@ const TARGET_LIFETIME = 3000; // 3 seconds before target disappears
 const TARGET_SPAWN_INTERVAL = 800; // New target every 800ms
 const MAX_TARGETS = 8; // Maximum targets on screen
 
-const LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const LETTERS_ENGLISH = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const LETTERS_HEBREW = 'אבגדהוזחטיכלמנסעפצקרשת'.split('');
+
+function getLettersForLayout(layout: 'qwerty' | 'hebrew'): string[] {
+  return layout === 'hebrew' ? LETTERS_HEBREW : LETTERS_ENGLISH;
+}
 
 interface Target {
   id: number;
@@ -29,8 +35,9 @@ interface Target {
   createdAt: number;
 }
 
-function getRandomLetter(): string {
-  return LETTERS[Math.floor(Math.random() * LETTERS.length)];
+function getRandomLetter(layout: 'qwerty' | 'hebrew'): string {
+  const letters = getLettersForLayout(layout);
+  return letters[Math.floor(Math.random() * letters.length)];
 }
 
 function getRandomPosition(): { x: number; y: number } {
@@ -99,6 +106,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   const targetHighScore = useGameStore((s) => s.targetHighScore);
   const targetMaxComboRecord = useGameStore((s) => s.targetMaxCombo);
   const recordTargetResult = useGameStore((s) => s.recordTargetResult);
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
 
   // Keyboard highlight for hands display
   const {
@@ -107,6 +115,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
     targetText: lastHitLetter || '',
     currentPosition: 0,
     trackPressedKeys: gameState === 'playing',
+    layout: keyboardLayout,
   });
 
   // Spawn a new target
@@ -118,7 +127,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
       const pos = getRandomPosition();
       const newTarget: Target = {
         id: ++targetIdRef.current,
-        letter: getRandomLetter(),
+        letter: getRandomLetter(keyboardLayout),
         x: pos.x,
         y: pos.y,
         size: getRandomSize(),
@@ -127,7 +136,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
 
       return [...prev, newTarget];
     });
-  }, []);
+  }, [keyboardLayout]);
 
   // Remove expired targets
   const removeExpiredTargets = useCallback(() => {
@@ -145,7 +154,8 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   // Handle key press
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
     if (gameState !== 'playing') return;
-    if (e.key.length !== 1 || !/[a-z]/i.test(e.key)) return;
+    // Match Latin letters (a-z) or Hebrew letters (U+05D0-U+05EA)
+    if (e.key.length !== 1 || !/[a-z\u05D0-\u05EA]/i.test(e.key)) return;
 
     const key = e.key.toLowerCase();
     const targetIndex = targets.findIndex(t => t.letter === key);
@@ -486,6 +496,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
           <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
             <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
+                layout={keyboardLayout}
                 highlightedKey={lastHitLetter || undefined}
                 pressedKeys={new Set()}
                 showFingerColors={true}

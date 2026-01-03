@@ -8,6 +8,7 @@ import {
   shouldGenerateMore,
   type TextGeneratorConfig,
 } from '@/lib/calmTextGenerator';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 /**
  * Options for the calm text generator hook
@@ -23,6 +24,8 @@ export interface UseCalmTextGeneratorOptions {
   appendThreshold?: number;
   /** Callback when text is appended */
   onTextAppended?: (newText: string) => void;
+  /** Keyboard layout for word generation (default: 'qwerty') */
+  layout?: KeyboardLayoutType;
 }
 
 /**
@@ -73,6 +76,7 @@ export function useCalmTextGenerator(
     focusWeakLetters = true,
     appendThreshold = 0.8,
     onTextAppended,
+    layout = 'qwerty',
   } = options;
 
   // Get weak letters from progress store
@@ -95,8 +99,9 @@ export function useCalmTextGenerator(
       chunkSize,
       weakLetters: focusWeakLetters ? weakLetters : {},
       focusWeakLetters,
+      layout,
     }),
-    [focusWeakLetters, weakLetters]
+    [focusWeakLetters, weakLetters, layout]
   );
 
   // Generate initial text ONLY on mount (not when weakLetters changes)
@@ -108,6 +113,7 @@ export function useCalmTextGenerator(
       chunkSize: initialChunkSize,
       weakLetters: focusWeakLetters ? weakLetters : {},
       focusWeakLetters,
+      layout,
     });
     setText(initialText);
     setIsReady(true);

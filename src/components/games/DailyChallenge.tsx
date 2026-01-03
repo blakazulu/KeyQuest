@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTypingEngine, type CharacterState } from '@/hooks/useTypingEngine';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { getDailyChallenge, type DailyChallenge as DailyChallengeData } from '@/lib/dailyGenerator';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
@@ -24,8 +25,11 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   const locale = propLocale || hookLocale;
   const router = useRouter();
 
+  // Get keyboard layout first (needed for challenge generation)
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
+
   // Daily challenge data
-  const challenge = useMemo(() => getDailyChallenge(), []);
+  const challenge = useMemo(() => getDailyChallenge(new Date(), keyboardLayout), [keyboardLayout]);
 
   // Game states
   const [gameState, setGameState] = useState<'ready' | 'typing' | 'finished'>('ready');
@@ -99,6 +103,7 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
     targetText: challenge.text,
     currentPosition: cursorPosition,
     trackPressedKeys: gameState === 'typing',
+    layout: keyboardLayout,
   });
 
   // Update refs with current flash functions
@@ -402,6 +407,7 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
           <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
             <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
+                layout={keyboardLayout}
                 highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}

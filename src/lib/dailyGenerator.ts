@@ -3,6 +3,8 @@
  * Ensures the same challenge for all users on the same day.
  */
 
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
+
 // Simple seeded random number generator (Mulberry32)
 function seededRandom(seed: number): () => number {
   let state = seed;
@@ -33,8 +35,8 @@ function dateToSeed(date: Date): number {
   return year * 10000 + month * 100 + day;
 }
 
-// Challenge sentences pool (varied topics and lengths)
-const CHALLENGE_SENTENCES = [
+// Challenge sentences pool - English (varied topics and lengths)
+const CHALLENGE_SENTENCES_EN = [
   'The quick brown fox jumps over the lazy dog near the river bank.',
   'Programming requires patience and practice to master effectively.',
   'Keyboard skills are essential in our digital age.',
@@ -67,6 +69,30 @@ const CHALLENGE_SENTENCES = [
   'Embrace the challenge and grow stronger today.',
 ];
 
+// Challenge sentences pool - Hebrew
+const CHALLENGE_SENTENCES_HE = [
+  'הקלדה מהירה היא מיומנות חשובה בעולם הדיגיטלי של היום.',
+  'כל מומחה התחיל פעם כמתחיל שלא ויתר אף פעם.',
+  'תרגול יומי הוא המפתח להצלחה בהקלדה עיוורת.',
+  'המקלדת היא כלי, ואפשר לשלוט בה עם מספיק תרגול.',
+  'כל הקשה על המקלדת מקרבת אותך לשליטה מושלמת.',
+  'התמקד קודם בדיוק, והמהירות תבוא באופן טבעי.',
+  'האצבעות שלך יזכרו את המקשים עם מספיק תרגול.',
+  'אתגר את עצמך כל יום להפוך למקליד טוב יותר.',
+  'הצלחה מגיעה מתרגול עקבי ומסירות יומיומית.',
+  'למד להקליד מהר ופתח דלתות רבות בקריירה שלך.',
+  'מהירות ודיוק הם סימני ההיכר של מקליד מיומן.',
+  'תרגול עושה התקדמות, לא רק שלמות.',
+  'האתגר היומי שלך מחכה, האם אתה מוכן?',
+  'כל יום מביא הזדמנויות חדשות להשתפר.',
+  'ככל שתקליד יותר, כך תהיה מהיר יותר.',
+  'שמור על הרוגע ותן לאצבעותיך לרקוד על המקשים.',
+  'האמן בעצמך וההקלדה שלך תשתפר.',
+  'המקלידים הטובים ביותר התחילו בדיוק היכן שאתה עכשיו.',
+  'התמדה ותרגול מביאים לביצוע מושלם.',
+  'שמור את העיניים על המסך, לא על המקלדת.',
+];
+
 // Fun daily themes
 const DAILY_THEMES = [
   { emoji: '🌅', name: 'Morning Motivation' },
@@ -90,9 +116,12 @@ export interface DailyChallenge {
  * Generate the daily challenge for a given date.
  * Returns the same challenge for all users on the same day.
  */
-export function getDailyChallenge(date: Date = new Date()): DailyChallenge {
+export function getDailyChallenge(date: Date = new Date(), layout: KeyboardLayoutType = 'qwerty'): DailyChallenge {
   const seed = dateToSeed(date);
   const random = seededRandom(seed);
+
+  // Select appropriate sentences based on layout
+  const CHALLENGE_SENTENCES = layout === 'hebrew' ? CHALLENGE_SENTENCES_HE : CHALLENGE_SENTENCES_EN;
 
   // Select 2-3 sentences for the challenge
   const sentenceCount = 2 + Math.floor(random() * 2); // 2-3 sentences

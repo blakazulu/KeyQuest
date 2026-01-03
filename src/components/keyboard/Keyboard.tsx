@@ -2,7 +2,8 @@
 
 import { memo, useMemo } from 'react';
 import { Key, type KeyState } from './Key';
-import { qwertyLayout, getKeyData, type KeyData } from '@/data/keyboard-layout';
+import { layouts, type KeyData, type KeyboardLayoutType } from '@/data/keyboard-layout';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 
 interface KeyboardProps {
   /** Character that should be highlighted as the next key to press */
@@ -21,6 +22,8 @@ interface KeyboardProps {
   showHomeRow?: boolean;
   /** Base key size in pixels */
   baseSize?: number;
+  /** Keyboard layout to display (defaults to settings store value) */
+  layout?: KeyboardLayoutType;
   /** Click handler for keys (for touch/accessibility) */
   onKeyClick?: (key: string) => void;
   /** Additional CSS classes */
@@ -28,7 +31,7 @@ interface KeyboardProps {
 }
 
 /**
- * Visual keyboard component showing QWERTY layout.
+ * Visual keyboard component showing QWERTY or Hebrew layout.
  * Displays key states and finger color coding for typing practice.
  */
 export const Keyboard = memo(function Keyboard({
@@ -40,9 +43,15 @@ export const Keyboard = memo(function Keyboard({
   showFingerColors = true,
   showHomeRow = true,
   baseSize = 48,
+  layout: layoutProp,
   onKeyClick,
   className = '',
 }: KeyboardProps) {
+  // Get layout from settings if not provided
+  const settingsLayout = useSettingsStore((s) => s.keyboardLayout);
+  const layout = layoutProp ?? settingsLayout;
+  const keyboardLayout = layouts[layout];
+
   // Build set of highlighted keys for efficient lookup
   const highlightedSet = useMemo(() => {
     const set = new Set<string>();
@@ -91,10 +100,10 @@ export const Keyboard = memo(function Keyboard({
       className={`keyboard-container ${className}`}
       dir="ltr"
       role="img"
-      aria-label="Visual keyboard showing finger placement"
+      aria-label={`Visual ${layout === 'hebrew' ? 'Hebrew' : 'QWERTY'} keyboard showing finger placement`}
       aria-hidden="true"
     >
-      {qwertyLayout.map((row, rowIndex) => (
+      {keyboardLayout.map((row, rowIndex) => (
         <div
           key={rowIndex}
           className="keyboard-row"
@@ -126,20 +135,27 @@ export const CompactKeyboard = memo(function CompactKeyboard({
   wrongKey,
   showFingerColors = true,
   baseSize = 40,
+  layout: layoutProp,
   onKeyClick,
   className = '',
 }: Omit<KeyboardProps, 'showHomeRow'>) {
+  // Get layout from settings if not provided
+  const settingsLayout = useSettingsStore((s) => s.keyboardLayout);
+  const layout = layoutProp ?? settingsLayout;
+  const keyboardLayout = layouts[layout];
+
   // Only show letter rows (index 1, 2, 3) and space bar
+  // Filter for alphabetic keys (Latin a-z and Hebrew א-ת)
   const letterRows = useMemo(() => {
-    return qwertyLayout.slice(1, 4).map((row) => ({
+    return keyboardLayout.slice(1, 4).map((row) => ({
       ...row,
       keys: row.keys.filter(
         (k) =>
           k.key.length === 1 &&
-          k.key.match(/[a-z]/i)
+          (k.key.match(/[a-z]/i) || /[\u05D0-\u05EA]/.test(k.key))
       ),
     }));
-  }, []);
+  }, [keyboardLayout]);
 
   const getKeyState = (keyData: KeyData): KeyState => {
     const keyLower = keyData.key.toLowerCase();

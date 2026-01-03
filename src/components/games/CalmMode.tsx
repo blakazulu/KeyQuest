@@ -50,7 +50,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
   } = useCalmModeStore();
 
   const updateWeakLetter = useProgressStore((state) => state.updateWeakLetter);
-  const { calmModeSettings } = useSettingsStore();
+  const { calmModeSettings, keyboardLayout } = useSettingsStore();
   const focusWeakLetters = calmModeSettings?.focusWeakLetters ?? true;
 
   // Text generation
@@ -61,6 +61,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
   } = useCalmTextGenerator({
     focusWeakLetters,
     onTextAppended: () => {},
+    layout: keyboardLayout,
   });
 
   // Flash refs for keyboard
@@ -104,6 +105,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     targetText: text,
     currentPosition: cursorPosition,
     trackPressedKeys: status === 'running',
+    layout: keyboardLayout,
   });
 
   // Update flash refs
@@ -425,6 +427,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
           <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
             <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
+                layout={keyboardLayout}
                 highlightedKey={highlightedKey}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}

@@ -7,7 +7,7 @@ import { LessonSelectionModal } from '@/components/levels/LessonSelectionModal';
 import { FloatingMenu } from '@/components/layout/FloatingMenu';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
-import { stages as allStages, getStage } from '@/data/lessons';
+import { getStagesForLayout, getStageForLayout } from '@/data/lessons';
 import type { LevelStatus } from '@/components/ui/LevelCard';
 
 export default function LevelsPage() {
@@ -23,8 +23,15 @@ export default function LevelsPage() {
   const getLessonProgress = useProgressStore((s) => s.getLessonProgress);
   const completedLessons = useProgressStore((s) => s.completedLessons);
 
-  // Settings store for assessment
-  const initialAssessment = useSettingsStore((s) => s.initialAssessment);
+  // Settings store for assessment and keyboard layout
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
+  const getAssessmentForLayout = useSettingsStore((s) => s.getAssessmentForLayout);
+
+  // Get assessment for current layout (not the global one)
+  const layoutAssessment = useMemo(() => getAssessmentForLayout(keyboardLayout), [getAssessmentForLayout, keyboardLayout]);
+
+  // Get stages for the current keyboard layout
+  const allStages = useMemo(() => getStagesForLayout(keyboardLayout), [keyboardLayout]);
 
   // Compute stage statuses from progress store
   const stages = useMemo(() => {
@@ -41,9 +48,9 @@ export default function LevelsPage() {
     if (stageWithProgress) {
       // If user has started a stage, that's the current one
       currentStageId = stageWithProgress.id;
-    } else if (initialAssessment?.recommendedStage && completedLessons.length === 0) {
-      // If user has assessment but no lessons completed, recommended stage is current
-      currentStageId = initialAssessment.recommendedStage;
+    } else if (layoutAssessment?.recommendedStage && completedLessons.length === 0) {
+      // If user has assessment for this layout but no lessons completed, recommended stage is current
+      currentStageId = layoutAssessment.recommendedStage;
     } else {
       // Otherwise, first unlocked non-completed stage is current
       const firstUnlocked = allStages.find(
@@ -75,13 +82,13 @@ export default function LevelsPage() {
         status,
       };
     });
-  }, [allStages, locale, completedLessons, isStageCompleted, isStageUnlocked, initialAssessment]);
+  }, [allStages, locale, completedLessons, isStageCompleted, isStageUnlocked, layoutAssessment, keyboardLayout]);
 
   // Get the selected stage data for the modal
   const selectedStage = useMemo(() => {
     if (selectedStageId === null) return null;
-    return getStage(selectedStageId) ?? null;
-  }, [selectedStageId]);
+    return getStageForLayout(selectedStageId, keyboardLayout) ?? null;
+  }, [selectedStageId, keyboardLayout]);
 
   // Handle stage click to open modal
   const handleStageClick = useCallback((stageId: number) => {

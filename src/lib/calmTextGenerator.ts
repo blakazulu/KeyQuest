@@ -4,10 +4,16 @@
  */
 
 import {
-  getRandomWord,
-  getRandomWordWithLetter,
-  getWordsForLetter,
+  getRandomWord as getRandomEnglishWord,
+  getRandomWordWithLetter as getRandomEnglishWordWithLetter,
+  getWordsForLetter as getEnglishWordsForLetter,
 } from '@/data/calmModeWords';
+import {
+  getRandomHebrewWord,
+  getRandomHebrewWordWithLetter,
+  getHebrewWordsForLetter,
+} from '@/data/hebrewWords';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 /**
  * Configuration for text generation
@@ -21,6 +27,25 @@ export interface TextGeneratorConfig {
   focusWeakLetters?: boolean;
   /** Probability of selecting a weak letter word when focusing (default: 0.4) */
   weakLetterWeight?: number;
+  /** Keyboard layout to use for word generation (default: 'qwerty') */
+  layout?: KeyboardLayoutType;
+}
+
+// Helper functions that switch based on layout
+function getRandomWord(layout: KeyboardLayoutType = 'qwerty'): string {
+  return layout === 'hebrew' ? getRandomHebrewWord() : getRandomEnglishWord();
+}
+
+function getRandomWordWithLetter(letter: string, layout: KeyboardLayoutType = 'qwerty'): string {
+  return layout === 'hebrew'
+    ? getRandomHebrewWordWithLetter(letter)
+    : getRandomEnglishWordWithLetter(letter);
+}
+
+function getWordsForLetter(letter: string, layout: KeyboardLayoutType = 'qwerty'): string[] {
+  return layout === 'hebrew'
+    ? getHebrewWordsForLetter(letter)
+    : getEnglishWordsForLetter(letter);
 }
 
 /**
@@ -81,6 +106,7 @@ export function generateCalmText(config: TextGeneratorConfig = {}): string {
     weakLetters = {},
     focusWeakLetters = true,
     weakLetterWeight = 0.4,
+    layout = 'qwerty',
   } = config;
 
   const words: string[] = [];
@@ -96,14 +122,14 @@ export function generateCalmText(config: TextGeneratorConfig = {}): string {
     if (shouldFocusWeak && Math.random() < weakLetterWeight) {
       // Pick a word containing a weak letter
       const weakLetter = getRandomWeakLetter(weakLetters);
-      if (weakLetter && getWordsForLetter(weakLetter).length > 0) {
-        word = getRandomWordWithLetter(weakLetter);
+      if (weakLetter && getWordsForLetter(weakLetter, layout).length > 0) {
+        word = getRandomWordWithLetter(weakLetter, layout);
       } else {
-        word = getRandomWord();
+        word = getRandomWord(layout);
       }
     } else {
       // Pick a random word
-      word = getRandomWord();
+      word = getRandomWord(layout);
     }
 
     words.push(word);

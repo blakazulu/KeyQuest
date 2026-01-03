@@ -18,7 +18,12 @@ import {
   getLesson,
   getNextLesson,
   getFirstLesson,
+  getStagesForLayout,
+  getStageForLayout,
+  getLessonForLayout,
+  getFirstLessonForLayout,
 } from '@/data/lessons';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 /**
  * Check if a lesson is unlocked based on curriculum progress

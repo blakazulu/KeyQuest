@@ -14,7 +14,8 @@ import {
   getRecommendedLessons,
   getKeyMastery,
 } from '@/lib/lessonProgression';
-import { getLesson, getFirstLesson } from '@/data/lessons';
+import { getLesson, getFirstLesson, getLessonForLayout, getFirstLessonForLayout } from '@/data/lessons';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 import { useSettingsStore } from './useSettingsStore';
 import { useGameStore } from './useGameStore';
 import { getRankProgress, checkRankUp } from '@/data/ranks';
@@ -62,7 +63,10 @@ interface ProgressState {
   weakLetters: Record<string, number>;
 
   // Gamification data (Phase 9)
+  /** @deprecated Use layoutAchievements instead */
   achievements: Record<string, AchievementProgress>;
+  // Per-layout achievements (Phase 16)
+  layoutAchievements: Partial<Record<KeyboardLayoutType, Record<string, AchievementProgress>>>;
   perfectLessons: number;
   threeStarLessons: number;
   pendingAchievementIds: string[];
@@ -108,6 +112,7 @@ interface ProgressState {
   checkAndUnlockAchievements: () => string[];
   markAchievementSeen: (id: string) => void;
   clearPendingAchievements: () => void;
+  getAchievementsForLayout: (layout?: KeyboardLayoutType) => Record<string, AchievementProgress>;
 
   // Easter egg actions
   incrementHomeKeyClicks: () => string[];
@@ -146,6 +151,7 @@ const initialState = {
   weakLetters: {} as Record<string, number>,
   // Gamification
   achievements: {} as Record<string, AchievementProgress>,
+  layoutAchievements: {} as Record<KeyboardLayoutType, Record<string, AchievementProgress>>,
   perfectLessons: 0,
   threeStarLessons: 0,
   pendingAchievementIds: [] as string[],
@@ -560,6 +566,7 @@ export const useProgressStore = create<ProgressState>()(
         set({
           ...initialState,
           achievements: {},
+          layoutAchievements: {},
           perfectLessons: 0,
           threeStarLessons: 0,
           pendingAchievementIds: [],
@@ -568,17 +575,18 @@ export const useProgressStore = create<ProgressState>()(
       // Achievement actions
       checkAndUnlockAchievements: () => {
         const snapshot = get().getProgressSnapshot();
-        const currentAchievements = get().achievements;
+        const layout = useSettingsStore.getState().keyboardLayout;
+        const currentLayoutAchievements = get().layoutAchievements[layout] || {};
 
-        const newlyUnlocked = checkAllAchievements(snapshot, currentAchievements);
+        const newlyUnlocked = checkAllAchievements(snapshot, currentLayoutAchievements);
 
         if (newlyUnlocked.length > 0) {
-          const updatedAchievements = { ...currentAchievements };
+          const updatedLayoutAchievements = { ...currentLayoutAchievements };
           const achievementXpEvents: XpEvent[] = [];
           let achievementXp = 0;
 
           for (const id of newlyUnlocked) {
-            updatedAchievements[id] = createAchievementProgress(id);
+            updatedLayoutAchievements[id] = createAchievementProgress(id);
             const achievement = getAchievement(id);
             if (achievement) {
               achievementXp += achievement.xpReward;
@@ -592,7 +600,12 @@ export const useProgressStore = create<ProgressState>()(
           }
 
           set({
-            achievements: updatedAchievements,
+            layoutAchievements: {
+              ...get().layoutAchievements,
+              [layout]: updatedLayoutAchievements,
+            },
+            // Also update legacy achievements for backwards compatibility
+            achievements: { ...get().achievements, ...updatedLayoutAchievements },
             totalXp: get().totalXp + achievementXp,
             pendingAchievementIds: [...get().pendingAchievementIds, ...newlyUnlocked],
             xpHistory: [...get().xpHistory, ...achievementXpEvents],
@@ -603,12 +616,17 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       markAchievementSeen: (id) => {
-        const achievement = get().achievements[id];
+        const layout = useSettingsStore.getState().keyboardLayout;
+        const layoutAchievements = get().layoutAchievements[layout] || {};
+        const achievement = layoutAchievements[id];
         if (achievement) {
           set({
-            achievements: {
-              ...get().achievements,
-              [id]: { ...achievement, seen: true },
+            layoutAchievements: {
+              ...get().layoutAchievements,
+              [layout]: {
+                ...layoutAchievements,
+                [id]: { ...achievement, seen: true },
+              },
             },
             pendingAchievementIds: get().pendingAchievementIds.filter((aid) => aid !== id),
           });
@@ -616,16 +634,26 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       clearPendingAchievements: () => {
-        const updatedAchievements = { ...get().achievements };
+        const layout = useSettingsStore.getState().keyboardLayout;
+        const layoutAchievements = get().layoutAchievements[layout] || {};
+        const updatedLayoutAchievements = { ...layoutAchievements };
         for (const id of get().pendingAchievementIds) {
-          if (updatedAchievements[id]) {
-            updatedAchievements[id] = { ...updatedAchievements[id], seen: true };
+          if (updatedLayoutAchievements[id]) {
+            updatedLayoutAchievements[id] = { ...updatedLayoutAchievements[id], seen: true };
           }
         }
         set({
-          achievements: updatedAchievements,
+          layoutAchievements: {
+            ...get().layoutAchievements,
+            [layout]: updatedLayoutAchievements,
+          },
           pendingAchievementIds: [],
         });
+      },
+
+      getAchievementsForLayout: (layout?: KeyboardLayoutType) => {
+        const targetLayout = layout ?? useSettingsStore.getState().keyboardLayout;
+        return get().layoutAchievements[targetLayout] || {};
       },
 
       // Easter egg actions
@@ -653,13 +681,16 @@ export const useProgressStore = create<ProgressState>()(
           return true;
         }
 
-        // Check if unlocked via assessment - first lesson of each stage up to recommended
-        const { initialAssessment } = useSettingsStore.getState();
-        if (initialAssessment?.recommendedStage) {
-          const lesson = getLesson(lessonId);
-          if (lesson && lesson.stageId <= initialAssessment.recommendedStage) {
+        // Check if unlocked via layout-specific assessment
+        const settings = useSettingsStore.getState();
+        const layout = settings.keyboardLayout;
+        const layoutAssessment = settings.getAssessmentForLayout(layout);
+        if (layoutAssessment?.recommendedStage) {
+          // Use layout-aware functions to check lesson
+          const lesson = getLessonForLayout(lessonId, layout);
+          if (lesson && lesson.stageId <= layoutAssessment.recommendedStage) {
             // First lesson of unlocked stages is always available
-            const firstLesson = getFirstLesson(lesson.stageId);
+            const firstLesson = getFirstLessonForLayout(lesson.stageId, layout);
             if (firstLesson && firstLesson.id === lessonId) {
               return true;
             }
@@ -670,15 +701,19 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       isStageUnlocked: (stageId: number) => {
+        // Stage 1 is always unlocked for any layout
+        if (stageId === 1) return true;
+
         // Check if unlocked via normal progression
         if (isStageUnlocked(stageId, get().completedLessons)) {
           return true;
         }
 
-        // Check if unlocked via assessment
-        const { initialAssessment } = useSettingsStore.getState();
-        if (initialAssessment?.recommendedStage) {
-          return stageId <= initialAssessment.recommendedStage;
+        // Check if unlocked via layout-specific assessment
+        const settings = useSettingsStore.getState();
+        const layoutAssessment = settings.getAssessmentForLayout(settings.keyboardLayout);
+        if (layoutAssessment?.recommendedStage) {
+          return stageId <= layoutAssessment.recommendedStage;
         }
 
         return false;
@@ -749,7 +784,7 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'keyquest-progress',
-      version: 6, // Increment version for letter history tracking (Phase 11)
+      version: 7, // Increment version for per-layout achievements (Phase 16)
       migrate: (persistedState: unknown, version: number) => {
         if (version === 0 || version === 1) {
           // Migrate from old format to v2 format
@@ -863,6 +898,22 @@ export const useProgressStore = create<ProgressState>()(
           return {
             ...v5State,
             letterHistory: {},
+          };
+        }
+
+        if (version === 6) {
+          // Migrate from v6 to v7 - add per-layout achievements (Phase 16)
+          const v6State = persistedState as Omit<ProgressState, 'layoutAchievements'> & {
+            achievements: Record<string, AchievementProgress>;
+          };
+          // Migrate existing achievements to QWERTY layout
+          const layoutAchievements: Partial<Record<KeyboardLayoutType, Record<string, AchievementProgress>>> = {};
+          if (v6State.achievements && Object.keys(v6State.achievements).length > 0) {
+            layoutAchievements.qwerty = v6State.achievements;
+          }
+          return {
+            ...v6State,
+            layoutAchievements,
           };
         }
 

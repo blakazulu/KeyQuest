@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 export type AgeGroup = 'child' | 'teen' | 'adult';
 type Theme = 'light' | 'dark' | 'system';
@@ -17,6 +18,9 @@ export interface InitialAssessment {
   completedAt: string;
 }
 
+// Layout-specific assessments
+export type LayoutAssessments = Partial<Record<KeyboardLayoutType, InitialAssessment>>;
+
 // Avatar options (index-based selection)
 export type AvatarId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -30,13 +34,19 @@ interface SettingsState {
   fontSize: 'small' | 'medium' | 'large';
   calmModeSettings: CalmModeSettings;
 
+  // Keyboard layout for typing practice
+  keyboardLayout: KeyboardLayoutType;
+
   // User profile
   userName: string;
   userAvatar: AvatarId;
 
   // Onboarding state
   hasCompletedOnboarding: boolean;
+  /** @deprecated Use layoutAssessments instead */
   initialAssessment: InitialAssessment | null;
+  // Per-layout assessments (Phase 16)
+  layoutAssessments: LayoutAssessments;
 
   // Actions
   setAgeGroup: (group: AgeGroup) => void;
@@ -48,6 +58,9 @@ interface SettingsState {
   setFontSize: (size: 'small' | 'medium' | 'large') => void;
   updateCalmModeSettings: (settings: Partial<CalmModeSettings>) => void;
 
+  // Keyboard layout action
+  setKeyboardLayout: (layout: KeyboardLayoutType) => void;
+
   // Profile actions
   setUserName: (name: string) => void;
   setUserAvatar: (avatarId: AvatarId) => void;
@@ -56,6 +69,11 @@ interface SettingsState {
   completeOnboarding: () => void;
   setInitialAssessment: (assessment: InitialAssessment) => void;
   resetOnboarding: () => void;
+
+  // Layout-aware assessment helpers
+  getAssessmentForLayout: (layout?: KeyboardLayoutType) => InitialAssessment | null;
+  hasAssessmentForCurrentLayout: () => boolean;
+  needsAssessmentForLayout: (layout: KeyboardLayoutType) => boolean;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -74,6 +92,9 @@ export const useSettingsStore = create<SettingsState>()(
         showSubtleStats: true,
       },
 
+      // Keyboard layout (default to QWERTY)
+      keyboardLayout: 'qwerty',
+
       // User profile
       userName: '',
       userAvatar: 1,
@@ -81,6 +102,7 @@ export const useSettingsStore = create<SettingsState>()(
       // Onboarding state
       hasCompletedOnboarding: false,
       initialAssessment: null,
+      layoutAssessments: {},
 
       setAgeGroup: (ageGroup) => set({ ageGroup }),
       setTheme: (theme) => set({ theme }),
@@ -97,27 +119,50 @@ export const useSettingsStore = create<SettingsState>()(
           },
         }),
 
+      // Keyboard layout action
+      setKeyboardLayout: (keyboardLayout) => set({ keyboardLayout }),
+
       // Profile actions
       setUserName: (userName) => set({ userName }),
       setUserAvatar: (userAvatar) => set({ userAvatar }),
 
       // Onboarding actions
       completeOnboarding: () => set({ hasCompletedOnboarding: true }),
-      setInitialAssessment: (assessment) =>
+      setInitialAssessment: (assessment) => {
+        const currentLayout = get().keyboardLayout;
         set({
           initialAssessment: assessment,
           hasCompletedOnboarding: true,
-        }),
+          layoutAssessments: {
+            ...get().layoutAssessments,
+            [currentLayout]: assessment,
+          },
+        });
+      },
       resetOnboarding: () =>
         set({
           hasCompletedOnboarding: false,
           initialAssessment: null,
+          layoutAssessments: {},
           ageGroup: 'adult',
         }),
+
+      // Layout-aware assessment helpers
+      getAssessmentForLayout: (layout?: KeyboardLayoutType) => {
+        const targetLayout = layout ?? get().keyboardLayout;
+        return get().layoutAssessments[targetLayout] ?? null;
+      },
+      hasAssessmentForCurrentLayout: () => {
+        const currentLayout = get().keyboardLayout;
+        return currentLayout in get().layoutAssessments;
+      },
+      needsAssessmentForLayout: (layout: KeyboardLayoutType) => {
+        return !(layout in get().layoutAssessments);
+      },
     }),
     {
       name: 'keyquest-settings',
-      version: 3,
+      version: 5,
       migrate: (persistedState: unknown, version: number) => {
         const state = persistedState as Partial<SettingsState>;
 
@@ -129,6 +174,8 @@ export const useSettingsStore = create<SettingsState>()(
             initialAssessment: null,
             userName: '',
             userAvatar: 1,
+            keyboardLayout: 'qwerty',
+            layoutAssessments: {},
           } as SettingsState;
         }
 
@@ -138,6 +185,30 @@ export const useSettingsStore = create<SettingsState>()(
             ...state,
             userName: '',
             userAvatar: 1,
+            keyboardLayout: 'qwerty',
+            layoutAssessments: {},
+          } as SettingsState;
+        }
+
+        if (version < 4) {
+          // Add keyboard layout setting
+          return {
+            ...state,
+            keyboardLayout: 'qwerty',
+            layoutAssessments: {},
+          } as SettingsState;
+        }
+
+        if (version < 5) {
+          // Migrate existing initialAssessment to layoutAssessments (Phase 16)
+          const layoutAssessments: LayoutAssessments = {};
+          if (state.initialAssessment) {
+            // Existing assessment was for QWERTY layout
+            layoutAssessments.qwerty = state.initialAssessment;
+          }
+          return {
+            ...state,
+            layoutAssessments,
           } as SettingsState;
         }
 
