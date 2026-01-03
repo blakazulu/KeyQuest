@@ -13,7 +13,7 @@
   --color-surface: #FFFFFF;
   --color-surface-raised: #F8FAFF;
   --color-text: #1E293B;
-  --color-text-muted: #64748B;
+  --color-text-muted: #4B5563; /* Darkened from #64748B for WCAG AA contrast (4.5:1) */
   --color-border: #E2E8F0;
 
   /* === PRIMARY ACCENT (Warm Orange for CTAs) === */

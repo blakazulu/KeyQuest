@@ -133,8 +133,11 @@ export const StatCard = memo(function StatCard({
 
   // Parse numeric value for animation
   const numericValue = typeof value === 'number' ? value : parseFloat(String(value)) || 0;
+  // Always call the hook unconditionally (rules of hooks)
+  const animatedValue = useCountUp(numericValue, 800, delay + 200);
+  // Then decide which value to display
   const displayValue = animateValue && typeof value === 'number'
-    ? useCountUp(numericValue, 800, delay + 200)
+    ? animatedValue
     : value;
 
   useEffect(() => {

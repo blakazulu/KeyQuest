@@ -349,5 +349,30 @@
         "bonuses": "bonuses"
       }
     }
+  },
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "keyboardRequired": "Keyboard Required",
+    "keyboardRequiredDesc": "KeyQuest works best on larger screens with a physical keyboard. Please use a desktop or laptop computer for the best experience.",
+    "shortcuts": {
+      "title": "Keyboard Shortcuts",
+      "description": "Use these shortcuts to navigate faster",
+      "navigation": "Navigation",
+      "general": "General",
+      "goToLevels": "Go to Levels",
+      "goToDashboard": "Go to Dashboard",
+      "goToGames": "Go to Games",
+      "goToHome": "Go to Home",
+      "goToAchievements": "Go to Achievements",
+      "goToSettings": "Go to Settings",
+      "showShortcuts": "Show this help",
+      "closeModal": "Close modal/dialog"
+    }
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "description": "We're sorry, an unexpected error occurred. Please try again.",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Home"
   }
 }

@@ -349,5 +349,30 @@
         "bonuses": "בונוסים"
       }
     }
+  },
+  "accessibility": {
+    "skipToContent": "דלג לתוכן הראשי",
+    "keyboardRequired": "נדרשת מקלדת",
+    "keyboardRequiredDesc": "KeyQuest עובד הכי טוב על מסכים גדולים עם מקלדת פיזית. אנא השתמשו במחשב נייח או נייד לחוויה הטובה ביותר.",
+    "shortcuts": {
+      "title": "קיצורי מקלדת",
+      "description": "השתמשו בקיצורים אלה לניווט מהיר יותר",
+      "navigation": "ניווט",
+      "general": "כללי",
+      "goToLevels": "עבור לשלבים",
+      "goToDashboard": "עבור ללוח בקרה",
+      "goToGames": "עבור למשחקים",
+      "goToHome": "עבור לדף הבית",
+      "goToAchievements": "עבור להישגים",
+      "goToSettings": "עבור להגדרות",
+      "showShortcuts": "הצג עזרה זו",
+      "closeModal": "סגור חלון/דיאלוג"
+    }
+  },
+  "errors": {
+    "title": "משהו השתבש",
+    "description": "אנו מתנצלים, אירעה שגיאה לא צפויה. אנא נסו שוב.",
+    "tryAgain": "נסה שוב",
+    "goHome": "עבור לדף הבית"
   }
 }

@@ -17,8 +17,8 @@ export function OrganizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'KeyQuest',
-    url: 'https://keyquest.com',
-    logo: 'https://keyquest.com/images/full-logo.png',
+    url: 'https://keyquest-app.netlify.app',
+    logo: 'https://keyquest-app.netlify.app/images/full-logo.png',
     description: 'A fun, game-driven way to learn touch typing from the ground up.',
     sameAs: [],
   };
@@ -32,12 +32,12 @@ export function WebsiteJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'KeyQuest',
-    url: 'https://keyquest.com',
+    url: 'https://keyquest-app.netlify.app',
     description: 'Learn touch typing the fun way with engaging lessons and games.',
     inLanguage: ['en', 'he'],
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://keyquest.com/search?q={search_term_string}',
+      target: 'https://keyquest-app.netlify.app/search?q={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   };
@@ -55,7 +55,7 @@ export function EducationalCourseJsonLd() {
     provider: {
       '@type': 'Organization',
       name: 'KeyQuest',
-      url: 'https://keyquest.com',
+      url: 'https://keyquest-app.netlify.app',
     },
     educationalLevel: 'Beginner',
     isAccessibleForFree: true,

@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest-app.netlify.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const locales = ['en', 'he'];

@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
@@ -58,8 +59,10 @@ interface TargetGameProps {
 
 export function TargetGame({ locale: propLocale }: TargetGameProps) {
   const t = useTranslations('games');
-  const locale = (propLocale || useLocale()) as 'en' | 'he';
+  const hookLocale = useLocale() as 'en' | 'he';
+  const locale = propLocale || hookLocale;
   const router = useRouter();
+  const { playKeypress, playError, playCombo, playSuccess } = useSound();
 
   // Game states
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'finished'>('ready');
@@ -153,6 +156,13 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
       const multiplier = Math.min(5, 1 + Math.floor(newCombo / 5) * 0.5);
       const points = Math.round(SIZE_POINTS[target.size] * multiplier);
 
+      // Play sounds
+      playKeypress();
+      // Play combo sound on milestone (every 5 hits)
+      if (newCombo % 5 === 0) {
+        playCombo();
+      }
+
       // Update last hit letter for hands
       setLastHitLetter(key);
 
@@ -178,10 +188,11 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
       }, 500);
     } else {
       // Wrong key - break combo
+      playError();
       setCombo(0);
       setMisses(m => m + 1);
     }
-  }, [gameState, targets, combo]);
+  }, [gameState, targets, combo, playKeypress, playError, playCombo]);
 
   // Game timer
   useEffect(() => {
@@ -230,6 +241,11 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
     const { isNewHighScore, isNewComboRecord, xpEarned } = recordTargetResult(score, maxCombo, hits);
     addExerciseXp(xpEarned);
 
+    // Play success sound if player scored well
+    if (hits >= 10) {
+      playSuccess();
+    }
+
     setResults({
       score,
       maxCombo,
@@ -239,7 +255,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
       isNewHighScore,
       isNewComboRecord,
     });
-  }, [gameState, results, score, maxCombo, hits, misses, recordTargetResult, addExerciseXp]);
+  }, [gameState, results, score, maxCombo, hits, misses, recordTargetResult, addExerciseXp, playSuccess]);
 
   // Start game
   const startGame = useCallback(() => {

@@ -27,3 +27,12 @@ export type { LevelCardProps, LevelStatus } from './LevelCard';
 
 // Decorative Components
 export { FloatingKeys } from './FloatingKeys';
+
+// Accessibility Components
+export { SkipLink } from './SkipLink';
+export { MinWidthGuard } from './MinWidthGuard';
+export { ShortcutsHelp } from './ShortcutsHelp';
+export { ScreenReaderAnnounce, useScreenReaderAnnounce } from './ScreenReaderAnnounce';
+
+// Error Handling
+export { ErrorFallback } from './ErrorFallback';

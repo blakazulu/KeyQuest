@@ -9,6 +9,7 @@ import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useTypingEngine, type TypingStats } from '@/hooks/useTypingEngine';
 import { useKeyboardInput } from '@/hooks/useKeyboardInput';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
+import { useSound } from '@/hooks/useSound';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { calculateProgress } from '@/lib/typing-utils';
 
@@ -65,6 +66,7 @@ export function TypingArea({
 }: TypingAreaProps) {
   const t = useTranslations('practice');
   const containerRef = useRef<HTMLDivElement>(null);
+  const { playKeypress, playError, playSuccess } = useSound();
 
   // Get keyboard visibility settings (props override store settings)
   const {
@@ -79,14 +81,16 @@ export function TypingArea({
   const flashCorrectRef = useRef<(key: string) => void>(() => {});
   const flashWrongRef = useRef<(key: string) => void>(() => {});
 
-  // Handler for character typed - triggers keyboard flash effects via refs
+  // Handler for character typed - triggers keyboard flash effects and sounds
   const handleCharacterTyped = useCallback((char: string, isCorrect: boolean) => {
     if (isCorrect) {
       flashCorrectRef.current(char);
+      playKeypress();
     } else {
       flashWrongRef.current(char);
+      playError();
     }
-  }, []);
+  }, [playKeypress, playError]);
 
   // Handler for errors - calls the prop callback
   const handleError = useCallback((char: string, expected: string) => {
@@ -135,6 +139,13 @@ export function TypingArea({
       setTargetText(text);
     }
   }, [text, setTargetText]);
+
+  // Play success sound on completion
+  useEffect(() => {
+    if (status === 'completed') {
+      playSuccess();
+    }
+  }, [status, playSuccess]);
 
   // Handle Enter to start/resume and Escape to pause
   const handleEnter = useCallback(() => {

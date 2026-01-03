@@ -6,13 +6,15 @@ import { routing } from '@/i18n/routing';
 import { Header } from '@/components/layout/Header';
 import { Clouds } from '@/components/layout/Clouds';
 import { AchievementToast } from '@/components/gamification/AchievementToast';
+import { SkipLink, MinWidthGuard } from '@/components/ui';
+import { GlobalShortcutsProvider } from '@/components/layout/GlobalShortcutsProvider';
 
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest-app.netlify.app';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -63,9 +65,16 @@ export default async function LocaleLayout({ children, params }: Props) {
     <div lang={locale} dir={isRTL ? 'rtl' : 'ltr'} className="relative">
       <Clouds />
       <NextIntlClientProvider messages={messages}>
+        <SkipLink />
+        <MinWidthGuard />
+        <GlobalShortcutsProvider />
         <Header />
         <AchievementToast />
-        <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 pt-0">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="relative z-10 mx-auto max-w-7xl px-4 py-8 pt-0 outline-none"
+        >
           {children}
         </main>
       </NextIntlClientProvider>

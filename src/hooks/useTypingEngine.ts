@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useTypingStore } from '@/stores/useTypingStore';
 import { useKeyboardInput } from './useKeyboardInput';
 import { calculateWPM, calculateAccuracy, calculateNetWPM } from '@/lib/typing-utils';
@@ -100,6 +100,7 @@ export function useTypingEngine({
     currentPosition,
     errors,
     startTime,
+    endTime,
     isComplete,
     isPaused,
     setTargetText,
@@ -123,15 +124,40 @@ export function useTypingEngine({
     return 'idle';
   }, [isComplete, isPaused, startTime]);
 
-  // Calculate elapsed time
-  const elapsedTime = useMemo(() => {
-    if (!startTime) return 0;
-    if (isComplete) {
-      // Use the stored end time or calculate from now
-      return Date.now() - startTime;
+  // Track elapsed time with state, updated via effect
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Update elapsed time when relevant state changes
+  useEffect(() => {
+    if (!startTime) {
+      setElapsedTime(0);
+      return;
     }
-    return Date.now() - startTime;
-  }, [startTime, isComplete]);
+
+    if (isComplete && endTime) {
+      // Use stored end time for completed sessions
+      setElapsedTime(endTime - startTime);
+      return;
+    }
+
+    if (isPaused) {
+      // Don't update during pause
+      return;
+    }
+
+    // For running sessions, update time periodically
+    const updateTime = () => {
+      setElapsedTime(Date.now() - startTime);
+    };
+
+    // Update immediately
+    updateTime();
+
+    // Then update every 100ms for smooth display
+    const interval = setInterval(updateTime, 100);
+
+    return () => clearInterval(interval);
+  }, [startTime, endTime, isComplete, isPaused]);
 
   // Calculate statistics
   const stats: TypingStats = useMemo(() => {

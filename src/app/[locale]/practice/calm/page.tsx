@@ -6,7 +6,7 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest-app.netlify.app';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;

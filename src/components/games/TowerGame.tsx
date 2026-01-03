@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
@@ -59,8 +60,10 @@ interface TowerGameProps {
 export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const t = useTranslations('games');
   const tPractice = useTranslations('practice');
-  const locale = (propLocale || useLocale()) as 'en' | 'he';
+  const hookLocale = useLocale() as 'en' | 'he';
+  const locale = propLocale || hookLocale;
   const router = useRouter();
+  const { playKeypress, playError, playBrickDrop, playSuccess } = useSound();
 
   // Game states
   const [gameState, setGameState] = useState<'ready' | 'building' | 'finished'>('ready');
@@ -77,6 +80,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   // Refs
   const blockIdRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const towerRef = useRef<HTMLDivElement>(null);
   const flashCorrectRef = useRef<(key: string) => void>(() => {});
   const flashWrongRef = useRef<(key: string) => void>(() => {});
 
@@ -137,7 +141,8 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     });
     setTotalBlocks(t => t + 1);
     setMaxHeight(m => Math.max(m, blocks.length + 1));
-  }, [currentWord, blocks.length, getNextWord]);
+    playBrickDrop();
+  }, [currentWord, blocks.length, getNextWord, playBrickDrop]);
 
   // Remove top block (on error)
   const removeBlock = useCallback(() => {
@@ -168,6 +173,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     if (key === expectedChar) {
       // Correct key
       flashCorrectRef.current(key);
+      playKeypress();
       const newTyped = typedChars + key;
       setTypedChars(newTyped);
 
@@ -178,6 +184,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     } else if (/[a-z]/i.test(key)) {
       // Wrong key
       flashWrongRef.current(key);
+      playError();
 
       // Remove a block if tower has blocks
       if (blocks.length > 0) {
@@ -197,7 +204,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
         return newErrors;
       });
     }
-  }, [gameState, currentWord, typedChars, addBlock, removeBlock, blocks.length]);
+  }, [gameState, currentWord, typedChars, addBlock, removeBlock, blocks.length, playKeypress, playError]);
 
   // Key press listener
   useEffect(() => {
@@ -216,6 +223,11 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     const { isNewRecord, xpEarned } = recordTowerResult(maxHeight, totalBlocks);
     addExerciseXp(xpEarned);
 
+    // Play success sound if player built at least 5 blocks
+    if (maxHeight >= 5) {
+      playSuccess();
+    }
+
     setResults({
       height: maxHeight,
       blocksPlaced: totalBlocks,
@@ -223,7 +235,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
       xpEarned,
       isNewRecord,
     });
-  }, [gameState, results, maxHeight, totalBlocks, errors, recordTowerResult, addExerciseXp]);
+  }, [gameState, results, maxHeight, totalBlocks, errors, recordTowerResult, addExerciseXp, playSuccess]);
 
   // Start game
   const startGame = useCallback(() => {
@@ -265,6 +277,14 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   useEffect(() => {
     getNextWord(0);
   }, [getNextWord]);
+
+  // Scroll container to keep top of tower visible
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Scroll to top to show the newest blocks (flex-col-reverse puts them at top)
+    containerRef.current.scrollTop = 0;
+  }, [blocks.length]);
 
   const nextChar = currentWord[typedChars.length]?.toLowerCase();
 
@@ -348,42 +368,51 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
       <main className="flex-1 flex flex-col items-center justify-center px-4 gap-4 z-10 overflow-hidden">
         {/* Tower display */}
         <div
-          ref={containerRef}
-          className="relative w-full max-w-3xl h-[40vh] min-h-[250px] bg-gradient-to-b from-sky-300/20 to-sky-100/10 backdrop-blur-sm rounded-3xl overflow-hidden border-2 border-white/20"
+          className="relative w-full max-w-3xl h-[40vh] min-h-[250px] bg-gradient-to-b from-sky-300/20 to-sky-100/10 backdrop-blur-sm rounded-3xl border-2 border-white/20 overflow-hidden"
         >
-          {/* Ground */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-amber-800 to-amber-600" />
-
-          {/* Tower container */}
+          {/* Scrollable tower area - includes ground */}
           <div
-            className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col-reverse items-center transition-transform ${
-              shakeTower ? 'animate-shake' : ''
-            }`}
+            ref={containerRef}
+            className="absolute inset-0 overflow-y-auto overflow-x-hidden"
+            style={{ scrollBehavior: 'smooth' }}
           >
-            {/* Blocks */}
-            <AnimatePresence>
-              {blocks.map((block, index) => (
-                <motion.div
-                  key={block.id}
-                  initial={{ y: -100, opacity: 0, rotate: 0 }}
-                  animate={{
-                    y: 0,
-                    opacity: 1,
-                    rotate: blocks.length > 10 ? Math.sin(index * 0.5) * (blocks.length - 10) * 0.3 : 0,
-                  }}
-                  exit={{ y: -50, opacity: 0 }}
-                  transition={{ type: 'spring', damping: 10 }}
-                  className={`bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/30`}
-                  style={{
-                    width: `${Math.max(60, block.word.length * 14)}px`,
-                    marginTop: '-2px',
-                    transform: `translateX(${block.wobble}px)`,
-                  }}
-                >
-                  {block.word}
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {/* Tower container - flex-col-reverse so blocks stack from bottom */}
+            <div className="min-h-full flex flex-col-reverse">
+              {/* Ground - scrolls with tower */}
+              <div className="w-full h-8 bg-gradient-to-t from-amber-800 to-amber-600 flex-shrink-0" />
+
+              <div
+                ref={towerRef}
+                className={`flex flex-col-reverse items-center mx-auto py-4 ${
+                  shakeTower ? 'animate-shake' : ''
+                }`}
+              >
+                {/* Blocks */}
+                <AnimatePresence>
+                  {blocks.map((block, index) => (
+                    <motion.div
+                      key={block.id}
+                      initial={{ y: -100, opacity: 0, rotate: 0 }}
+                      animate={{
+                        y: 0,
+                        opacity: 1,
+                        rotate: blocks.length > 10 ? Math.sin(index * 0.5) * (blocks.length - 10) * 0.3 : 0,
+                      }}
+                      exit={{ y: -50, opacity: 0 }}
+                      transition={{ type: 'spring', damping: 10 }}
+                      className={`bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/30`}
+                      style={{
+                        width: `${Math.max(60, block.word.length * 14)}px`,
+                        marginTop: '-2px',
+                        transform: `translateX(${block.wobble}px)`,
+                      }}
+                    >
+                      {block.word}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
 
           {/* Falling blocks */}
@@ -400,7 +429,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
                 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1, ease: 'easeIn' }}
-                className={`absolute bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm`}
+                className={`absolute bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm z-20`}
                 style={{
                   width: `${Math.max(60, block.word.length * 14)}px`,
                   left: '50%',
@@ -414,7 +443,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
           </AnimatePresence>
 
           {/* Height marker */}
-          <div className="absolute right-4 bottom-8 top-4 w-8 flex flex-col justify-end items-center">
+          <div className="absolute right-4 bottom-4 top-4 w-8 flex flex-col justify-end items-center z-10 pointer-events-none">
             {blocks.length > 0 && (
               <div className="bg-black/50 text-white px-2 py-1 rounded text-sm font-bold">
                 {blocks.length}
@@ -424,7 +453,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
 
           {/* Ready screen */}
           {gameState === 'ready' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm z-30">
               <div className="text-7xl mb-4">🏗️</div>
               <h2 className="font-display text-3xl font-bold text-white mb-2">
                 {t('tower.title')}

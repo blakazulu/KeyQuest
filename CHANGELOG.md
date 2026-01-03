@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 13: Polish, Accessibility & Compliance** - Production-ready accessibility features (COMPLETED)
+  - **Skip Link** - "Skip to main content" link for keyboard users (WCAG 2.4.1)
+  - **Minimum Width Guard** - Friendly overlay for screens < 1028px requiring keyboard
+  - **Error Boundaries** - Graceful error handling with error.tsx, global-error.tsx, and ErrorFallback component
+  - **Sound Effects System** - useSound hook with Web Audio API, integrated with settings
+    - Keypress, error, success, achievement, combo, and level-up sounds
+    - Game-specific sounds: engine-running, car-stop, brick-drop
+    - Looping sound support for continuous sounds (engine during race)
+    - All game components now integrated: TypingArea, AchievementToast, RaceGame, TowerGame, TargetGame
+    - Respects soundEnabled and soundVolume from settings store
+    - Sound files guide at public/sounds/README.md
+  - **Keyboard Shortcuts** - Global navigation shortcuts for power users
+    - Press `?` to show shortcuts help modal
+    - `g + h` - Go to Home
+    - `g + l` - Go to Levels
+    - `g + d` - Go to Dashboard
+    - `g + g` - Go to Games
+    - `g + a` - Go to Achievements
+    - `g + s` - Go to Settings
+  - **Screen Reader Announcements** - ScreenReaderAnnounce component for ARIA live regions
+  - **WCAG 2.2 Audit** - axe-core and eslint-plugin-jsx-a11y configured with strict accessibility rules
+  - **Color Contrast Audit** - Muted text color darkened (#4B5563) for 4.5:1 ratio compliance
+  - **Performance Audit** - Verified lean dependencies, memoized components, Next.js code splitting
+  - **SEO/AEO/GEO Verification** - Confirmed sitemap, robots.txt, meta tags, JSON-LD schemas
+  - New translations for accessibility features (English/Hebrew)
+  - AxeAccessibilityReporter component for dev-time accessibility testing
+
 - **Phase 14: Settings & Preferences Page** - Comprehensive settings at `/settings`
   - **Display** - Font size selector (Small/Medium/Large)
   - **Sound Settings** - Sound effects toggle and volume slider (0-100%)
@@ -19,6 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Settings link added to header navigation
   - Full bilingual support (English/Hebrew) with RTL layout
   - Full WCAG accessibility with proper ARIA labels and keyboard navigation
+
+### Fixed
+- **Tower Game Scrolling** - Tower container now auto-scrolls to keep the top blocks visible as the tower grows, and scrolls back down when blocks are removed
 
 ### Added (Phase 12)
 - **Phase 12: Additional Game Modes** - 4 new typing game modes with game selection hub

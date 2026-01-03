@@ -6,6 +6,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTypingEngine, type CharacterState } from '@/hooks/useTypingEngine';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
+import { useSound } from '@/hooks/useSound';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
@@ -47,8 +48,10 @@ interface RaceGameProps {
 export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const t = useTranslations('games');
   const tPractice = useTranslations('practice');
-  const locale = (propLocale || useLocale()) as 'en' | 'he';
+  const hookLocale = useLocale() as 'en' | 'he';
+  const locale = propLocale || hookLocale;
   const router = useRouter();
+  const { playKeypress, playError, playCarStop, startEngineLoop, stopEngineLoop } = useSound();
 
   // Game states
   const [gameState, setGameState] = useState<'ready' | 'racing' | 'finished'>('ready');
@@ -80,10 +83,12 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const handleCharacterTyped = useCallback((char: string, isCorrect: boolean) => {
     if (isCorrect) {
       flashCorrectRef.current(char);
+      playKeypress();
     } else {
       flashWrongRef.current(char);
+      playError();
     }
-  }, []);
+  }, [playKeypress, playError]);
 
   const {
     status,
@@ -138,6 +143,8 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
       const totalTime = endTime - (startTime || endTime);
       setFinishTime(totalTime);
       setGameState('finished');
+      stopEngineLoop(300); // Fade out engine
+      playCarStop();
 
       // Calculate results
       const { isNewBest, xpEarned } = recordRaceResult(totalTime, targetText.length);
@@ -151,7 +158,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
         isNewBest,
       });
     }
-  }, [isComplete, gameState, startTime, targetText.length, stats, recordRaceResult, addExerciseXp]);
+  }, [isComplete, gameState, startTime, targetText.length, stats, recordRaceResult, addExerciseXp, playCarStop, stopEngineLoop]);
 
   // Initialize game
   const initGame = useCallback(() => {
@@ -171,7 +178,8 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
     setGameState('racing');
     setStartTime(Date.now());
     startEngine();
-  }, [startEngine]);
+    startEngineLoop();
+  }, [startEngine, startEngineLoop]);
 
   // Handle key presses to start
   useEffect(() => {
@@ -192,6 +200,13 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   useEffect(() => {
     initGame();
   }, [initGame]);
+
+  // Cleanup - stop engine loop if component unmounts
+  useEffect(() => {
+    return () => {
+      stopEngineLoop(0);
+    };
+  }, [stopEngineLoop]);
 
   // Calculate progress percentage - correct keys move forward, errors move back
   const baseProgress = targetText.length > 0 ? (stats.correctCount / targetText.length) * 100 : 0;

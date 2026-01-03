@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://keyquest.com/sitemap.xml
+Sitemap: https://keyquest-app.netlify.app/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /api/

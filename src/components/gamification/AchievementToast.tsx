@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { getAchievement } from '@/data/achievements';
+import { useSound } from '@/hooks/useSound';
 
 // Individual toast for a single achievement
 const Toast = memo(function Toast({
@@ -245,20 +246,22 @@ export function AchievementToast() {
   const markAchievementSeen = useProgressStore((s) => s.markAchievementSeen);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const { playAchievement } = useSound();
 
   // Handle hydration
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Show next achievement from queue
+  // Show next achievement from queue and play sound
   useEffect(() => {
     if (!isHydrated) return;
 
     if (!currentId && pendingAchievementIds.length > 0) {
       setCurrentId(pendingAchievementIds[0]);
+      playAchievement(); // Play achievement sound when showing new achievement
     }
-  }, [pendingAchievementIds, currentId, isHydrated]);
+  }, [pendingAchievementIds, currentId, isHydrated, playAchievement]);
 
   const handleDismiss = useCallback(() => {
     if (currentId) {

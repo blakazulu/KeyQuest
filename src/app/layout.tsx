@@ -37,7 +37,7 @@ const heebo = Heebo({
   display: 'swap',
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest.com';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://keyquest-app.netlify.app';
 
 // Disable zoom to keep UI elements fixed size
 export const viewport: Viewport = {

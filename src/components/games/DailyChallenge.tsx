@@ -20,7 +20,8 @@ interface DailyChallengeProps {
 export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   const t = useTranslations('games');
   const tPractice = useTranslations('practice');
-  const locale = (propLocale || useLocale()) as 'en' | 'he';
+  const hookLocale = useLocale() as 'en' | 'he';
+  const locale = propLocale || hookLocale;
   const router = useRouter();
 
   // Daily challenge data
