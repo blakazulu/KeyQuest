@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useTypingEngine, type TypingStats } from '@/hooks/useTypingEngine';
+import { useTypingEngine, type TypingStats, type CharacterState } from '@/hooks/useTypingEngine';
 
 interface KeyboardTestProps {
   locale: 'en' | 'he';
@@ -189,41 +189,77 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
             disabled={isFinished}
           />
 
-          {/* Text display */}
+          {/* Text display - with word grouping to prevent mid-word breaks */}
           <div
-            className="font-mono text-lg leading-relaxed text-left break-words"
+            className="typing-text text-lg leading-relaxed text-left"
             dir="ltr"
             aria-live="polite"
-            style={{ wordBreak: 'break-word' }}
           >
             {characters.length > 0 ? (
-              characters.map((char, index) => (
-                <span
-                  key={index}
-                  className={`
-                    relative inline
-                    ${char.status === 'correct' ? 'text-emerald-400' : ''}
-                    ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/40' : ''}
-                    ${char.status === 'current' ? 'text-white bg-amber-500/50' : ''}
-                    ${char.status === 'pending' ? 'text-gray-500' : ''}
-                  `}
-                >
-                  {char.status === 'current' && !isStarted && (
-                    <span className="absolute left-0 top-0 h-full w-0.5 bg-amber-400 animate-pulse" />
-                  )}
-                  {char.char === ' ' ? '\u00A0' : char.char}
-                </span>
-              ))
+              (() => {
+                // Group characters into words to prevent mid-word line breaks
+                const words: CharacterState[][] = [];
+                let currentWord: CharacterState[] = [];
+                characters.forEach((charState: CharacterState) => {
+                  if (charState.char === ' ') {
+                    if (currentWord.length > 0) {
+                      words.push(currentWord);
+                      currentWord = [];
+                    }
+                    words.push([charState]);
+                  } else {
+                    currentWord.push(charState);
+                  }
+                });
+                if (currentWord.length > 0) {
+                  words.push(currentWord);
+                }
+                return words.map((word, wordIndex) => (
+                  <span key={wordIndex} className="inline-block whitespace-nowrap">
+                    {word.map((char: CharacterState) => (
+                      <span
+                        key={char.index}
+                        className={`
+                          relative inline
+                          ${char.status === 'correct' ? 'text-emerald-400' : ''}
+                          ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/40' : ''}
+                          ${char.status === 'current' ? 'text-white bg-amber-500/50' : ''}
+                          ${char.status === 'pending' ? 'text-gray-500' : ''}
+                        `}
+                      >
+                        {char.status === 'current' && !isStarted && (
+                          <span className="absolute left-0 top-0 h-full w-0.5 bg-amber-400 animate-pulse" />
+                        )}
+                        {char.char === ' ' ? '\u00A0' : char.char}
+                      </span>
+                    ))}
+                  </span>
+                ));
+              })()
             ) : (
-              // Show the test text before engine initializes
-              TEST_TEXT.split('').map((char, index) => (
-                <span
-                  key={index}
-                  className={index === 0 ? 'text-white bg-amber-500/50' : 'text-gray-500'}
-                >
-                  {char === ' ' ? '\u00A0' : char}
-                </span>
-              ))
+              // Show the test text before engine initializes - also with word grouping
+              (() => {
+                const words = TEST_TEXT.split(' ');
+                return words.map((word, wordIndex) => (
+                  <span key={wordIndex} className="inline-block whitespace-nowrap">
+                    {word.split('').map((char, charIndex) => {
+                      const globalIndex = words.slice(0, wordIndex).join(' ').length + (wordIndex > 0 ? 1 : 0) + charIndex;
+                      return (
+                        <span
+                          key={charIndex}
+                          className={globalIndex === 0 ? 'text-white bg-amber-500/50' : 'text-gray-500'}
+                        >
+                          {char}
+                        </span>
+                      );
+                    })}
+                    {/* Add space after word (except last) */}
+                    {wordIndex < words.length - 1 && (
+                      <span className="text-gray-500">{'\u00A0'}</span>
+                    )}
+                  </span>
+                ));
+              })()
             )}
           </div>
 

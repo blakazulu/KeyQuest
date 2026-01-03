@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full WCAG accessibility with proper ARIA labels and keyboard navigation
 
 ### Fixed
+- **Monitor Text Overflow** - Fixed text overflow and word-breaking issues across all typing monitors
+  - Added `word-break: keep-all` to prevent mid-word line breaks
+  - Implemented word grouping in RaceGame, DailyChallenge, and KeyboardTest components
+  - Words now wrap to new lines as complete units, never breaking mid-word
+  - Added `.calm-typing-text` CSS class for consistent calm mode styling
 - **Tower Game Scrolling** - Tower container now auto-scrolls to keep the top blocks visible as the tower grows, and scrolls back down when blocks are removed
 
 ### Added (Phase 12)

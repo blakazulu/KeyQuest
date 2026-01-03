@@ -359,21 +359,44 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
                 </button>
               </div>
             ) : (
-              <div className="font-mono text-2xl leading-relaxed select-none text-center">
-                {characters.map((char: CharacterState, index: number) => (
-                  <span
-                    key={index}
-                    className={`
-                      transition-colors duration-100
-                      ${char.status === 'correct' ? 'text-green-400' : ''}
-                      ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/30' : ''}
-                      ${char.status === 'current' ? 'bg-orange-500/30 text-orange-300 border-b-2 border-orange-400' : ''}
-                      ${char.status === 'pending' ? 'text-indigo-300/60' : ''}
-                    `}
-                  >
-                    {char.char === ' ' ? '\u00A0' : char.char}
-                  </span>
-                ))}
+              <div className="typing-text text-2xl leading-relaxed select-none text-center">
+                {/* Group characters into words to prevent mid-word line breaks */}
+                {(() => {
+                  const words: CharacterState[][] = [];
+                  let currentWord: CharacterState[] = [];
+                  characters.forEach((charState: CharacterState) => {
+                    if (charState.char === ' ') {
+                      if (currentWord.length > 0) {
+                        words.push(currentWord);
+                        currentWord = [];
+                      }
+                      words.push([charState]);
+                    } else {
+                      currentWord.push(charState);
+                    }
+                  });
+                  if (currentWord.length > 0) {
+                    words.push(currentWord);
+                  }
+                  return words.map((word, wordIndex) => (
+                    <span key={wordIndex} className="inline-block whitespace-nowrap">
+                      {word.map((char: CharacterState) => (
+                        <span
+                          key={char.index}
+                          className={`
+                            transition-colors duration-100
+                            ${char.status === 'correct' ? 'text-green-400' : ''}
+                            ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/30' : ''}
+                            ${char.status === 'current' ? 'bg-orange-500/30 text-orange-300 border-b-2 border-orange-400' : ''}
+                            ${char.status === 'pending' ? 'text-indigo-300/60' : ''}
+                          `}
+                        >
+                          {char.char === ' ' ? '\u00A0' : char.char}
+                        </span>
+                      ))}
+                    </span>
+                  ));
+                })()}
               </div>
             )}
           </div>

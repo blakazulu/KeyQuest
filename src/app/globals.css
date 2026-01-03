@@ -497,6 +497,26 @@ a[aria-disabled="true"],
   justify-content: center;
   color: #e0e7ff;
   text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  /* Prevent word breaking - words wrap to new line as complete units */
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+/* Calm mode typing text - similar but gentler styling */
+.calm-typing-text {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  line-height: 2;
+  min-height: 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  color: #e0e7ff;
+  /* Prevent word breaking - words wrap to new line as complete units */
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 /* ============================================
