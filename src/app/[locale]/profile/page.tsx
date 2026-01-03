@@ -446,7 +446,7 @@ export default function ProfilePage() {
                 {t.assessment.recommendedStage}
               </p>
               <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                Stage {initialAssessment.recommendedStage}: {stageNames[locale][initialAssessment.recommendedStage as keyof typeof stageNames['en']]}
+                {locale === 'he' ? 'שלב' : 'Stage'} {initialAssessment.recommendedStage}: {stageNames[locale][initialAssessment.recommendedStage as keyof typeof stageNames['en']]}
               </p>
             </div>
 

@@ -100,6 +100,9 @@ interface ProgressState {
   updateStreak: () => void;
   reset: () => void;
 
+  // Assessment session (for onboarding)
+  recordAssessmentSession: (wpm: number, accuracy: number) => string[];
+
   // Achievement actions
   checkAndUnlockAchievements: () => string[];
   markAchievementSeen: (id: string) => void;
@@ -387,6 +390,90 @@ export const useProgressStore = create<ProgressState>()(
         set((state) => ({
           totalXp: state.totalXp + xpAmount,
         }));
+      },
+
+      recordAssessmentSession: (wpm, accuracy) => {
+        const { sessionHistory, averageAccuracy, averageWpm, achievements } = get();
+
+        // Skip if WPM is 0 (skipped assessment)
+        if (wpm === 0) {
+          return [];
+        }
+
+        // Add assessment as a session entry (no XP or stars for assessment)
+        const assessmentSession: SessionResult = {
+          lessonId: 'assessment',
+          accuracy,
+          wpm,
+          date: new Date().toISOString(),
+          xpEarned: 0,
+          stars: 0,
+        };
+        const newHistory = [...sessionHistory, assessmentSession];
+
+        // Calculate new averages
+        const totalSessions = newHistory.length;
+        const newAvgAccuracy =
+          totalSessions === 1
+            ? accuracy
+            : (averageAccuracy * (totalSessions - 1) + accuracy) / totalSessions;
+        const newAvgWpm =
+          totalSessions === 1
+            ? wpm
+            : (averageWpm * (totalSessions - 1) + wpm) / totalSessions;
+
+        set({
+          sessionHistory: newHistory,
+          averageAccuracy: newAvgAccuracy,
+          averageWpm: newAvgWpm,
+          lastPracticeDate: new Date().toISOString(),
+        });
+
+        // Update streak
+        get().updateStreak();
+
+        // Check session-specific achievements (Lightning Fingers, Turbo Typer)
+        const sessionAchievements = checkSessionAchievements(wpm, accuracy, achievements);
+
+        // Unlock session achievements
+        if (sessionAchievements.length > 0) {
+          const updatedAchievements = { ...get().achievements };
+          let achievementXp = 0;
+          const achievementXpEvents: XpEvent[] = [];
+
+          for (const id of sessionAchievements) {
+            if (!updatedAchievements[id]?.unlocked) {
+              updatedAchievements[id] = createAchievementProgress(id);
+              const achievement = getAchievement(id);
+              if (achievement) {
+                achievementXp += achievement.xpReward;
+                achievementXpEvents.push({
+                  type: 'achievement',
+                  id,
+                  xp: achievement.xpReward,
+                  date: new Date().toISOString(),
+                });
+              }
+            }
+          }
+
+          set({
+            achievements: updatedAchievements,
+            totalXp: get().totalXp + achievementXp,
+            pendingAchievementIds: [
+              ...get().pendingAchievementIds,
+              ...sessionAchievements.filter(
+                (id) => !get().pendingAchievementIds.includes(id)
+              ),
+            ],
+            xpHistory: [...get().xpHistory, ...achievementXpEvents],
+          });
+        }
+
+        // Check all other achievements (like Speed Demon based on averageWpm)
+        const allNewAchievements = get().checkAndUnlockAchievements();
+
+        return [...new Set([...sessionAchievements, ...allNewAchievements])];
       },
 
       updateWeakLetter: (letter, accuracy) => {

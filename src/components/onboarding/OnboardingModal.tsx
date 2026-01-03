@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSettingsStore, type AgeGroup, type AvatarId, type InitialAssessment } from '@/stores/useSettingsStore';
+import { useProgressStore } from '@/stores/useProgressStore';
 import { ProfileSelector } from './ProfileSelector';
 import { KeyboardTest } from './KeyboardTest';
 import { OnboardingResults } from './OnboardingResults';
@@ -59,6 +60,7 @@ export function OnboardingModal({ locale, onClose }: OnboardingModalProps) {
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
 
   const { setAgeGroup, setUserName, setUserAvatar, setInitialAssessment, completeOnboarding } = useSettingsStore();
+  const { recordAssessmentSession } = useProgressStore();
 
   // Focus trap
   useEffect(() => {
@@ -153,12 +155,15 @@ export function OnboardingModal({ locale, onClose }: OnboardingModalProps) {
         completedAt: new Date().toISOString(),
       };
       setInitialAssessment(assessment);
+
+      // Record assessment as a session to unlock WPM-based achievements
+      recordAssessmentSession(testResults.wpm, testResults.accuracy);
     } else {
       completeOnboarding();
     }
     router.push(`/${locale}/levels`);
     onClose();
-  }, [testResults, setInitialAssessment, completeOnboarding, router, locale, onClose]);
+  }, [testResults, setInitialAssessment, recordAssessmentSession, completeOnboarding, router, locale, onClose]);
 
   const handleSkipConfirm = useCallback(() => {
     completeOnboarding();

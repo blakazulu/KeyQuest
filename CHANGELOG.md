@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Achievements now unlock from onboarding assessment** - WPM-based achievements (Speed Demon, Lightning Fingers, Turbo Typer) now properly trigger from initial typing assessment results
+- **Hebrew translation for "Stage" in profile page** - Assessment recommended stage now shows "שלב" in Hebrew instead of hardcoded "Stage"
+
 ### Added
 - **Phase 11: Adaptive Learning System** - Personalized practice based on performance
   - **Letter History Tracking** - Records accuracy history per letter (last 20 sessions) for trend analysis
