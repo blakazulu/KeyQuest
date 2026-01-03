@@ -60,6 +60,29 @@ export function checkAchievementCondition(
     case 'levels_key_clicks':
       return snapshot.levelsKeyClicks >= achievement.threshold;
 
+    // Game mode achievements
+    case 'race_best_time':
+      // Lower is better for time - check if completed and under threshold
+      return snapshot.raceBestTime !== null && snapshot.raceBestTime <= achievement.threshold;
+
+    case 'target_high_score':
+      return snapshot.targetHighScore >= achievement.threshold;
+
+    case 'target_max_combo':
+      return snapshot.targetMaxCombo >= achievement.threshold;
+
+    case 'tower_max_height':
+      return snapshot.towerMaxHeight >= achievement.threshold;
+
+    case 'daily_completed':
+      return snapshot.dailiesCompleted >= achievement.threshold;
+
+    case 'daily_streak':
+      return snapshot.dailyStreak >= achievement.threshold;
+
+    case 'games_played':
+      return snapshot.totalGamesPlayed >= achievement.threshold;
+
     // Session-specific conditions are handled separately
     case 'session_wpm_min':
     case 'session_accuracy_min':

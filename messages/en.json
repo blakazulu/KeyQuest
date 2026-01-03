@@ -6,6 +6,7 @@
   "nav": {
     "home": "Home",
     "levels": "Levels",
+    "games": "Games",
     "practice": "Practice",
     "calmMode": "Calm Mode",
     "dashboard": "Dashboard",
@@ -243,6 +244,56 @@
       "escape": "Esc to pause",
       "space": "Space to resume",
       "enter": "Enter to start"
+    }
+  },
+  "games": {
+    "title": "Game Modes",
+    "subtitle": "Practice typing through fun and engaging games",
+    "play": "Play",
+    "locked": "Locked",
+    "completed": "Completed",
+    "bestScore": "Best",
+    "bestTime": "Best Time",
+    "maxHeight": "Max Height",
+    "maxCombo": "Max Combo",
+    "blocks": "blocks",
+    "gamesPlayed": "games",
+    "dayStreak": "day streak",
+    "backToLevels": "Back to Levels",
+    "xpInfo": {
+      "title": "Earn XP in Games!",
+      "description": "Complete games to earn XP and unlock achievements. Daily Challenge gives 1.5x bonus XP!"
+    },
+    "race": {
+      "title": "Race Game",
+      "description": "Race across the track by typing! Type fast and accurately to keep your car speeding ahead. Errors slow you down!"
+    },
+    "target": {
+      "title": "Target Shooting",
+      "description": "Hit letter targets before they disappear! Build combos for multiplied points. How high can you score in 60 seconds?"
+    },
+    "tower": {
+      "title": "Tower Builder",
+      "description": "Build the tallest tower by typing words! Each correct word adds a block. Errors make blocks fall!"
+    },
+    "daily": {
+      "title": "Daily Challenge",
+      "description": "Complete today's unique challenge for bonus XP! Same challenge for everyone. Build your daily streak!"
+    },
+    "calm": {
+      "title": "Calm Mode",
+      "description": "Stress-free typing practice at your own pace. No timers, no pressure - just peaceful practice."
+    },
+    "results": {
+      "title": "Game Complete!",
+      "score": "Score",
+      "time": "Time",
+      "accuracy": "Accuracy",
+      "wpm": "WPM",
+      "xpEarned": "XP Earned",
+      "newBest": "New Best!",
+      "playAgain": "Play Again",
+      "exit": "Exit"
     }
   },
   "gamification": {

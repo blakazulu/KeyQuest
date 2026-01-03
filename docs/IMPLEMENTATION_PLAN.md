@@ -726,16 +726,16 @@ typing-learning/
 ### Phase 12: Additional Game Modes
 
 **Goal**: More engaging ways to practice
-**Status**: [ ] Not Started
+**Status**: [x] Complete
 
 | #    | Task                           | Status | Description                                          |
 | ---- | ------------------------------ | ------ | ---------------------------------------------------- |
-| 12.1 | Build Race Game                | [ ]    | Character moves forward with typing, slows on errors |
-| 12.2 | Build Target Shooting          | [ ]    | Type letters to hit targets, combos for streaks      |
-| 12.3 | Build Tower Builder            | [ ]    | Correct words add blocks, errors remove them         |
-| 12.4 | Build Daily Challenge          | [ ]    | Unique daily exercise with bonus rewards             |
-| 12.5 | Create game selection UI       | [ ]    | Choose between game modes                            |
-| 12.6 | Add game-specific achievements | [ ]    | Achievements tied to each game mode                  |
+| 12.1 | Build Race Game                | [x]    | Car racing game with parallax road, timer-based      |
+| 12.2 | Build Target Shooting          | [x]    | Type letters to hit targets, combo multiplier system |
+| 12.3 | Build Tower Builder            | [x]    | Stack blocks by typing words, blocks fall on errors  |
+| 12.4 | Build Daily Challenge          | [x]    | Date-seeded daily challenge with 1.5x XP, streaks    |
+| 12.5 | Create game selection UI       | [x]    | Game hub at /games with cards for each mode          |
+| 12.6 | Add game-specific achievements | [x]    | 10 new achievements for game modes                   |
 
 **Deliverable**: Multiple engaging practice modes
 

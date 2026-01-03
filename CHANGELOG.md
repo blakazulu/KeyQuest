@@ -20,6 +20,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full bilingual support (English/Hebrew) with RTL layout
   - Full WCAG accessibility with proper ARIA labels and keyboard navigation
 
+### Added (Phase 12)
+- **Phase 12: Additional Game Modes** - 4 new typing game modes with game selection hub
+  - **Game Selection Hub** at `/games` - Central hub with cards for all game modes
+  - **Race Game** at `/games/race` - Car racing typing game with parallax road
+    - Car moves forward as you type correctly, slows on errors
+    - Timer-based scoring with personal best tracking
+    - XP awarded based on speed and accuracy
+  - **Target Shooting** at `/games/target` - 60-second timed letter targeting
+    - Floating letter targets to type before they disappear
+    - Combo multiplier system for consecutive correct hits
+    - High score and max combo tracking
+  - **Tower Builder** at `/games/tower` - Word typing to stack blocks
+    - Type words correctly to add blocks to tower
+    - Errors cause blocks to fall
+    - Max height and blocks placed tracking
+  - **Daily Challenge** at `/games/daily` - Unique daily typing challenge
+    - Date-seeded text generation for consistent daily challenges
+    - 1.5x XP bonus for completion
+    - Daily streak tracking
+    - Shows completion status for repeat practice
+  - **10 New Game Achievements**:
+    - Speed Racer / Lightning Lap (race completion times)
+    - Sharpshooter / Combo King (target shooting performance)
+    - Tower Architect / Sky High (tower heights)
+    - Daily Devotee / Daily Champion (daily completions)
+    - Game Collector / Game Master (cross-game achievements)
+  - New `useGameStore` for persistent game stats
+  - Shared components: `GameCard`, `GameHeader`, `GameResults`
+  - Games link added to header navigation
+  - Full bilingual support (English/Hebrew)
+
 ### Fixed
 - **Achievements now unlock from onboarding assessment** - WPM-based achievements (Speed Demon, Lightning Fingers, Turbo Typer) now properly trigger from initial typing assessment results
 - **Hebrew translation for "Stage" in profile page** - Assessment recommended stage now shows "שלב" in Hebrew instead of hardcoded "Stage"

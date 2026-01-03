@@ -13,6 +13,7 @@ export type AchievementCategory =
   | 'streak'       // Streak-related achievements
   | 'dedication'   // Practice time/session count
   | 'mastery'      // Key mastery achievements
+  | 'games'        // Game mode achievements
   | 'secret';      // Hidden easter egg achievements
 
 /**
@@ -43,7 +44,15 @@ export type AchievementConditionType =
   | 'keys_mastered'
   | 'curriculum_complete'
   | 'home_key_clicks'      // Easter egg: clicking key on home page
-  | 'levels_key_clicks';   // Easter egg: clicking key on levels page
+  | 'levels_key_clicks'    // Easter egg: clicking key on levels page
+  // Game mode achievements
+  | 'race_best_time'       // Fastest race completion (ms)
+  | 'target_high_score'    // Best target shooting score
+  | 'target_max_combo'     // Longest combo streak
+  | 'tower_max_height'     // Tallest tower built
+  | 'daily_completed'      // Total dailies completed
+  | 'daily_streak'         // Consecutive daily completions
+  | 'games_played';        // Total games across all modes
 
 /**
  * Achievement definition (static data).
@@ -108,4 +117,12 @@ export interface ProgressSnapshot {
   weakLetters: Record<string, number>;
   homeKeyClicks: number;
   levelsKeyClicks: number;
+  // Game mode stats
+  raceBestTime: number | null;
+  targetHighScore: number;
+  targetMaxCombo: number;
+  towerMaxHeight: number;
+  dailiesCompleted: number;
+  dailyStreak: number;
+  totalGamesPlayed: number;
 }

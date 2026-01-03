@@ -213,6 +213,7 @@ export default function AchievementsPage() {
     streak: { en: 'Streaks', he: 'רצף' },
     dedication: { en: 'Dedication', he: 'מסירות' },
     mastery: { en: 'Mastery', he: 'שליטה' },
+    games: { en: 'Games', he: 'משחקים' },
     secret: { en: 'Secrets', he: 'סודות' },
   };
 

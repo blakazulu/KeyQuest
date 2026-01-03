@@ -1,6 +1,6 @@
 /**
  * Achievement definitions for the gamification system.
- * 15 achievements across 6 categories.
+ * 35 achievements across 8 categories (including games).
  */
 
 import type { Achievement, AchievementCategory } from '@/types/achievement';
@@ -245,6 +245,118 @@ export const achievements: Achievement[] = [
     conditionType: 'levels_key_clicks',
     threshold: 100,
   },
+
+  // === GAME ACHIEVEMENTS (10) ===
+  {
+    id: 'speed-racer',
+    category: 'games',
+    rarity: 'rare',
+    icon: '🏎️',
+    title: { en: 'Speed Racer', he: 'רץ מהירות' },
+    description: { en: 'Complete a race in under 30 seconds', he: 'השלם מרוץ בפחות מ-30 שניות' },
+    xpReward: 75,
+    conditionType: 'race_best_time',
+    threshold: 30000,
+  },
+  {
+    id: 'lightning-lap',
+    category: 'games',
+    rarity: 'epic',
+    icon: '⚡',
+    title: { en: 'Lightning Lap', he: 'הקפה ברק' },
+    description: { en: 'Complete a race in under 20 seconds', he: 'השלם מרוץ בפחות מ-20 שניות' },
+    xpReward: 150,
+    conditionType: 'race_best_time',
+    threshold: 20000,
+  },
+  {
+    id: 'sharpshooter',
+    category: 'games',
+    rarity: 'rare',
+    icon: '🎯',
+    title: { en: 'Sharpshooter', he: 'צלף מדויק' },
+    description: { en: 'Score 50 points in Target Shooting', he: 'השג 50 נקודות בירי למטרות' },
+    xpReward: 75,
+    conditionType: 'target_high_score',
+    threshold: 50,
+  },
+  {
+    id: 'combo-king',
+    category: 'games',
+    rarity: 'epic',
+    icon: '👑',
+    title: { en: 'Combo King', he: 'מלך הקומבו' },
+    description: { en: 'Achieve a 25-hit combo', he: 'השג קומבו של 25 פגיעות' },
+    xpReward: 150,
+    conditionType: 'target_max_combo',
+    threshold: 25,
+  },
+  {
+    id: 'tower-architect',
+    category: 'games',
+    rarity: 'rare',
+    icon: '🏗️',
+    title: { en: 'Tower Architect', he: 'אדריכל מגדלים' },
+    description: { en: 'Build a 25-block tower', he: 'בנה מגדל של 25 קוביות' },
+    xpReward: 75,
+    conditionType: 'tower_max_height',
+    threshold: 25,
+  },
+  {
+    id: 'sky-high',
+    category: 'games',
+    rarity: 'legendary',
+    icon: '🌟',
+    title: { en: 'Sky High', he: 'גבוה עד השמיים' },
+    description: { en: 'Build a 50-block tower', he: 'בנה מגדל של 50 קוביות' },
+    xpReward: 300,
+    conditionType: 'tower_max_height',
+    threshold: 50,
+  },
+  {
+    id: 'daily-devotee',
+    category: 'games',
+    rarity: 'common',
+    icon: '📅',
+    title: { en: 'Daily Devotee', he: 'מסור יומי' },
+    description: { en: 'Complete 7 daily challenges', he: 'השלם 7 אתגרים יומיים' },
+    xpReward: 50,
+    conditionType: 'daily_completed',
+    threshold: 7,
+  },
+  {
+    id: 'daily-champion',
+    category: 'games',
+    rarity: 'rare',
+    icon: '🏆',
+    title: { en: 'Daily Champion', he: 'אלוף יומי' },
+    description: { en: 'Complete 30 daily challenges', he: 'השלם 30 אתגרים יומיים' },
+    xpReward: 100,
+    conditionType: 'daily_completed',
+    threshold: 30,
+  },
+  {
+    id: 'game-collector',
+    category: 'games',
+    rarity: 'rare',
+    icon: '🎮',
+    title: { en: 'Game Collector', he: 'אספן משחקים' },
+    description: { en: 'Play all 4 game modes', he: 'שחק בכל 4 מצבי המשחק' },
+    xpReward: 100,
+    conditionType: 'games_played',
+    threshold: 4,
+  },
+  {
+    id: 'game-master',
+    category: 'games',
+    rarity: 'legendary',
+    icon: '🎖️',
+    title: { en: 'Game Master', he: 'אמן המשחקים' },
+    description: { en: 'Reach top performance in all games', he: 'הגע לביצועים מעולים בכל המשחקים' },
+    xpReward: 500,
+    conditionType: 'games_played',
+    threshold: 100,
+  },
 ];
 
 /**
@@ -271,5 +383,6 @@ export const achievementCategories: AchievementCategory[] = [
   'streak',
   'dedication',
   'mastery',
+  'games',
   'secret',
 ];

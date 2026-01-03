@@ -16,6 +16,7 @@ import {
 } from '@/lib/lessonProgression';
 import { getLesson, getFirstLesson } from '@/data/lessons';
 import { useSettingsStore } from './useSettingsStore';
+import { useGameStore } from './useGameStore';
 import { getRankProgress, checkRankUp } from '@/data/ranks';
 import { calculateXpEnhanced, type XpBreakdown } from '@/lib/xpCalculation';
 import {
@@ -719,6 +720,7 @@ export const useProgressStore = create<ProgressState>()(
       getProgressSnapshot: (): ProgressSnapshot => {
         const state = get();
         const curriculum = state.getCurriculumProgress();
+        const gameState = useGameStore.getState();
 
         return {
           completedLessons: state.completedLessons,
@@ -734,6 +736,14 @@ export const useProgressStore = create<ProgressState>()(
           weakLetters: state.weakLetters,
           homeKeyClicks: state.homeKeyClicks,
           levelsKeyClicks: state.levelsKeyClicks,
+          // Game stats
+          raceBestTime: gameState.raceBestTime,
+          targetHighScore: gameState.targetHighScore,
+          targetMaxCombo: gameState.targetMaxCombo,
+          towerMaxHeight: gameState.towerMaxHeight,
+          dailiesCompleted: gameState.dailiesCompleted,
+          dailyStreak: gameState.dailyStreak,
+          totalGamesPlayed: gameState.totalGamesPlayed,
         };
       },
     }),
