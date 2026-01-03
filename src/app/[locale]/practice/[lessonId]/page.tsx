@@ -3,8 +3,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import { getLesson, getNextLesson } from '@/data/lessons';
+import { getLessonForLayout, getNextLessonForLayout } from '@/data/lessons';
 import { useProgressStore } from '@/stores/useProgressStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import { LessonIntro, ExerciseRunner, LessonSummary } from '@/components/practice';
 import type { ExerciseResult, LessonResult } from '@/types/lesson';
 import type { LetterStats } from '@/hooks/useTypingEngine';
@@ -21,9 +22,12 @@ export default function LessonPracticePage() {
   const [lessonResult, setLessonResult] = useState<LessonResult | null>(null);
   const [flowKey, setFlowKey] = useState(0); // Used to reset the flow
 
-  // Get lesson data
-  const lesson = getLesson(lessonId);
-  const nextLesson = lesson ? getNextLesson(lessonId) : null;
+  // Get keyboard layout for lesson lookup
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
+
+  // Get lesson data using layout-aware functions
+  const lesson = getLessonForLayout(lessonId, keyboardLayout);
+  const nextLesson = lesson ? getNextLessonForLayout(lessonId, keyboardLayout) : null;
 
   // Progress store actions
   const completeLesson = useProgressStore((s) => s.completeLesson);

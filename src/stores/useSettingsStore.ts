@@ -144,6 +144,7 @@ export const useSettingsStore = create<SettingsState>()(
           hasCompletedOnboarding: false,
           initialAssessment: null,
           layoutAssessments: {},
+          keyboardLayout: 'qwerty',
           ageGroup: 'adult',
         }),
 

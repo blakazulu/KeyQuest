@@ -5,7 +5,7 @@ import { useProgressStore, type XpEvent } from '@/stores/useProgressStore';
 import { useSettingsStore, type AvatarId, type AgeGroup } from '@/stores/useSettingsStore';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { getLesson } from '@/data/lessons';
+import { getLessonAnyLayout } from '@/data/lessons';
 import { getAchievement, achievements } from '@/data/achievements';
 
 // Mini avatar component for the pill
@@ -136,7 +136,7 @@ export const XpPill = memo(function XpPill() {
     .reverse()
     .map((event) => {
       if (event.type === 'lesson') {
-        const lesson = getLesson(event.id);
+        const lesson = getLessonAnyLayout(event.id);
         return {
           ...event,
           title: lesson?.title[locale] || event.id,

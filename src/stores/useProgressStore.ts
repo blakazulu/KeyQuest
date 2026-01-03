@@ -213,7 +213,9 @@ export const useProgressStore = create<ProgressState>()(
       ...initialState,
 
       completeLesson: (lessonId, accuracy, wpm, timeSpent) => {
-        const lesson = getLesson(lessonId);
+        // Get current layout to find lesson in correct curriculum
+        const layout = useSettingsStore.getState().keyboardLayout;
+        const lesson = getLessonForLayout(lessonId, layout);
         if (!lesson) {
           return {
             passed: false,
@@ -342,20 +344,21 @@ export const useProgressStore = create<ProgressState>()(
         // Update streak
         get().updateStreak();
 
-        // Check for new achievements
-        const sessionAchievements = checkSessionAchievements(wpm, accuracy, achievements);
+        // Check for new achievements using layout-specific achievements
+        const currentLayoutAchievements = get().layoutAchievements[layout] || {};
+        const sessionAchievements = checkSessionAchievements(wpm, accuracy, currentLayoutAchievements);
         const allNewAchievements = get().checkAndUnlockAchievements();
         const newAchievements = [...new Set([...sessionAchievements, ...allNewAchievements])];
 
-        // Unlock session achievements
+        // Unlock session achievements to layout-specific storage
         if (sessionAchievements.length > 0) {
-          const updatedAchievements = { ...get().achievements };
+          const updatedLayoutAchievements = { ...currentLayoutAchievements };
           let achievementXp = 0;
           const achievementXpEvents: XpEvent[] = [];
 
           for (const id of sessionAchievements) {
-            if (!updatedAchievements[id]?.unlocked) {
-              updatedAchievements[id] = createAchievementProgress(id);
+            if (!updatedLayoutAchievements[id]?.unlocked) {
+              updatedLayoutAchievements[id] = createAchievementProgress(id);
               const achievement = getAchievement(id);
               if (achievement) {
                 achievementXp += achievement.xpReward;
@@ -370,7 +373,12 @@ export const useProgressStore = create<ProgressState>()(
           }
 
           set({
-            achievements: updatedAchievements,
+            layoutAchievements: {
+              ...get().layoutAchievements,
+              [layout]: updatedLayoutAchievements,
+            },
+            // Also update legacy achievements for backwards compatibility
+            achievements: { ...get().achievements, ...updatedLayoutAchievements },
             totalXp: get().totalXp + achievementXp,
             pendingAchievementIds: [
               ...get().pendingAchievementIds,

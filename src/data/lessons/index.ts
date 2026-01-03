@@ -229,5 +229,18 @@ export function getCurriculumStatsForLayout(layout: KeyboardLayoutType = 'qwerty
   };
 }
 
+/**
+ * Get a lesson by ID from any layout
+ * Useful for XP history where we need to display lesson titles regardless of current layout
+ */
+export function getLessonAnyLayout(lessonId: string): Lesson | undefined {
+  // Hebrew lessons start with 'he-'
+  if (lessonId.startsWith('he-')) {
+    return getHebrewLesson(lessonId);
+  }
+  // Otherwise assume QWERTY
+  return getLesson(lessonId);
+}
+
 // Re-export individual stages for direct import
 export { stage1, stage2, stage3, stage4, stage5, stage6, hebrewStages };
