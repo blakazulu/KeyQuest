@@ -6,10 +6,11 @@ import { useRouter } from '@/i18n/navigation';
 import { useTypingEngine, type CharacterState } from '@/hooks/useTypingEngine';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
-import { GameHeader } from './GameHeader';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
+import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
+import { RaceBackground } from './GameBackgrounds';
 
 // Sample race texts (short sentences for racing)
 const RACE_TEXTS = [
@@ -55,7 +56,7 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [finishTime, setFinishTime] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [showHands, setShowHands] = useState(true);
 
   // Results
   const [results, setResults] = useState<{
@@ -107,6 +108,8 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
     wrongKey,
     flashCorrect,
     flashWrong,
+    highlightedKey,
+    activeFinger,
   } = useKeyboardHighlight({
     targetText: targetText,
     currentPosition: cursorPosition,
@@ -199,139 +202,158 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const nextChar = targetText[cursorPosition]?.toLowerCase();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <GameHeader
-        gameId="race"
-        icon="🏎️"
-        bestScore={raceBestTime ? formatTime(raceBestTime) : undefined}
-        bestScoreLabel={t('bestTime')}
-        currentValue={gameState === 'racing' ? formatTime(currentTime) : undefined}
-        currentLabel={t('results.time')}
-        locale={locale}
-      />
+    <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
+      <RaceBackground />
 
-      {/* Game area */}
-      <div className="pt-20 px-4 pb-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Race Track */}
-          <div className="relative mb-8 h-48 bg-gray-700 rounded-2xl overflow-hidden shadow-xl">
-            {/* Sky background */}
-            <div className="absolute inset-0 bg-gradient-to-b from-sky-400 to-sky-300 dark:from-sky-900 dark:to-sky-800" />
-
-            {/* Hills */}
-            <div className="absolute bottom-16 left-0 right-0 h-16">
-              <svg viewBox="0 0 1200 100" className="w-full h-full" preserveAspectRatio="none">
-                <path
-                  d="M0,100 C200,20 400,80 600,40 C800,0 1000,60 1200,30 L1200,100 L0,100 Z"
-                  fill="#22c55e"
-                  className="dark:fill-green-800"
-                />
-              </svg>
+      {/* Top control bar - pill style like CalmMode */}
+      <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">
+        {/* Stats pill */}
+        {gameState === 'racing' && (
+          <div className="flex items-center gap-4 px-5 py-2.5 bg-black/50 backdrop-blur-md rounded-xl text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-orange-400">⏱️</span>
+              <span className="font-bold">{formatTime(currentTime)}</span>
             </div>
-
-            {/* Road */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gray-600 dark:bg-gray-700">
-              {/* Road markings - animate based on progress */}
-              <div
-                className="absolute top-1/2 left-0 right-0 h-1 flex gap-8"
-                style={{ transform: `translateX(-${progress}%)` }}
-              >
-                {[...Array(30)].map((_, i) => (
-                  <div key={i} className="w-12 h-1 bg-yellow-400 flex-shrink-0" />
-                ))}
-              </div>
-
-              {/* Start line */}
-              <div className="absolute left-8 top-0 bottom-0 w-1 bg-white" />
-
-              {/* Finish line */}
-              <div
-                className="absolute top-0 bottom-0 w-4 transition-all duration-300"
-                style={{
-                  right: `${Math.max(0, 8 - progress * 0.8)}%`,
-                  background: 'repeating-linear-gradient(0deg, white 0px, white 4px, black 4px, black 8px)',
-                }}
-              />
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-400">⚡</span>
+              <span>{stats.wpm} WPM</span>
             </div>
-
-            {/* Car */}
-            <div
-              className="absolute bottom-4 transition-all duration-150 ease-out"
-              style={{
-                left: `${Math.min(85, 5 + progress * 0.8)}%`,
-                transform: `translateX(-50%)`,
-              }}
-            >
-              {/* Car body - flipped to face right */}
-              <div className="relative">
-                <div
-                  className="text-5xl filter drop-shadow-lg"
-                  style={{ transform: 'scaleX(-1)' }}
-                >
-                  🏎️
-                </div>
-                {/* Speed lines behind the car (on left side) */}
-                {gameState === 'racing' && stats.wpm > 30 && (
-                  <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-row-reverse gap-1 opacity-60">
-                    {[...Array(3)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-0.5 bg-white rounded-full animate-pulse"
-                        style={{
-                          animationDelay: `${i * 100}ms`,
-                          width: `${12 + i * 4}px`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2">
+              <span className="text-green-400">🎯</span>
+              <span>{stats.accuracy}%</span>
             </div>
+          </div>
+        )}
 
-            {/* Progress bar */}
-            <div className="absolute top-4 left-4 right-4 h-2 bg-black/30 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-green-400 to-green-500 transition-all duration-150"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+        {/* Best time pill */}
+        {raceBestTime && (
+          <div className="px-4 py-2.5 bg-amber-500/80 backdrop-blur-md rounded-xl text-white font-medium text-sm">
+            🏆 {t('bestTime')}: {formatTime(raceBestTime)}
+          </div>
+        )}
 
-            {/* Speed indicator */}
-            {gameState === 'racing' && (
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 text-white text-sm font-bold">
-                {stats.wpm} WPM
-              </div>
-            )}
+        {/* Hands toggle */}
+        <button
+          onClick={() => setShowHands(!showHands)}
+          className={`
+            flex items-center gap-2 px-4 py-2.5
+            backdrop-blur-md rounded-xl
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md
+            ${showHands
+              ? 'bg-orange-500 text-white hover:bg-orange-600'
+              : 'bg-white/20 text-white hover:bg-white/30'
+            }
+          `}
+        >
+          ✋
+          <span className="hidden sm:inline">
+            {showHands ? 'Hide Hands' : 'Show Hands'}
+          </span>
+        </button>
+
+        {/* Exit */}
+        <button
+          onClick={() => router.push('/games')}
+          className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 backdrop-blur-md rounded-xl text-white font-medium text-sm transition-all shadow-md"
+        >
+          ✕
+          <span>Exit</span>
+        </button>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 gap-6 z-10 overflow-hidden">
+        {/* Race Track Visual */}
+        <div className="w-full max-w-4xl relative h-40 bg-gradient-to-b from-gray-700 to-gray-800 rounded-2xl overflow-hidden shadow-xl border border-gray-600">
+          {/* Road surface */}
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-600 to-gray-700" />
+
+          {/* Road markings - animate based on progress */}
+          <div
+            className="absolute top-1/2 left-0 right-0 h-1 flex gap-8 -translate-y-1/2"
+            style={{ transform: `translateX(-${progress}%)` }}
+          >
+            {[...Array(30)].map((_, i) => (
+              <div key={i} className="w-12 h-1 bg-yellow-400 flex-shrink-0" />
+            ))}
           </div>
 
-          {/* Text display */}
-          <div className="bg-surface rounded-2xl shadow-lg p-6 mb-6">
+          {/* Start line */}
+          <div className="absolute left-8 top-0 bottom-0 w-1 bg-white opacity-50" />
+
+          {/* Finish line */}
+          <div
+            className="absolute top-0 bottom-0 w-4 transition-all duration-300"
+            style={{
+              right: `${Math.max(4, 8 - progress * 0.08)}%`,
+              background: 'repeating-linear-gradient(0deg, white 0px, white 8px, #1a1a1a 8px, #1a1a1a 16px)',
+            }}
+          />
+
+          {/* Car */}
+          <div
+            className="absolute top-1/2 transition-all duration-150 ease-out"
+            style={{
+              left: `${Math.min(85, 5 + progress * 0.8)}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <div className="relative">
+              <div className="text-5xl filter drop-shadow-lg" style={{ transform: 'scaleX(-1)' }}>
+                🏎️
+              </div>
+              {/* Speed lines */}
+              {gameState === 'racing' && stats.wpm > 30 && (
+                <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-row-reverse gap-1 opacity-60">
+                  {[...Array(3)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-0.5 bg-orange-400 rounded-full animate-pulse"
+                      style={{ animationDelay: `${i * 100}ms`, width: `${12 + i * 4}px` }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Progress bar at top */}
+          <div className="absolute top-3 left-3 right-3 h-2 bg-black/40 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-orange-400 to-yellow-400 transition-all duration-150 rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Monitor with text */}
+        <div className="typing-monitor w-full max-w-3xl flex-shrink-0">
+          <div className="typing-monitor-screen">
             {gameState === 'ready' ? (
-              <div className="text-center">
-                <p className="text-lg text-muted mb-4">{tPractice('pressEnterToStart')}</p>
+              <div className="text-center py-8">
+                <p className="text-lg text-indigo-200 mb-6">{tPractice('pressEnterToStart')}</p>
                 <button
                   onClick={startRace}
-                  className="btn-primary px-8 py-3 rounded-xl text-lg font-semibold"
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white text-xl font-bold shadow-lg hover:scale-105 transition-transform"
                 >
                   🏁 {t('play')}
                 </button>
               </div>
             ) : (
-              <div
-                className="font-mono text-2xl leading-relaxed select-none"
-                role="textbox"
-                aria-label={tPractice('typingArea')}
-              >
+              <div className="font-mono text-2xl leading-relaxed select-none text-center">
                 {characters.map((char: CharacterState, index: number) => (
                   <span
                     key={index}
                     className={`
                       transition-colors duration-100
-                      ${char.status === 'correct' ? 'text-green-600 dark:text-green-400' : ''}
-                      ${char.status === 'incorrect' ? 'text-red-500 bg-red-100 dark:bg-red-900/30' : ''}
-                      ${char.status === 'current' ? 'bg-primary/20 text-primary border-b-2 border-primary' : ''}
-                      ${char.status === 'pending' ? 'text-muted' : ''}
+                      ${char.status === 'correct' ? 'text-green-400' : ''}
+                      ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/30' : ''}
+                      ${char.status === 'current' ? 'bg-orange-500/30 text-orange-300 border-b-2 border-orange-400' : ''}
+                      ${char.status === 'pending' ? 'text-indigo-300/60' : ''}
                     `}
                   >
                     {char.char === ' ' ? '\u00A0' : char.char}
@@ -339,43 +361,27 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
                 ))}
               </div>
             )}
-
-            {/* Stats during race */}
-            {gameState === 'racing' && (
-              <div className="flex justify-center gap-8 mt-4 text-sm text-muted">
-                <span>{tPractice('stats.accuracy')}: {stats.accuracy}%</span>
-                <span>{tPractice('stats.errors')}: {stats.errorCount}</span>
-              </div>
-            )}
           </div>
+          <div className="typing-monitor-stand" />
+        </div>
 
-          {/* Keyboard toggle - only show during racing */}
-          {gameState === 'racing' && (
-            <div className="flex justify-center mb-4">
-              <button
-                onClick={() => setShowKeyboard(!showKeyboard)}
-                className="text-sm text-muted hover:text-foreground transition-colors"
-              >
-                {showKeyboard ? '⌨️ Hide Keyboard' : '⌨️ Show Keyboard'}
-              </button>
-            </div>
-          )}
-
-          {/* Visual keyboard - only show during racing */}
-          {showKeyboard && gameState === 'racing' && (
-            <div className="flex justify-center">
+        {/* Keyboard with hands */}
+        {showHands && gameState === 'racing' && (
+          <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
+            <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
-                highlightedKey={nextChar}
+                highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}
                 wrongKey={wrongKey}
-                showFingerColors
+                showFingerColors={true}
+                showHomeRow={true}
                 baseSize={44}
               />
-            </div>
-          )}
-        </div>
-      </div>
+            </HandsWithKeyboard>
+          </div>
+        )}
+      </main>
 
       {/* Results modal */}
       {results && (

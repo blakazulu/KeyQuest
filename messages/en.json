@@ -278,7 +278,8 @@
     },
     "daily": {
       "title": "Daily Challenge",
-      "description": "Complete today's unique challenge for bonus XP! Same challenge for everyone. Build your daily streak!"
+      "description": "Complete today's unique challenge for bonus XP! Same challenge for everyone. Build your daily streak!",
+      "todayLabel": "Today"
     },
     "calm": {
       "title": "Calm Mode",

@@ -7,10 +7,11 @@ import { useTypingEngine, type CharacterState } from '@/hooks/useTypingEngine';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
 import { getDailyChallenge, type DailyChallenge as DailyChallengeData } from '@/lib/dailyGenerator';
-import { GameHeader } from './GameHeader';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
+import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
+import { DailyBackground } from './GameBackgrounds';
 
 interface DailyChallengeProps {
   locale?: 'en' | 'he';
@@ -30,7 +31,7 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [finishTime, setFinishTime] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [showHands, setShowHands] = useState(true);
 
   // Results
   const [results, setResults] = useState<{
@@ -91,6 +92,8 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
     wrongKey,
     flashCorrect,
     flashWrong,
+    highlightedKey,
+    activeFinger,
   } = useKeyboardHighlight({
     targetText: challenge.text,
     currentPosition: cursorPosition,
@@ -210,102 +213,132 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 dark:from-gray-900 dark:to-purple-900">
-      {/* Header */}
-      <GameHeader
-        gameId="daily"
-        icon="📅"
-        currentValue={gameState === 'typing' ? formatTime(currentTime) : undefined}
-        currentLabel={t('results.time')}
-        locale={locale}
-      />
+    <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
+      <DailyBackground />
 
-      {/* Game area */}
-      <div className="pt-20 px-4 pb-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Daily info card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-3xl">{challenge.theme.emoji}</span>
-                  <h2 className="font-display text-xl font-bold text-foreground">
-                    {challenge.theme.name}
-                  </h2>
-                </div>
-                <p className="text-sm text-muted">
-                  {formatDate(challenge.date)}
-                </p>
-              </div>
-
-              {/* Streak display */}
-              {dailyStreak > 0 && (
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 dark:bg-orange-900/30">
-                  <span className="text-2xl">🔥</span>
-                  <span className="font-bold text-orange-600 dark:text-orange-400">
-                    {dailyStreak} {t('dayStreak')}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Challenge stats */}
-            <div className="flex gap-4 text-sm text-muted">
-              <span>📝 {challenge.wordCount} words</span>
-              <span>📊 {challenge.characterCount} characters</span>
-            </div>
-
-            {/* Already completed badge */}
-            {todayCompleted && gameState === 'ready' && (
-              <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">✅</span>
-                  <div>
-                    <div className="font-semibold text-green-700 dark:text-green-400">
-                      {t('completed')} Today!
-                    </div>
-                    {todayStats && (
-                      <div className="text-sm text-green-600 dark:text-green-500">
-                        {todayStats.wpm} WPM • {todayStats.accuracy}% accuracy • {formatTime(todayStats.time)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* XP bonus info */}
-            {!todayCompleted && gameState === 'ready' && (
-              <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl flex items-center gap-2">
-                <span className="text-xl">💎</span>
-                <span className="text-sm text-purple-700 dark:text-purple-300">
-                  Complete for <strong>1.5x XP bonus</strong>!
-                </span>
-              </div>
-            )}
+      {/* Top control bar */}
+      <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">
+        {/* Daily info pill */}
+        <div className="flex items-center gap-3 px-5 py-2.5 bg-black/50 backdrop-blur-md rounded-xl text-white">
+          <span className="text-2xl">{challenge.theme.emoji}</span>
+          <div>
+            <div className="font-bold text-sm">{challenge.theme.name}</div>
+            <div className="text-xs text-white/60">{formatDate(challenge.date)}</div>
           </div>
+        </div>
 
-          {/* Progress bar */}
-          {gameState === 'typing' && (
-            <div className="mb-4">
-              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-150"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-sm text-muted mt-1">
-                <span>{Math.round(progress)}%</span>
-                <span>{stats.wpm} WPM</span>
-              </div>
+        {/* Stats pill (during typing) */}
+        {gameState === 'typing' && (
+          <div className="flex items-center gap-4 px-5 py-2.5 bg-black/50 backdrop-blur-md rounded-xl text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-pink-400">⏱️</span>
+              <span className="font-bold">{formatTime(currentTime)}</span>
             </div>
-          )}
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-400">⚡</span>
+              <span>{stats.wpm} WPM</span>
+            </div>
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2">
+              <span className="text-green-400">🎯</span>
+              <span>{stats.accuracy}%</span>
+            </div>
+          </div>
+        )}
 
-          {/* Text display */}
-          <div className="bg-surface rounded-2xl shadow-lg p-6 mb-6">
+        {/* Streak pill */}
+        {dailyStreak > 0 && (
+          <div className="px-4 py-2.5 bg-orange-500/80 backdrop-blur-md rounded-xl text-white font-medium text-sm">
+            🔥 {dailyStreak} {t('dayStreak')}
+          </div>
+        )}
+
+        {/* Completed badge */}
+        {todayCompleted && gameState === 'ready' && (
+          <div className="px-4 py-2.5 bg-green-500/80 backdrop-blur-md rounded-xl text-white font-medium text-sm">
+            ✅ {t('completed')}
+          </div>
+        )}
+
+        {/* Hands toggle */}
+        <button
+          onClick={() => setShowHands(!showHands)}
+          className={`
+            flex items-center gap-2 px-4 py-2.5
+            backdrop-blur-md rounded-xl
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md
+            ${showHands
+              ? 'bg-pink-500 text-white hover:bg-pink-600'
+              : 'bg-white/20 text-white hover:bg-white/30'
+            }
+          `}
+        >
+          ✋
+          <span className="hidden sm:inline">
+            {showHands ? 'Hide Hands' : 'Show Hands'}
+          </span>
+        </button>
+
+        {/* Exit */}
+        <button
+          onClick={() => router.push('/games')}
+          className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 backdrop-blur-md rounded-xl text-white font-medium text-sm transition-all shadow-md"
+        >
+          ✕
+          <span>Exit</span>
+        </button>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 gap-4 z-10 overflow-hidden">
+        {/* Progress bar (during typing) */}
+        {gameState === 'typing' && (
+          <div className="w-full max-w-3xl">
+            <div className="h-3 bg-black/30 backdrop-blur-sm rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-violet-500 transition-all duration-150 rounded-full"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-sm text-white/70 mt-1">
+              <span>{Math.round(progress)}%</span>
+              <span>{challenge.wordCount} words • {challenge.characterCount} chars</span>
+            </div>
+          </div>
+        )}
+
+        {/* Monitor with text */}
+        <div className="typing-monitor w-full max-w-3xl flex-shrink-0">
+          <div className="typing-monitor-screen">
             {gameState === 'ready' ? (
-              <div className="text-center">
-                <p className="text-lg text-muted mb-4">
+              <div className="text-center py-6">
+                {/* XP bonus info */}
+                {!todayCompleted && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/30 rounded-full mb-6">
+                    <span className="text-xl">💎</span>
+                    <span className="text-sm text-purple-200">
+                      Complete for <strong>1.5x XP bonus</strong>!
+                    </span>
+                  </div>
+                )}
+
+                {/* Already completed info */}
+                {todayCompleted && todayStats && (
+                  <div className="mb-6 p-4 bg-green-500/20 rounded-xl">
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <span className="text-2xl">✅</span>
+                      <span className="font-semibold text-green-300">{t('completed')} Today!</span>
+                    </div>
+                    <div className="text-sm text-green-200/70">
+                      {todayStats.wpm} WPM • {todayStats.accuracy}% accuracy • {formatTime(todayStats.time)}
+                    </div>
+                  </div>
+                )}
+
+                <p className="text-lg text-indigo-200 mb-6">
                   {todayCompleted
                     ? 'Practice again or come back tomorrow!'
                     : tPractice('pressEnterToStart')
@@ -313,26 +346,22 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
                 </p>
                 <button
                   onClick={startTyping}
-                  className="btn-primary px-8 py-3 rounded-xl text-lg font-semibold"
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xl font-bold shadow-lg hover:scale-105 transition-transform"
                 >
-                  {todayCompleted ? '🔄 Practice Again' : `🎯 ${t('play')}`}
+                  {todayCompleted ? '🔄 Practice Again' : `📅 ${t('play')}`}
                 </button>
               </div>
             ) : (
-              <div
-                className="font-mono text-xl leading-relaxed select-none"
-                role="textbox"
-                aria-label={tPractice('typingArea')}
-              >
+              <div className="font-mono text-xl leading-relaxed select-none text-center">
                 {characters.map((char: CharacterState, index: number) => (
                   <span
                     key={index}
                     className={`
                       transition-colors duration-100
-                      ${char.status === 'correct' ? 'text-green-600 dark:text-green-400' : ''}
-                      ${char.status === 'incorrect' ? 'text-red-500 bg-red-100 dark:bg-red-900/30' : ''}
-                      ${char.status === 'current' ? 'bg-primary/20 text-primary border-b-2 border-primary' : ''}
-                      ${char.status === 'pending' ? 'text-muted' : ''}
+                      ${char.status === 'correct' ? 'text-green-400' : ''}
+                      ${char.status === 'incorrect' ? 'text-red-400 bg-red-900/30' : ''}
+                      ${char.status === 'current' ? 'bg-pink-500/30 text-pink-300 border-b-2 border-pink-400' : ''}
+                      ${char.status === 'pending' ? 'text-indigo-300/60' : ''}
                     `}
                   >
                     {char.char === ' ' ? '\u00A0' : char.char}
@@ -340,41 +369,27 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
                 ))}
               </div>
             )}
-
-            {/* Stats during typing */}
-            {gameState === 'typing' && (
-              <div className="flex justify-center gap-8 mt-4 text-sm text-muted">
-                <span>{tPractice('stats.accuracy')}: {stats.accuracy}%</span>
-                <span>{tPractice('stats.errors')}: {stats.errorCount}</span>
-              </div>
-            )}
           </div>
+          <div className="typing-monitor-stand" />
+        </div>
 
-          {/* Keyboard toggle */}
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={() => setShowKeyboard(!showKeyboard)}
-              className="text-sm text-muted hover:text-foreground transition-colors"
-            >
-              {showKeyboard ? '⌨️ Hide Keyboard' : '⌨️ Show Keyboard'}
-            </button>
-          </div>
-
-          {/* Visual keyboard */}
-          {showKeyboard && gameState !== 'ready' && (
-            <div className="flex justify-center">
+        {/* Keyboard with hands */}
+        {showHands && gameState === 'typing' && (
+          <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
+            <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
-                highlightedKey={nextChar}
+                highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}
                 wrongKey={wrongKey}
-                showFingerColors
+                showFingerColors={true}
+                showHomeRow={true}
                 baseSize={44}
               />
-            </div>
-          )}
-        </div>
-      </div>
+            </HandsWithKeyboard>
+          </div>
+        )}
+      </main>
 
       {/* Results modal */}
       {results && (

@@ -22,6 +22,10 @@ export function Header() {
   // Hide everything on calm mode page - it has its own fullscreen UI
   const isCalmModePage = pathname.includes('/practice/calm');
 
+  // Hide everything on individual game pages (race, target, tower, daily) - they have fullscreen UI with pills
+  // The games hub (/games) should still show the header
+  const isGamePlayPage = pathname.match(/\/games\/(race|target|tower|daily)$/);
+
   const navItems = [
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
@@ -84,8 +88,8 @@ export function Header() {
     }
   }, [isScrolled]);
 
-  // Don't render anything on calm mode page
-  if (isCalmModePage) {
+  // Don't render anything on calm mode page or individual game pages
+  if (isCalmModePage || isGamePlayPage) {
     return null;
   }
 

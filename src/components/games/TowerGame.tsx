@@ -6,10 +6,11 @@ import { useRouter } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useGameStore } from '@/stores/useGameStore';
-import { GameHeader } from './GameHeader';
 import { GameResults } from './GameResults';
 import { Keyboard } from '@/components/keyboard/Keyboard';
+import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
+import { TowerBackground } from './GameBackgrounds';
 
 // Word lists by difficulty
 const SHORT_WORDS = ['cat', 'dog', 'sun', 'run', 'big', 'top', 'hat', 'red', 'box', 'cup'];
@@ -17,14 +18,14 @@ const MEDIUM_WORDS = ['house', 'water', 'green', 'happy', 'tower', 'block', 'bui
 const LONG_WORDS = ['building', 'elephant', 'mountain', 'keyboard', 'champion', 'practice', 'strength'];
 
 const BLOCK_COLORS = [
-  'bg-red-500',
-  'bg-orange-500',
-  'bg-yellow-500',
-  'bg-green-500',
-  'bg-blue-500',
-  'bg-indigo-500',
-  'bg-purple-500',
-  'bg-pink-500',
+  'from-red-400 to-red-600',
+  'from-orange-400 to-orange-600',
+  'from-yellow-400 to-yellow-600',
+  'from-green-400 to-green-600',
+  'from-blue-400 to-blue-600',
+  'from-indigo-400 to-indigo-600',
+  'from-purple-400 to-purple-600',
+  'from-pink-400 to-pink-600',
 ];
 
 interface Block {
@@ -69,13 +70,15 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const [errors, setErrors] = useState(0);
   const [totalBlocks, setTotalBlocks] = useState(0);
   const [maxHeight, setMaxHeight] = useState(0);
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  const [showHands, setShowHands] = useState(true);
   const [fallingBlocks, setFallingBlocks] = useState<Block[]>([]);
   const [shakeTower, setShakeTower] = useState(false);
 
   // Refs
   const blockIdRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const flashCorrectRef = useRef<(key: string) => void>(() => {});
+  const flashWrongRef = useRef<(key: string) => void>(() => {});
 
   // Results
   const [results, setResults] = useState<{
@@ -91,10 +94,6 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const towerMaxHeightRecord = useGameStore((s) => s.towerMaxHeight);
   const recordTowerResult = useGameStore((s) => s.recordTowerResult);
 
-  // Refs for flash functions (defined before hook)
-  const flashCorrectRef = useRef<(key: string) => void>(() => {});
-  const flashWrongRef = useRef<(key: string) => void>(() => {});
-
   // Keyboard highlight
   const {
     pressedKeys,
@@ -102,6 +101,8 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
     wrongKey,
     flashCorrect,
     flashWrong,
+    highlightedKey,
+    activeFinger,
   } = useKeyboardHighlight({
     targetText: currentWord,
     currentPosition: typedChars.length,
@@ -268,125 +269,188 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
   const nextChar = currentWord[typedChars.length]?.toLowerCase();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-100 to-orange-200 dark:from-gray-900 dark:to-amber-900">
-      {/* Header */}
-      <GameHeader
-        gameId="tower"
-        icon="🏗️"
-        bestScore={towerMaxHeightRecord > 0 ? `${towerMaxHeightRecord} ${t('blocks')}` : undefined}
-        bestScoreLabel={t('maxHeight')}
-        currentValue={gameState === 'building' ? `${blocks.length}` : undefined}
-        currentLabel={t('blocks')}
-        locale={locale}
-      />
+    <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
+      <TowerBackground />
 
-      {/* Game area */}
-      <div className="pt-20 px-4 pb-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Tower display */}
-          <div
-            ref={containerRef}
-            className="relative h-[50vh] min-h-[300px] bg-gradient-to-b from-sky-200 to-sky-100 dark:from-gray-800 dark:to-gray-700 rounded-3xl overflow-hidden mb-6"
-          >
-            {/* Ground */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-green-700 to-green-500" />
-
-            {/* Tower container */}
-            <div
-              className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col-reverse items-center transition-transform ${
-                shakeTower ? 'animate-shake' : ''
-              }`}
-            >
-              {/* Blocks */}
-              <AnimatePresence>
-                {blocks.map((block, index) => (
-                  <motion.div
-                    key={block.id}
-                    initial={{ y: -100, opacity: 0, rotate: 0 }}
-                    animate={{
-                      y: 0,
-                      opacity: 1,
-                      rotate: blocks.length > 10 ? Math.sin(index * 0.5) * (blocks.length - 10) * 0.3 : 0,
-                    }}
-                    exit={{ y: -50, opacity: 0 }}
-                    transition={{ type: 'spring', damping: 10 }}
-                    className={`${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/30`}
-                    style={{
-                      width: `${Math.max(60, block.word.length * 14)}px`,
-                      marginTop: '-2px',
-                      transform: `translateX(${block.wobble}px)`,
-                    }}
-                  >
-                    {block.word}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+      {/* Top control bar */}
+      <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">
+        {/* Stats pill */}
+        {gameState === 'building' && (
+          <div className="flex items-center gap-4 px-5 py-2.5 bg-black/50 backdrop-blur-md rounded-xl text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-amber-400">🏗️</span>
+              <span className="font-bold">{blocks.length}</span>
+              <span className="text-white/60 text-sm">{t('blocks')}</span>
             </div>
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-400">⭐</span>
+              <span>Max: {maxHeight}</span>
+            </div>
+            <div className="w-px h-5 bg-white/30" />
+            <div className="flex items-center gap-2 text-red-400">
+              <span>❌</span>
+              <span>{errors}</span>
+            </div>
+          </div>
+        )}
 
-            {/* Falling blocks */}
+        {/* Best height pill */}
+        {towerMaxHeightRecord > 0 && (
+          <div className="px-4 py-2.5 bg-amber-500/80 backdrop-blur-md rounded-xl text-white font-medium text-sm">
+            🏆 {t('maxHeight')}: {towerMaxHeightRecord}
+          </div>
+        )}
+
+        {/* Hands toggle */}
+        <button
+          onClick={() => setShowHands(!showHands)}
+          className={`
+            flex items-center gap-2 px-4 py-2.5
+            backdrop-blur-md rounded-xl
+            font-medium text-sm
+            transition-all duration-200
+            shadow-md
+            ${showHands
+              ? 'bg-amber-500 text-white hover:bg-amber-600'
+              : 'bg-white/20 text-white hover:bg-white/30'
+            }
+          `}
+        >
+          ✋
+          <span className="hidden sm:inline">
+            {showHands ? 'Hide Hands' : 'Show Hands'}
+          </span>
+        </button>
+
+        {/* Give up button */}
+        {gameState === 'building' && maxHeight > 0 && (
+          <button
+            onClick={giveUp}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-xl text-white font-medium text-sm transition-all shadow-md"
+          >
+            🏳️
+            <span>Finish</span>
+          </button>
+        )}
+
+        {/* Exit */}
+        <button
+          onClick={() => router.push('/games')}
+          className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 backdrop-blur-md rounded-xl text-white font-medium text-sm transition-all shadow-md"
+        >
+          ✕
+          <span>Exit</span>
+        </button>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 gap-4 z-10 overflow-hidden">
+        {/* Tower display */}
+        <div
+          ref={containerRef}
+          className="relative w-full max-w-3xl h-[40vh] min-h-[250px] bg-gradient-to-b from-sky-300/20 to-sky-100/10 backdrop-blur-sm rounded-3xl overflow-hidden border-2 border-white/20"
+        >
+          {/* Ground */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-amber-800 to-amber-600" />
+
+          {/* Tower container */}
+          <div
+            className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col-reverse items-center transition-transform ${
+              shakeTower ? 'animate-shake' : ''
+            }`}
+          >
+            {/* Blocks */}
             <AnimatePresence>
-              {fallingBlocks.map(block => (
+              {blocks.map((block, index) => (
                 <motion.div
-                  key={`falling-${block.id}`}
-                  initial={{ opacity: 1 }}
+                  key={block.id}
+                  initial={{ y: -100, opacity: 0, rotate: 0 }}
                   animate={{
-                    y: 300,
-                    x: Math.random() > 0.5 ? 200 : -200,
-                    rotate: Math.random() * 360,
-                    opacity: 0,
+                    y: 0,
+                    opacity: 1,
+                    rotate: blocks.length > 10 ? Math.sin(index * 0.5) * (blocks.length - 10) * 0.3 : 0,
                   }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1, ease: 'easeIn' }}
-                  className={`absolute ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm`}
+                  exit={{ y: -50, opacity: 0 }}
+                  transition={{ type: 'spring', damping: 10 }}
+                  className={`bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm border-2 border-white/30`}
                   style={{
                     width: `${Math.max(60, block.word.length * 14)}px`,
-                    left: '50%',
-                    bottom: `${(blocks.length + 1) * 30 + 32}px`,
-                    transform: 'translateX(-50%)',
+                    marginTop: '-2px',
+                    transform: `translateX(${block.wobble}px)`,
                   }}
                 >
                   {block.word}
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
 
-            {/* Height marker */}
-            <div className="absolute right-4 bottom-8 top-4 w-8 flex flex-col justify-end items-center">
-              {blocks.length > 0 && (
-                <div className="bg-black/50 text-white px-2 py-1 rounded text-sm font-bold">
-                  {blocks.length}
-                </div>
-              )}
-            </div>
+          {/* Falling blocks */}
+          <AnimatePresence>
+            {fallingBlocks.map(block => (
+              <motion.div
+                key={`falling-${block.id}`}
+                initial={{ opacity: 1 }}
+                animate={{
+                  y: 300,
+                  x: Math.random() > 0.5 ? 200 : -200,
+                  rotate: Math.random() * 360,
+                  opacity: 0,
+                }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1, ease: 'easeIn' }}
+                className={`absolute bg-gradient-to-r ${block.color} h-8 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-sm`}
+                style={{
+                  width: `${Math.max(60, block.word.length * 14)}px`,
+                  left: '50%',
+                  bottom: `${(blocks.length + 1) * 30 + 32}px`,
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                {block.word}
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
-            {/* Ready screen */}
-            {gameState === 'ready' && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm">
-                <div className="text-6xl mb-4">🏗️</div>
-                <h2 className="font-display text-2xl font-bold text-white mb-2">
-                  {t('tower.title')}
-                </h2>
-                <p className="text-white/80 max-w-sm text-center mb-6">
-                  {t('tower.description')}
-                </p>
-                <button
-                  onClick={startGame}
-                  className="btn-game px-8 py-3 rounded-xl font-bold"
-                >
-                  ▶ {t('play')}
-                </button>
+          {/* Height marker */}
+          <div className="absolute right-4 bottom-8 top-4 w-8 flex flex-col justify-end items-center">
+            {blocks.length > 0 && (
+              <div className="bg-black/50 text-white px-2 py-1 rounded text-sm font-bold">
+                {blocks.length}
               </div>
             )}
           </div>
 
-          {/* Current word to type */}
-          {gameState === 'building' && (
-            <div className="bg-surface rounded-2xl shadow-lg p-6 mb-6">
-              <div className="text-center mb-4">
-                <span className="text-sm text-muted">Type this word:</span>
+          {/* Ready screen */}
+          {gameState === 'ready' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 backdrop-blur-sm">
+              <div className="text-7xl mb-4">🏗️</div>
+              <h2 className="font-display text-3xl font-bold text-white mb-2">
+                {t('tower.title')}
+              </h2>
+              <p className="text-white/80 max-w-sm text-center mb-6">
+                {t('tower.description')}
+              </p>
+              <button
+                onClick={startGame}
+                className="px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xl font-bold shadow-lg hover:scale-105 transition-transform"
+              >
+                ▶ {t('play')}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Current word to type - Monitor style */}
+        {gameState === 'building' && (
+          <div className="typing-monitor w-full max-w-2xl flex-shrink-0">
+            <div className="typing-monitor-screen">
+              <div className="text-center mb-2">
+                <span className="text-sm text-indigo-300">Type this word:</span>
               </div>
 
-              <div className="flex justify-center gap-1 font-mono text-4xl">
+              <div className="flex justify-center gap-1 font-mono text-3xl">
                 {currentWord.split('').map((char, index) => {
                   const isTyped = index < typedChars.length;
                   const isCurrent = index === typedChars.length;
@@ -395,12 +459,12 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
                     <span
                       key={index}
                       className={`
-                        w-12 h-14 flex items-center justify-center rounded-lg border-2 transition-all
+                        w-10 h-12 flex items-center justify-center rounded-lg border-2 transition-all
                         ${isTyped
-                          ? 'bg-green-100 border-green-400 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          ? 'bg-green-500/30 border-green-400 text-green-400'
                           : isCurrent
-                          ? 'bg-primary/10 border-primary text-primary animate-pulse'
-                          : 'bg-gray-100 border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-600'
+                          ? 'bg-amber-500/30 border-amber-400 text-amber-300 animate-pulse'
+                          : 'bg-white/5 border-white/20 text-indigo-300/50'
                         }
                       `}
                     >
@@ -409,53 +473,28 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
                   );
                 })}
               </div>
-
-              {/* Stats */}
-              <div className="flex justify-center gap-8 mt-6 text-sm text-muted">
-                <span>Height: {blocks.length}</span>
-                <span>Max: {maxHeight}</span>
-                <span>Errors: {errors}</span>
-              </div>
-
-              {/* Give up button */}
-              {maxHeight > 0 && (
-                <div className="flex justify-center mt-4">
-                  <button
-                    onClick={giveUp}
-                    className="text-sm text-muted hover:text-foreground transition-colors"
-                  >
-                    🏳️ Finish Building
-                  </button>
-                </div>
-              )}
             </div>
-          )}
-
-          {/* Keyboard toggle */}
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={() => setShowKeyboard(!showKeyboard)}
-              className="text-sm text-muted hover:text-foreground transition-colors"
-            >
-              {showKeyboard ? '⌨️ Hide Keyboard' : '⌨️ Show Keyboard'}
-            </button>
+            <div className="typing-monitor-stand" />
           </div>
+        )}
 
-          {/* Visual keyboard */}
-          {showKeyboard && gameState === 'building' && (
-            <div className="flex justify-center">
+        {/* Keyboard with hands */}
+        {showHands && gameState === 'building' && (
+          <div className="w-full max-w-5xl flex-shrink-0 animate-fade-in">
+            <HandsWithKeyboard activeFinger={activeFinger} locale={locale}>
               <Keyboard
-                highlightedKey={nextChar}
+                highlightedKey={highlightedKey || nextChar}
                 pressedKeys={pressedKeys}
                 correctKey={correctKey}
                 wrongKey={wrongKey}
-                showFingerColors
-                baseSize={44}
+                showFingerColors={true}
+                showHomeRow={true}
+                baseSize={40}
               />
-            </div>
-          )}
-        </div>
-      </div>
+            </HandsWithKeyboard>
+          </div>
+        )}
+      </main>
 
       {/* Results modal */}
       {results && (
