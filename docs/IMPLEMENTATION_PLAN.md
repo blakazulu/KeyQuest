@@ -687,16 +687,38 @@ typing-learning/
 ### Phase 11: Adaptive Learning
 
 **Goal**: Personalized practice based on performance
-**Status**: [ ] Not Started
+**Status**: [x] COMPLETED
 
 | #    | Task                             | Status | Description                                                                                      |
 | ---- | -------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
-| 11.1 | Build analytics engine           | [ ]    | Track accuracy per letter over time                                                              |
-| 11.2 | Identify weak letters            | [ ]    | Algorithm to detect struggling letters                                                           |
-| 11.3 | Generate targeted practice       | [ ]    | Create exercises focusing on weak letters                                                        |
-| 11.4 | Adjust difficulty                | [ ]    | Pace based on performance (slower/faster) and chosen Child / Teen / Adult selection from profile |
-| 11.5 | Build "Problem Letters" practice | [ ]    | Dedicated mode for weak letters                                                                  |
-| 11.6 | Add learning insights            | [ ]    | Show user their improvement areas                                                                |
+| 11.1 | Build analytics engine           | [x]    | Track accuracy per letter over time (letterHistory with last 20 sessions)                        |
+| 11.2 | Identify weak letters            | [x]    | Algorithm with trend analysis (improving/declining/stable)                                       |
+| 11.3 | Generate targeted practice       | [x]    | Exercises focusing on weak letters (70% weak letter weight)                                      |
+| 11.4 | Adjust difficulty                | [x]    | Pace based on performance (slower/faster) and chosen Child / Teen / Adult selection from profile |
+| 11.5 | Build "Problem Letters" practice | [x]    | Dedicated mode at `/problem-letters` with 50% XP rate                                            |
+| 11.6 | Add learning insights            | [x]    | LearningInsights dashboard component with trends and focus areas                                 |
+
+**Components Created**:
+- `LearningInsights` - Dashboard component showing improvement trends, focus areas, mastered letters
+- `WeakLetterSelector` - Letter selection UI with accuracy and trend indicators
+- `TargetedPractice` - Full practice session with keyboard and targeted text
+- `useTargetedPractice` - Hook managing practice session state and XP calculation
+
+**New Libraries**:
+- `src/lib/letterAnalytics.ts` - Trend detection, priority scoring, weak letter ranking
+- `src/lib/difficultySettings.ts` - Age-based difficulty profiles
+- `src/lib/targetedTextGenerator.ts` - 70% weak letter focus text generation
+
+**Features**:
+- Letter history tracking (last 20 sessions per letter)
+- Trend detection (improving/declining/stable based on recent vs older performance)
+- Priority scoring for weak letters (considers accuracy, trend, consistency)
+- Age-based word length: Child (2-4), Teen (3-6), Adult (4-8) letters
+- Problem Letters awards 50% XP to keep lesson XP more valuable
+- Friendly labels ("Mastered", "Getting Better", "Needs Practice") with percentages on hover
+- Store migration v5 → v6 with letterHistory field
+- Full bilingual support (English/Hebrew)
+- Full WCAG accessibility
 
 **Deliverable**: System that adapts to user's weaknesses
 

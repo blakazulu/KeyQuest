@@ -8,6 +8,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Phase 11: Adaptive Learning System** - Personalized practice based on performance
+  - **Letter History Tracking** - Records accuracy history per letter (last 20 sessions) for trend analysis
+  - **Letter Analytics Engine** - Detects improving, declining, and stable letter trends
+  - **Problem Letters Practice** at `/problem-letters` - Dedicated practice mode for weak letters
+    - Select specific letters to practice or practice all weak letters
+    - Targeted text generation with 70% weak letter focus (vs 40% in Calm Mode)
+    - Age-appropriate word length selection based on profile (Child/Teen/Adult)
+    - Awards 50% XP to encourage use while keeping lesson XP more valuable
+    - Endless mode with real-time progress tracking
+    - Full keyboard visualization with target letters highlighted
+  - **Learning Insights Dashboard** - Shows improvement trends and focus areas
+    - Recently mastered letters (achieved 95%+ in last 7 days)
+    - Improving letters (green trend arrows)
+    - Declining letters (red trend arrows)
+    - Top 3 focus areas with priority ranking
+    - Friendly labels ("Mastered", "Getting Better", "Needs Practice") with percentages on hover
+    - Direct CTA to Problem Letters practice
+  - **Targeted Text Generator** - Dynamic text generation for weak letter practice
+  - **Age-Based Difficulty Settings** - Subtle adjustments based on profile
+    - Word length preferences (Child: 2-4, Teen: 3-6, Adult: 4-8 letters)
+    - Encouragement messaging style (high/medium/low)
+    - Default keyboard/finger guide visibility
+  - Store migration v5 -> v6 with letterHistory field
+  - Full bilingual support (English/Hebrew) for all adaptive learning UI
+  - Full WCAG accessibility with keyboard navigation and screen reader support
+
 - **Phase 10: Onboarding Flow** - First-time user experience with profile selection and typing assessment
   - **Profile Selection** - Choose age group (Child 6-12, Teen 13-17, Adult 18+) with illustrated character cards
   - **Keyboard Assessment Test** - 30-second typing test to evaluate user's current level

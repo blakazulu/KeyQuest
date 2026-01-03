@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { LessonProgress, CurriculumProgress } from '@/types/lesson';
 import type { AchievementProgress, ProgressSnapshot } from '@/types/achievement';
 import type { RankProgress } from '@/types/rank';
+import type { LetterHistoryEntry } from '@/types/progress';
 import {
   getCurriculumProgress,
   processLessonResult,
@@ -72,6 +73,9 @@ interface ProgressState {
   // XP history (all XP gains)
   xpHistory: XpEvent[];
 
+  // Letter accuracy history for analytics (Phase 11)
+  letterHistory: Record<string, LetterHistoryEntry[]>;
+
   // Actions
   completeLesson: (
     lessonId: string,
@@ -89,6 +93,10 @@ interface ProgressState {
   };
   addExerciseXp: (xpAmount: number) => void;
   updateWeakLetter: (letter: string, accuracy: number) => void;
+  recordLetterHistory: (
+    letterAccuracy: Record<string, { correct: number; total: number }>,
+    sessionId: string
+  ) => void;
   updateStreak: () => void;
   reset: () => void;
 
@@ -116,6 +124,9 @@ interface ProgressState {
 
   // Progress snapshot for achievement checking
   getProgressSnapshot: () => ProgressSnapshot;
+
+  // Letter history getter (Phase 11)
+  getLetterHistory: (letter: string) => LetterHistoryEntry[];
 }
 
 const initialState = {
@@ -139,6 +150,8 @@ const initialState = {
   levelsKeyClicks: 0,
   // XP history
   xpHistory: [] as XpEvent[],
+  // Letter history (Phase 11)
+  letterHistory: {} as Record<string, LetterHistoryEntry[]>,
 };
 
 /**
@@ -392,6 +405,34 @@ export const useProgressStore = create<ProgressState>()(
         });
       },
 
+      recordLetterHistory: (letterAccuracy, sessionId) => {
+        const currentHistory = get().letterHistory;
+        const updatedHistory = { ...currentHistory };
+        const now = new Date().toISOString();
+        const MAX_HISTORY_PER_LETTER = 20;
+
+        for (const [letter, stats] of Object.entries(letterAccuracy)) {
+          if (stats.total > 0) {
+            const accuracy = Math.round((stats.correct / stats.total) * 100);
+            const entry: LetterHistoryEntry = {
+              accuracy,
+              date: now,
+              sessionId,
+            };
+
+            // Get existing history for this letter or start fresh
+            const letterEntries = updatedHistory[letter] || [];
+
+            // Add new entry and keep only the last MAX_HISTORY_PER_LETTER entries
+            updatedHistory[letter] = [...letterEntries, entry].slice(
+              -MAX_HISTORY_PER_LETTER
+            );
+          }
+        }
+
+        set({ letterHistory: updatedHistory });
+      },
+
       updateStreak: () => {
         const { lastPracticeDate, practiceStreak, longestStreak } = get();
         const today = new Date().toDateString();
@@ -582,6 +623,11 @@ export const useProgressStore = create<ProgressState>()(
         return getRankProgress(get().totalXp);
       },
 
+      // Letter history getter (Phase 11)
+      getLetterHistory: (letter: string) => {
+        return get().letterHistory[letter] || [];
+      },
+
       // Progress snapshot for achievement checking
       getProgressSnapshot: (): ProgressSnapshot => {
         const state = get();
@@ -606,7 +652,7 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'keyquest-progress',
-      version: 5, // Increment version for XP history tracking
+      version: 6, // Increment version for letter history tracking (Phase 11)
       migrate: (persistedState: unknown, version: number) => {
         if (version === 0 || version === 1) {
           // Migrate from old format to v2 format
@@ -711,6 +757,15 @@ export const useProgressStore = create<ProgressState>()(
           return {
             ...v4State,
             xpHistory: [],
+          };
+        }
+
+        if (version === 5) {
+          // Migrate from v5 to v6 - add letter history tracking (Phase 11)
+          const v5State = persistedState as Omit<ProgressState, 'letterHistory'>;
+          return {
+            ...v5State,
+            letterHistory: {},
           };
         }
 

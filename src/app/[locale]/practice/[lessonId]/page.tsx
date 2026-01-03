@@ -28,6 +28,7 @@ export default function LessonPracticePage() {
   // Progress store actions
   const completeLesson = useProgressStore((s) => s.completeLesson);
   const updateWeakLetter = useProgressStore((s) => s.updateWeakLetter);
+  const recordLetterHistory = useProgressStore((s) => s.recordLetterHistory);
   const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked);
 
   // Scroll to top on mount
@@ -74,6 +75,9 @@ export default function LessonPracticePage() {
         }
       }
 
+      // Record letter history for analytics (Phase 11)
+      recordLetterHistory(totalStats.letterAccuracy, lessonId);
+
       // Create full lesson result
       const fullResult: LessonResult = {
         lessonId,
@@ -100,7 +104,7 @@ export default function LessonPracticePage() {
       window.scrollTo({ top: 0, behavior: 'instant' });
       setPhase('summary');
     },
-    [lesson, lessonId, completeLesson, updateWeakLetter]
+    [lesson, lessonId, completeLesson, updateWeakLetter, recordLetterHistory]
   );
 
   // Handle restart

@@ -12,6 +12,7 @@ import {
   ContinuePractice,
   type TrendDirection,
 } from '@/components/dashboard';
+import { LearningInsights } from '@/components/dashboard/LearningInsights';
 
 // Calculate trend from session history
 function calculateTrend(
@@ -179,6 +180,11 @@ export default function DashboardPage() {
         locale={locale}
         delay={400}
       />
+
+      {/* Learning Insights (Phase 11) */}
+      <div className="mt-6">
+        <LearningInsights locale={locale} />
+      </div>
 
       {/* Progress & Weak Letters Row */}
       <div className="grid gap-6 lg:grid-cols-2 mt-10">
