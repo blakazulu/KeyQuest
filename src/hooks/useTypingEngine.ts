@@ -234,20 +234,37 @@ export function useTypingEngine({
 
     // Check if just completed
     if (currentPosition + 1 >= targetText.length) {
+      // Capture the completion time immediately before setTimeout
+      const completionTime = Date.now();
+      const capturedStartTime = useTypingStore.getState().startTime;
+
       // Will trigger on next render with updated stats
       setTimeout(() => {
         const finalStats = useTypingStore.getState();
+
+        // Guard: If store was reset (startTime is null but we had a valid start),
+        // use the captured values to avoid 0 WPM/accuracy
+        const startTime = finalStats.startTime ?? capturedStartTime ?? completionTime;
+        const elapsed = completionTime - startTime;
+
+        // Guard: If position is 0, the store was likely reset - skip callback
+        if (finalStats.currentPosition === 0 && finalStats.targetText.length === 0) {
+          return;
+        }
+
         const correctCount = finalStats.currentPosition - finalStats.errors.length;
-        const elapsed = Date.now() - (finalStats.startTime ?? Date.now());
+
+        // Ensure we have valid elapsed time (at least 100ms to avoid extreme WPM)
+        const safeElapsed = Math.max(elapsed, 100);
 
         onComplete?.({
           // WPM based on correct characters only (errors don't count toward speed)
-          wpm: calculateWPM(correctCount, elapsed),
-          netWpm: calculateNetWPM(finalStats.currentPosition, finalStats.errors.length, elapsed),
+          wpm: calculateWPM(correctCount, safeElapsed),
+          netWpm: calculateNetWPM(finalStats.currentPosition, finalStats.errors.length, safeElapsed),
           accuracy: calculateAccuracy(correctCount, finalStats.currentPosition),
           correctCount,
           errorCount: finalStats.errors.length,
-          elapsedTime: elapsed,
+          elapsedTime: safeElapsed,
           charactersTyped: finalStats.currentPosition,
           totalCharacters: finalStats.targetText.length,
           letterAccuracy: { ...letterAccuracyRef.current },
