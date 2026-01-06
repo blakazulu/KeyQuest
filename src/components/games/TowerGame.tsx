@@ -516,7 +516,7 @@ export function TowerGame({ locale: propLocale }: TowerGameProps) {
           <div className="typing-monitor w-full max-w-2xl flex-shrink-0">
             <div className="typing-monitor-screen">
               <div className="text-center mb-2">
-                <span className="text-sm text-indigo-300">Type this word:</span>
+                <span className="text-sm text-indigo-300">{t('tower.typeThisWord')}</span>
               </div>
 
               <div className="flex justify-center gap-1 font-mono text-3xl">

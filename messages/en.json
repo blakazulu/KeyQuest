@@ -274,7 +274,8 @@
     },
     "tower": {
       "title": "Tower Builder",
-      "description": "Build the tallest tower by typing words! Each correct word adds a block. Errors make blocks fall!"
+      "description": "Build the tallest tower by typing words! Each correct word adds a block. Errors make blocks fall!",
+      "typeThisWord": "Type this word:"
     },
     "daily": {
       "title": "Daily Challenge",
