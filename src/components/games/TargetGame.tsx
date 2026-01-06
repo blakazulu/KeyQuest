@@ -13,6 +13,7 @@ import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { TargetBackground } from './GameBackgrounds';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 
 const GAME_DURATION = 60000; // 60 seconds
 const TARGET_LIFETIME = 3000; // 3 seconds before target disappears
@@ -72,7 +73,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   const { playKeypress, playError, playCombo, playSuccess } = useSound();
 
   // Game states
-  const [gameState, setGameState] = useState<'ready' | 'playing' | 'finished'>('ready');
+  const [gameState, setGameState] = useState<'verifying' | 'ready' | 'playing' | 'finished'>('verifying');
   const [targets, setTargets] = useState<Target[]>([]);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
@@ -83,6 +84,11 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   const [hitEffects, setHitEffects] = useState<{ id: number; x: number; y: number; points: number }[]>([]);
   const [showHands, setShowHands] = useState(true);
   const [lastHitLetter, setLastHitLetter] = useState<string | null>(null);
+
+  // Handle keyboard verification complete
+  const handleKeyboardReady = useCallback(() => {
+    setGameState('ready');
+  }, []);
 
   // Refs
   const targetIdRef = useRef(0);
@@ -304,6 +310,15 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
       <TargetBackground />
+
+      {/* Keyboard layout verification */}
+      {gameState === 'verifying' && (
+        <KeyboardLayoutChecker
+          expectedLayout={keyboardLayout}
+          locale={locale}
+          onReady={handleKeyboardReady}
+        />
+      )}
 
       {/* Top control bar */}
       <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">

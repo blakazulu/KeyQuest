@@ -13,6 +13,7 @@ import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { DailyBackground } from './GameBackgrounds';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 
 interface DailyChallengeProps {
   locale?: 'en' | 'he';
@@ -32,11 +33,16 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   const challenge = useMemo(() => getDailyChallenge(new Date(), keyboardLayout), [keyboardLayout]);
 
   // Game states
-  const [gameState, setGameState] = useState<'ready' | 'typing' | 'finished'>('ready');
+  const [gameState, setGameState] = useState<'verifying' | 'ready' | 'typing' | 'finished'>('verifying');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [finishTime, setFinishTime] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [showHands, setShowHands] = useState(true);
+
+  // Handle keyboard verification complete
+  const handleKeyboardReady = useCallback(() => {
+    setGameState('ready');
+  }, []);
 
   // Results
   const [results, setResults] = useState<{
@@ -221,6 +227,15 @@ export function DailyChallenge({ locale: propLocale }: DailyChallengeProps) {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
       <DailyBackground />
+
+      {/* Keyboard layout verification */}
+      {gameState === 'verifying' && (
+        <KeyboardLayoutChecker
+          expectedLayout={keyboardLayout}
+          locale={locale}
+          onReady={handleKeyboardReady}
+        />
+      )}
 
       {/* Top control bar */}
       <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">

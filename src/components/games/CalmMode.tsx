@@ -14,6 +14,7 @@ import { useCalmTextGenerator } from '@/hooks/useCalmTextGenerator';
 import { useCalmModeStore } from '@/stores/useCalmModeStore';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 
 interface CalmModeProps {
   locale?: 'en' | 'he';
@@ -38,6 +39,12 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [keyboardVerified, setKeyboardVerified] = useState(false);
+
+  // Handle keyboard verification complete
+  const handleKeyboardReady = useCallback(() => {
+    setKeyboardVerified(true);
+  }, []);
 
   // Stores
   const {
@@ -161,9 +168,9 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
     };
   }, []);
 
-  // Initialize: enter fullscreen and start practice immediately
+  // Initialize: enter fullscreen and start practice immediately (after keyboard verified)
   useEffect(() => {
-    if (!hasInitialized && isReady && text) {
+    if (!hasInitialized && isReady && text && keyboardVerified) {
       setHasInitialized(true);
       enterFullscreen();
       setTargetText(text);
@@ -171,7 +178,7 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
       startEngine();
       containerRef.current?.focus();
     }
-  }, [hasInitialized, isReady, text, enterFullscreen, setTargetText, start, startEngine]);
+  }, [hasInitialized, isReady, text, keyboardVerified, enterFullscreen, setTargetText, start, startEngine]);
 
   // Sync text updates to typing engine
   useEffect(() => {
@@ -269,6 +276,23 @@ export function CalmMode({ locale = 'en' }: CalmModeProps) {
         <CalmBackground />
         <div className="text-stone-700 text-lg animate-pulse z-10">
           {t('loading')}
+        </div>
+      </div>
+    );
+  }
+
+  // Keyboard verification state
+  if (!keyboardVerified) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+        <CalmBackground />
+        <div className="z-10">
+          <KeyboardLayoutChecker
+            expectedLayout={keyboardLayout}
+            locale={locale}
+            onReady={handleKeyboardReady}
+            onSkip={handleExit}
+          />
         </div>
       </div>
     );

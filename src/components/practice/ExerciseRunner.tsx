@@ -3,12 +3,11 @@
 import { memo, useState, useCallback, useRef } from 'react';
 import { TypingArea } from '@/components/typing';
 import { ExerciseCompleteModal } from './ExerciseCompleteModal';
-import { KeyboardLayoutMismatchModal } from '@/components/ui/KeyboardLayoutMismatchModal';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 import { useProgressStore } from '@/stores/useProgressStore';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import type { Lesson, ExerciseResult } from '@/types/lesson';
 import type { TypingStats, LetterStats } from '@/hooks/useTypingEngine';
-import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface ExerciseRunnerProps {
   lesson: Lesson;
@@ -49,7 +48,7 @@ export const ExerciseRunner = memo(function ExerciseRunner({
     errors: number;
     letterAccuracy: Record<string, LetterStats>;
   } | null>(null);
-  const [showLayoutMismatch, setShowLayoutMismatch] = useState(false);
+  const [keyboardVerified, setKeyboardVerified] = useState(false);
 
   // Progress store action
   const addExerciseXp = useProgressStore((s) => s.addExerciseXp);
@@ -57,14 +56,9 @@ export const ExerciseRunner = memo(function ExerciseRunner({
   // Get expected keyboard layout from settings
   const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
 
-  // Handle keyboard layout mismatch
-  const handleLayoutMismatch = useCallback((detectedLayout: KeyboardLayoutType) => {
-    // Only show modal if we haven't shown it already
-    setShowLayoutMismatch(true);
-  }, []);
-
-  const handleDismissLayoutMismatch = useCallback(() => {
-    setShowLayoutMismatch(false);
+  // Handle keyboard layout verification
+  const handleKeyboardReady = useCallback(() => {
+    setKeyboardVerified(true);
   }, []);
 
   // Aggregate letter accuracy across all exercises
@@ -177,7 +171,16 @@ export const ExerciseRunner = memo(function ExerciseRunner({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col mt-2">
-        {phase === 'typing' && (
+        {/* Keyboard layout verification before starting */}
+        {phase === 'typing' && !keyboardVerified && (
+          <KeyboardLayoutChecker
+            expectedLayout={keyboardLayout}
+            locale={locale}
+            onReady={handleKeyboardReady}
+          />
+        )}
+
+        {phase === 'typing' && keyboardVerified && (
           <div className="flex-1 flex flex-col w-full h-full">
             <TypingArea
               key={typingKey}
@@ -188,19 +191,8 @@ export const ExerciseRunner = memo(function ExerciseRunner({
               allowBackspace={false}
               compactKeyboard={false}
               locale={locale}
-              expectedLayout={keyboardLayout}
-              onLayoutMismatch={handleLayoutMismatch}
             />
           </div>
-        )}
-
-        {/* Keyboard layout mismatch modal */}
-        {showLayoutMismatch && (
-          <KeyboardLayoutMismatchModal
-            expectedLayout={keyboardLayout}
-            locale={locale}
-            onDismiss={handleDismissLayoutMismatch}
-          />
         )}
 
         {phase === 'result' && lastResult && (

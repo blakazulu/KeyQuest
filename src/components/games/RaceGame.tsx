@@ -13,6 +13,7 @@ import { Keyboard } from '@/components/keyboard/Keyboard';
 import { HandsWithKeyboard } from '@/components/keyboard/HandGuide';
 import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { RaceBackground } from './GameBackgrounds';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 
 // Sample race texts (short sentences for racing)
 const RACE_TEXTS_ENGLISH = [
@@ -70,12 +71,17 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   const { playKeypress, playError, playCarStop, startEngineLoop, stopEngineLoop } = useSound();
 
   // Game states
-  const [gameState, setGameState] = useState<'ready' | 'racing' | 'finished'>('ready');
+  const [gameState, setGameState] = useState<'verifying' | 'ready' | 'racing' | 'finished'>('verifying');
   const [targetText, setTargetText] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
   const [finishTime, setFinishTime] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [showHands, setShowHands] = useState(true);
+
+  // Handle keyboard verification complete
+  const handleKeyboardReady = useCallback(() => {
+    setGameState('ready');
+  }, []);
 
   // Results
   const [results, setResults] = useState<{
@@ -237,6 +243,15 @@ export function RaceGame({ locale: propLocale }: RaceGameProps) {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col overflow-hidden">
       <RaceBackground />
+
+      {/* Keyboard layout verification */}
+      {gameState === 'verifying' && (
+        <KeyboardLayoutChecker
+          expectedLayout={keyboardLayout}
+          locale={locale}
+          onReady={handleKeyboardReady}
+        />
+      )}
 
       {/* Top control bar - pill style like CalmMode */}
       <header className="flex-shrink-0 flex items-center justify-center gap-3 p-4 z-10">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTypingEngine, type TypingStats, type CharacterState } from '@/hooks/useTypingEngine';
-import { KeyboardLayoutMismatchModal } from '@/components/ui/KeyboardLayoutMismatchModal';
+import { KeyboardLayoutChecker } from '@/components/ui/KeyboardLayoutChecker';
 import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface KeyboardTestProps {
@@ -53,7 +53,7 @@ export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: Key
   // Use layout to determine test text (Hebrew layout = Hebrew text)
   const testText = TEST_TEXTS[expectedLayout];
   const isRTL = expectedLayout === 'hebrew';
-  const [showLayoutMismatch, setShowLayoutMismatch] = useState(false);
+  const [keyboardVerified, setKeyboardVerified] = useState(false);
 
   const [timeRemaining, setTimeRemaining] = useState(TEST_DURATION);
   const [isStarted, setIsStarted] = useState(false);
@@ -72,13 +72,9 @@ export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: Key
     onComplete({ wpm: stats.wpm, accuracy: stats.accuracy });
   }, [onComplete]);
 
-  // Handle keyboard layout mismatch
-  const handleLayoutMismatch = useCallback(() => {
-    setShowLayoutMismatch(true);
-  }, []);
-
-  const handleDismissLayoutMismatch = useCallback(() => {
-    setShowLayoutMismatch(false);
+  // Handle keyboard verification complete
+  const handleKeyboardReady = useCallback(() => {
+    setKeyboardVerified(true);
   }, []);
 
   const {
@@ -90,8 +86,6 @@ export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: Key
     onComplete: handleComplete,
     allowBackspace: false,
     caseSensitive: false,
-    expectedLayout,
-    onLayoutMismatch: handleLayoutMismatch,
   });
 
   // Track stats for time-up completion
@@ -156,6 +150,18 @@ export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: Key
 
   // Progress percentage based on time
   const progressPercent = ((TEST_DURATION - timeRemaining) / TEST_DURATION) * 100;
+
+  // Show keyboard verification first
+  if (!keyboardVerified) {
+    return (
+      <KeyboardLayoutChecker
+        expectedLayout={expectedLayout}
+        locale={locale}
+        onReady={handleKeyboardReady}
+        onSkip={onSkip}
+      />
+    );
+  }
 
   return (
     <div className="text-center">
@@ -313,15 +319,6 @@ export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: Key
       >
         {t.skip}
       </button>
-
-      {/* Keyboard layout mismatch modal */}
-      {showLayoutMismatch && (
-        <KeyboardLayoutMismatchModal
-          expectedLayout={expectedLayout}
-          locale={locale}
-          onDismiss={handleDismissLayoutMismatch}
-        />
-      )}
     </div>
   );
 }

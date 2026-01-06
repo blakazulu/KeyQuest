@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Keyboard Layout Mismatch Detection** - Detects when user types in wrong keyboard language
-  - Shows a helpful modal with instructions on how to switch keyboard layout (Alt+Shift on Windows, Cmd+Space on Mac)
-  - Pauses lesson/test until user confirms they've switched
-  - Works in lessons, exercises, and onboarding typing test
+- **Pre-Activity Keyboard Verification** - Verify keyboard layout BEFORE starting any typing activity
+  - New `KeyboardLayoutChecker` component prompts "Press any key to verify your keyboard"
+  - Detects character compatibility via Unicode range analysis (Hebrew U+05D0-U+05EA vs Latin)
+  - Shows mismatch modal with OS-specific switch instructions (Alt+Shift on Windows, Cmd+Space on Mac)
+  - Integrated into: Lessons (ExerciseRunner), all Games (Race, Tower, Target, Daily), Calm Mode, Onboarding Test
+  - Prevents frustration of typing in wrong language
+- **Layout-Aware Lesson Progression** - Hebrew lessons now properly unlock after completion
+  - Fixed `isLessonUnlocked` to search correct lesson pool based on keyboard layout
+  - Hebrew lessons use 'he-' prefix and are found via `getLessonForLayout`
 - **Phase 16: Hebrew Keyboard Layout** - Full Hebrew typing practice support
   - **Hebrew SI-1452 Keyboard Layout** - Complete Hebrew keyboard with finger mappings
     - Home row: ש ד ג כ (left) | ח ל ך ף (right)
