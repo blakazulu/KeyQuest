@@ -92,6 +92,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `recordAssessmentSession` now writes achievements to layout-specific storage instead of global storage
   - `markAchievementSeen` and `clearPendingAchievements` now have fallback logic for backwards compatibility
   - Prevents achievement sound from repeatedly playing when navigating to levels page after assessment
+- **WPM Calculation** - WPM now only counts correctly typed characters, not errors
+  - Previously, typing fast with errors could inflate WPM scores unrealistically
+  - Now errors don't contribute to WPM, only correct keystrokes count
 - **Monitor Text Overflow** - Fixed text overflow and word-breaking issues across all typing monitors
   - Added `word-break: keep-all` to prevent mid-word line breaks
   - Implemented word grouping in RaceGame, DailyChallenge, and KeyboardTest components

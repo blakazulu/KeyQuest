@@ -3,23 +3,23 @@
  *
  * WPM Calculation Standard:
  * - A "word" is defined as 5 characters (industry standard)
- * - Gross WPM = (total characters / 5) / minutes
- * - Net WPM = Gross WPM - (errors / minutes)
+ * - WPM = (correct characters / 5) / minutes (only correct chars count)
+ * - Net WPM = Gross WPM - (errors / minutes) (legacy formula)
  */
 
 /**
- * Calculate gross words per minute (WPM).
- * Does not account for errors.
+ * Calculate words per minute (WPM) based on correctly typed characters.
+ * Only correct characters count toward WPM - errors don't inflate the score.
  *
- * @param charactersTyped - Total number of characters typed
+ * @param correctCharacters - Number of correctly typed characters
  * @param elapsedMs - Time elapsed in milliseconds
  * @returns WPM rounded to nearest integer, minimum 0
  */
-export function calculateWPM(charactersTyped: number, elapsedMs: number): number {
-  if (elapsedMs <= 0 || charactersTyped <= 0) return 0;
+export function calculateWPM(correctCharacters: number, elapsedMs: number): number {
+  if (elapsedMs <= 0 || correctCharacters <= 0) return 0;
 
   const minutes = elapsedMs / 60000; // Convert ms to minutes
-  const words = charactersTyped / 5; // Standard: 5 chars = 1 word
+  const words = correctCharacters / 5; // Standard: 5 chars = 1 word
   const wpm = words / minutes;
 
   return Math.max(0, Math.round(wpm));
