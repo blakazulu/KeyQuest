@@ -23,7 +23,8 @@ export const KeyboardLayoutMismatchModal = memo(function KeyboardLayoutMismatchM
   onDismiss,
 }: KeyboardLayoutMismatchModalProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const isRTL = locale === 'he';
+  // RTL should be based on expectedLayout (what user will type), not just UI locale
+  const isRTL = expectedLayout === 'hebrew';
   const { title, instructions, dismissLabel } = getLayoutSwitchInstructions(expectedLayout, locale);
 
   // Focus the button on mount for accessibility

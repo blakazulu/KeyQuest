@@ -48,7 +48,8 @@ export const KeyboardLayoutChecker = memo(function KeyboardLayoutChecker({
   const [isChecking, setIsChecking] = useState(true);
   const hasVerifiedRef = useRef(false);
   const t = translations[locale];
-  const isRTL = locale === 'he';
+  // RTL should be based on expectedLayout (what user will type), not just UI locale
+  const isRTL = expectedLayout === 'hebrew';
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Ignore if already verified or showing mismatch modal
