@@ -5,6 +5,7 @@ import type { Lesson } from '@/types/lesson';
 import { Keyboard } from '@/components/keyboard';
 import { LeftHand, RightHand } from '@/components/keyboard/HandGuide';
 import { LessonExplanation } from './LessonExplanations';
+import { isHebrewChar } from '@/data/keyboard-layout';
 
 interface LessonIntroProps {
   lesson: Lesson;
@@ -75,11 +76,22 @@ export const LessonIntro = memo(function LessonIntro({
   const homeRowKeys = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
   const isHomeRowLesson = lesson.stageId === 1;
 
+  // Detect if this is a Hebrew lesson based on the keys
+  const lessonLayout = useMemo(() => {
+    const keysToCheck = lesson.newKeys.length > 0 ? lesson.newKeys : lesson.practiceKeys;
+    return keysToCheck.some(k => isHebrewChar(k)) ? 'hebrew' : 'qwerty';
+  }, [lesson.newKeys, lesson.practiceKeys]);
+
+  // Hebrew home row keys for context
+  const hebrewHomeRowKeys = ['ש', 'ד', 'ג', 'כ', 'ח', 'ל', 'ך', 'ף'];
+
   const highlightedKeys = useMemo(() => {
+    const contextHomeRow = lessonLayout === 'hebrew' ? hebrewHomeRowKeys : homeRowKeys;
+
     if (lesson.newKeys.length > 0) {
       // If there are new keys, highlight them plus home row for context
       if (isHomeRowLesson) {
-        const allKeys = new Set([...lesson.newKeys.map(k => k.toLowerCase()), ...homeRowKeys]);
+        const allKeys = new Set([...lesson.newKeys.map(k => k.toLowerCase()), ...contextHomeRow]);
         return Array.from(allKeys);
       }
       return lesson.newKeys.map(k => k.toLowerCase());
@@ -90,8 +102,8 @@ export const LessonIntro = memo(function LessonIntro({
       return lesson.practiceKeys.map(k => k.toLowerCase());
     }
     // For larger sets (like full alphabet), just highlight home row as base
-    return homeRowKeys;
-  }, [lesson.newKeys, lesson.practiceKeys, isHomeRowLesson]);
+    return contextHomeRow;
+  }, [lesson.newKeys, lesson.practiceKeys, isHomeRowLesson, lessonLayout]);
 
   return (
     <div
@@ -209,6 +221,7 @@ export const LessonIntro = memo(function LessonIntro({
                 <div className="flex items-start justify-center gap-4 w-full">
                   <LeftHand locale={locale} className="hidden md:flex" />
                   <Keyboard
+                    layout={lessonLayout}
                     highlightedKeys={highlightedKeys}
                     showFingerColors={true}
                     showHomeRow={true}

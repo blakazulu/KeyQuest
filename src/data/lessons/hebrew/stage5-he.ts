@@ -20,9 +20,9 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 5,
     exercises: [
-      { id: 'he-stage-5-lesson-1-ex-1', type: 'sentences', content: 'שלום לכלם. מה שלומך היום?', instructions: { en: 'Type these greeting sentences', he: 'הקלד את משפטי הברכה האלה' }, targetAccuracy: 75 },
+      { id: 'he-stage-5-lesson-1-ex-1', type: 'sentences', content: 'שלום לכולם. מה שלומך היום?', instructions: { en: 'Type these greeting sentences', he: 'הקלד את משפטי הברכה האלה' }, targetAccuracy: 75 },
       { id: 'he-stage-5-lesson-1-ex-2', type: 'sentences', content: 'היום יום יפה. השמש זורחת.', instructions: { en: 'Weather-related sentences', he: 'משפטים על מזג האוויר' }, targetAccuracy: 75 },
-      { id: 'he-stage-5-lesson-1-ex-3', type: 'sentences', content: 'אני אוהב ללמד. הלמידה מעניינת.', instructions: { en: 'Learning-related sentences', he: 'משפטים על לימודים' }, targetAccuracy: 80 },
+      { id: 'he-stage-5-lesson-1-ex-3', type: 'sentences', content: 'אני אוהב ללמוד. הלמידה מעניינת.', instructions: { en: 'Learning-related sentences', he: 'משפטים על לימודים' }, targetAccuracy: 80 },
     ],
   },
   {
@@ -56,7 +56,7 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 5,
     exercises: [
-      { id: 'he-stage-5-lesson-3-ex-1', type: 'sentences', content: 'בקר טוב! מה נשמע? הכל בסדר.', instructions: { en: 'Morning conversation', he: 'שיחת בקר' }, targetAccuracy: 75 },
+      { id: 'he-stage-5-lesson-3-ex-1', type: 'sentences', content: 'בוקר טוב! מה נשמע? הכל בסדר.', instructions: { en: 'Morning conversation', he: 'שיחת בוקר' }, targetAccuracy: 75 },
       { id: 'he-stage-5-lesson-3-ex-2', type: 'sentences', content: 'תודה רבה. על לא דבר. בבקשה.', instructions: { en: 'Polite expressions', he: 'ביטויי נימוס' }, targetAccuracy: 75 },
       { id: 'he-stage-5-lesson-3-ex-3', type: 'sentences', content: 'נעים מאד. שמחתי להכיר. להתראות!', instructions: { en: 'Meeting and parting', he: 'פגישה ופרידה' }, targetAccuracy: 80 },
     ],
@@ -74,7 +74,7 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 6,
     exercises: [
-      { id: 'he-stage-5-lesson-4-ex-1', type: 'sentences', content: 'אני לומד לכתב בעברית על המחשב.', instructions: { en: 'Typing about typing!', he: 'הקלדה על הקלדה!' }, targetAccuracy: 75 },
+      { id: 'he-stage-5-lesson-4-ex-1', type: 'sentences', content: 'אני לומד לכתוב בעברית על המחשב.', instructions: { en: 'Typing about typing!', he: 'הקלדה על הקלדה!' }, targetAccuracy: 75 },
       { id: 'he-stage-5-lesson-4-ex-2', type: 'sentences', content: 'הספר הזה מאד מעניין ושווה קריאה.', instructions: { en: 'Opinion sentence', he: 'משפט דעה' }, targetAccuracy: 75 },
       { id: 'he-stage-5-lesson-4-ex-3', type: 'sentences', content: 'כאשר מתרגלים כל יום, רואים שיפור.', instructions: { en: 'Motivational sentence', he: 'משפט מוטיבציה' }, targetAccuracy: 80 },
     ],

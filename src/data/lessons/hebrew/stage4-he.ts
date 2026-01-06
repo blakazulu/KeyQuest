@@ -38,7 +38,7 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 4,
     exercises: [
-      { id: 'he-stage-4-lesson-2-ex-1', type: 'words', content: 'אמא אבא ילד כלב חתל', instructions: { en: 'Family and animal words', he: 'מילות משפחה וחיות' }, targetAccuracy: 75 },
+      { id: 'he-stage-4-lesson-2-ex-1', type: 'words', content: 'אמא אבא ילד כלב חתול', instructions: { en: 'Family and animal words', he: 'מילות משפחה וחיות' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-2-ex-2', type: 'words', content: 'בית ספר דלת מים שמש', instructions: { en: 'Object words', he: 'מילות חפצים' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-2-ex-3', type: 'words', content: 'טוב רע גדל קטן יפה', instructions: { en: 'Descriptive words', he: 'מילות תיאור' }, targetAccuracy: 80 },
     ],
@@ -56,7 +56,7 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 4,
     exercises: [
-      { id: 'he-stage-4-lesson-3-ex-1', type: 'words', content: 'שלום תודה בקר ערב לילה', instructions: { en: 'Greetings and time words', he: 'מילות ברכה וזמן' }, targetAccuracy: 75 },
+      { id: 'he-stage-4-lesson-3-ex-1', type: 'words', content: 'שלום תודה בוקר ערב לילה', instructions: { en: 'Greetings and time words', he: 'מילות ברכה וזמן' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-3-ex-2', type: 'words', content: 'אני אתה את הוא היא אנחנו', instructions: { en: 'Pronoun words', he: 'מילות כינוי גוף' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-3-ex-3', type: 'words', content: 'רוצה יכול צריך אוהב שומע', instructions: { en: 'Action words', he: 'מילות פעולה' }, targetAccuracy: 80 },
     ],
@@ -74,9 +74,9 @@ const lessons: Lesson[] = [
     passingAccuracy: 75,
     estimatedMinutes: 4,
     exercises: [
-      { id: 'he-stage-4-lesson-4-ex-1', type: 'words', content: 'בקר טוב ערב טוב לילה טוב', instructions: { en: 'Greeting phrases', he: 'ביטויי ברכה' }, targetAccuracy: 75 },
+      { id: 'he-stage-4-lesson-4-ex-1', type: 'words', content: 'בוקר טוב ערב טוב לילה טוב', instructions: { en: 'Greeting phrases', he: 'ביטויי ברכה' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-4-ex-2', type: 'words', content: 'מה נשמע מה שלומך תודה רבה', instructions: { en: 'Polite phrases', he: 'ביטויי נימוס' }, targetAccuracy: 75 },
-      { id: 'he-stage-4-lesson-4-ex-3', type: 'words', content: 'יום יפה בקר נעים ערב נחמד', instructions: { en: 'Descriptive phrases', he: 'ביטויי תיאור' }, targetAccuracy: 80 },
+      { id: 'he-stage-4-lesson-4-ex-3', type: 'words', content: 'יום יפה בוקר נעים ערב נחמד', instructions: { en: 'Descriptive phrases', he: 'ביטויי תיאור' }, targetAccuracy: 80 },
     ],
   },
   {
@@ -92,9 +92,9 @@ const lessons: Lesson[] = [
     passingAccuracy: 80,
     estimatedMinutes: 5,
     exercises: [
-      { id: 'he-stage-4-lesson-5-ex-1', type: 'words', content: 'שלום אני רוצה ללמד עברית', instructions: { en: 'Mixed common words', he: 'מילים נפוצות מעורבות' }, targetAccuracy: 75 },
+      { id: 'he-stage-4-lesson-5-ex-1', type: 'words', content: 'שלום אני רוצה ללמוד עברית', instructions: { en: 'Mixed common words', he: 'מילים נפוצות מעורבות' }, targetAccuracy: 75 },
       { id: 'he-stage-4-lesson-5-ex-2', type: 'words', content: 'היום הלילה אתמול מחר תמיד', instructions: { en: 'Time-related words', he: 'מילות זמן' }, targetAccuracy: 75 },
-      { id: 'he-stage-4-lesson-5-ex-3', type: 'words', content: 'אחד שנים שלוש ארבע חמש', instructions: { en: 'Number words', he: 'מילות מספר' }, targetAccuracy: 80 },
+      { id: 'he-stage-4-lesson-5-ex-3', type: 'words', content: 'אחד שתיים שלוש ארבע חמש', instructions: { en: 'Number words', he: 'מילות מספר' }, targetAccuracy: 80 },
     ],
   },
 ];

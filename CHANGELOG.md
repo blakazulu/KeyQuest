@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Hebrew Final Form Letters** - All Hebrew text content now uses proper final letters (ך, ם, ן, ף, ץ) at word endings
+  - Fixed word pools in `hebrewWords.ts` (short, medium, long words, phrases, sentences)
+  - Fixed lesson content in stages 4-6 (words, sentences, paragraphs)
+  - Corrected spelling errors (בוקר, ללמוד, לכתוב, שתיים, עיוורת, etc.)
+- **Lesson Intro Keyboard Display** - Hebrew lesson intros now show the correct keyboard layout
+  - Added layout detection based on lesson keys (Hebrew vs QWERTY)
+  - Pass correct `layout` prop to Keyboard component
+  - Hebrew home row keys (ש ד ג כ | ח ל ך ף) now highlight correctly
+
 ### Added
 - **Pre-Activity Keyboard Verification** - Verify keyboard layout BEFORE starting any typing activity
   - New `KeyboardLayoutChecker` component prompts "Press any key to verify your keyboard"
