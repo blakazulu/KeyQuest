@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useTypingStore } from '@/stores/useTypingStore';
 import { useKeyboardInput } from './useKeyboardInput';
 import { calculateWPM, calculateAccuracy, calculateNetWPM } from '@/lib/typing-utils';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 export type TypingSessionStatus = 'idle' | 'running' | 'paused' | 'completed';
 
@@ -50,6 +51,10 @@ export interface UseTypingEngineOptions {
   allowBackspace?: boolean;
   /** Whether typing is case-sensitive (default: false for easier levels) */
   caseSensitive?: boolean;
+  /** Expected keyboard layout - if set, will detect mismatches */
+  expectedLayout?: KeyboardLayoutType;
+  /** Called when user types in wrong keyboard language */
+  onLayoutMismatch?: (detectedLayout: KeyboardLayoutType) => void;
 }
 
 export interface UseTypingEngineReturn {
@@ -94,6 +99,8 @@ export function useTypingEngine({
   onReset,
   allowBackspace = false,
   caseSensitive = false,
+  expectedLayout,
+  onLayoutMismatch,
 }: UseTypingEngineOptions = {}): UseTypingEngineReturn {
   const {
     targetText,
@@ -265,6 +272,8 @@ export function useTypingEngine({
     onReset,
     enabled: isInputEnabled && targetText.length > 0,
     allowBackspace,
+    expectedLayout,
+    onLayoutMismatch,
   });
 
   // Control functions

@@ -197,6 +197,7 @@ export default function ProfilePage() {
   const userAvatar = useSettingsStore((s) => s.userAvatar);
   const ageGroup = useSettingsStore((s) => s.ageGroup);
   const initialAssessment = useSettingsStore((s) => s.initialAssessment);
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
   const setUserName = useSettingsStore((s) => s.setUserName);
   const setUserAvatar = useSettingsStore((s) => s.setUserAvatar);
   const setAgeGroup = useSettingsStore((s) => s.setAgeGroup);
@@ -643,6 +644,7 @@ export default function ProfilePage() {
             <div className="p-6">
               <KeyboardTest
                 locale={locale}
+                expectedLayout={keyboardLayout}
                 onComplete={handleTestComplete}
                 onSkip={handleTestSkip}
               />

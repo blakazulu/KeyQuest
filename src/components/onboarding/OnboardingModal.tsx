@@ -59,7 +59,7 @@ export function OnboardingModal({ locale, onClose }: OnboardingModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const firstFocusableRef = useRef<HTMLButtonElement>(null);
 
-  const { setAgeGroup, setUserName, setUserAvatar, setInitialAssessment, completeOnboarding } = useSettingsStore();
+  const { setAgeGroup, setUserName, setUserAvatar, setInitialAssessment, completeOnboarding, keyboardLayout } = useSettingsStore();
   const { recordAssessmentSession } = useProgressStore();
 
   // Focus trap
@@ -242,6 +242,7 @@ export function OnboardingModal({ locale, onClose }: OnboardingModalProps) {
           {step === 'test' && (
             <KeyboardTest
               locale={locale}
+              expectedLayout={keyboardLayout}
               onComplete={handleTestComplete}
               onSkip={handleTestSkip}
             />

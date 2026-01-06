@@ -2,9 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTypingEngine, type TypingStats, type CharacterState } from '@/hooks/useTypingEngine';
+import { KeyboardLayoutMismatchModal } from '@/components/ui/KeyboardLayoutMismatchModal';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface KeyboardTestProps {
   locale: 'en' | 'he';
+  /** The expected keyboard layout - determines which test text to show and what layout to expect */
+  expectedLayout: KeyboardLayoutType;
   onComplete: (results: { wpm: number; accuracy: number }) => void;
   onSkip: () => void;
 }
@@ -36,18 +40,20 @@ const translations = {
   },
 };
 
-// Test text - pangrams (locale-specific)
-const TEST_TEXTS = {
-  en: "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.",
-  he: "דג סקרן שט בים מאוכזב ולפתע מצא חברה. הקליטה בזק שדרת מגן עוף צחי.",
+// Test text - pangrams (layout-specific)
+const TEST_TEXTS: Record<KeyboardLayoutType, string> = {
+  qwerty: "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.",
+  hebrew: "דג סקרן שט בים מאוכזב ולפתע מצא חברה. הקליטה בזק שדרת מגן עוף צחי.",
 };
 
 const TEST_DURATION = 30; // seconds
 
-export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) {
+export function KeyboardTest({ locale, expectedLayout, onComplete, onSkip }: KeyboardTestProps) {
   const t = translations[locale];
-  const testText = TEST_TEXTS[locale];
-  const isRTL = locale === 'he';
+  // Use layout to determine test text (Hebrew layout = Hebrew text)
+  const testText = TEST_TEXTS[expectedLayout];
+  const isRTL = expectedLayout === 'hebrew';
+  const [showLayoutMismatch, setShowLayoutMismatch] = useState(false);
 
   const [timeRemaining, setTimeRemaining] = useState(TEST_DURATION);
   const [isStarted, setIsStarted] = useState(false);
@@ -66,6 +72,15 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
     onComplete({ wpm: stats.wpm, accuracy: stats.accuracy });
   }, [onComplete]);
 
+  // Handle keyboard layout mismatch
+  const handleLayoutMismatch = useCallback(() => {
+    setShowLayoutMismatch(true);
+  }, []);
+
+  const handleDismissLayoutMismatch = useCallback(() => {
+    setShowLayoutMismatch(false);
+  }, []);
+
   const {
     characters,
     stats,
@@ -75,6 +90,8 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
     onComplete: handleComplete,
     allowBackspace: false,
     caseSensitive: false,
+    expectedLayout,
+    onLayoutMismatch: handleLayoutMismatch,
   });
 
   // Track stats for time-up completion
@@ -296,6 +313,15 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
       >
         {t.skip}
       </button>
+
+      {/* Keyboard layout mismatch modal */}
+      {showLayoutMismatch && (
+        <KeyboardLayoutMismatchModal
+          expectedLayout={expectedLayout}
+          locale={locale}
+          onDismiss={handleDismissLayoutMismatch}
+        />
+      )}
     </div>
   );
 }

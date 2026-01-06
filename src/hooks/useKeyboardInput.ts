@@ -1,4 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
+import { isCharacterCompatibleWithLayout, detectLayoutFromChar } from '@/lib/keyboard-layout-detector';
 
 interface UseKeyboardInputOptions {
   /** Called when a valid character key is pressed */
@@ -17,6 +19,10 @@ interface UseKeyboardInputOptions {
   allowBackspace?: boolean;
   /** Element to attach listener to (defaults to window) */
   targetRef?: React.RefObject<HTMLElement>;
+  /** Expected keyboard layout - if set, will detect mismatches */
+  expectedLayout?: KeyboardLayoutType;
+  /** Called when a layout mismatch is detected (user typing in wrong language) */
+  onLayoutMismatch?: (detectedLayout: KeyboardLayoutType) => void;
 }
 
 interface UseKeyboardInputReturn {
@@ -48,13 +54,17 @@ export function useKeyboardInput({
   enabled = true,
   allowBackspace = false,
   targetRef,
+  expectedLayout,
+  onLayoutMismatch,
 }: UseKeyboardInputOptions = {}): UseKeyboardInputReturn {
-  const callbacksRef = useRef({ onKeyPress, onBackspace, onEnter, onEscape, onReset });
+  const callbacksRef = useRef({ onKeyPress, onBackspace, onEnter, onEscape, onReset, onLayoutMismatch });
+  const expectedLayoutRef = useRef(expectedLayout);
 
   // Keep callbacks ref updated to avoid stale closures
   useEffect(() => {
-    callbacksRef.current = { onKeyPress, onBackspace, onEnter, onEscape, onReset };
-  }, [onKeyPress, onBackspace, onEnter, onEscape, onReset]);
+    callbacksRef.current = { onKeyPress, onBackspace, onEnter, onEscape, onReset, onLayoutMismatch };
+    expectedLayoutRef.current = expectedLayout;
+  }, [onKeyPress, onBackspace, onEnter, onEscape, onReset, onLayoutMismatch, expectedLayout]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Ignore if input is disabled
@@ -107,6 +117,20 @@ export function useKeyboardInput({
     // Ignore non-printable keys
     if (key.length !== 1) {
       return;
+    }
+
+    // Check for keyboard layout mismatch if expected layout is set
+    if (expectedLayoutRef.current) {
+      const isCompatible = isCharacterCompatibleWithLayout(key, expectedLayoutRef.current);
+      if (!isCompatible) {
+        // Detected wrong keyboard layout
+        const detectedLayout = detectLayoutFromChar(key);
+        if (detectedLayout && callbacks.onLayoutMismatch) {
+          event.preventDefault();
+          callbacks.onLayoutMismatch(detectedLayout);
+          return; // Don't process this keystroke
+        }
+      }
     }
 
     // Valid character key - prevent default and handle

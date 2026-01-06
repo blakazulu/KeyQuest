@@ -147,12 +147,12 @@ export const LessonIntro = memo(function LessonIntro({
                 <button
                   ref={startButtonRef}
                   onClick={onStart}
-                  className="px-8 py-4 text-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-bold rounded-xl transition-all transform hover:scale-105 active:scale-95 border border-white/30"
+                  className="px-10 py-5 text-xl bg-white hover:bg-gray-100 text-orange-600 font-bold rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl"
                   aria-label={labels.startLesson}
                 >
                   {labels.startLesson} →
                 </button>
-                <p className="text-center text-xs text-white/60 mt-2">
+                <p className="text-center text-xs text-white/70 mt-2">
                   {labels.pressEnter}
                 </p>
               </div>

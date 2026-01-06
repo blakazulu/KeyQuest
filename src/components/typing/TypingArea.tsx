@@ -12,6 +12,7 @@ import { useKeyboardHighlight } from '@/hooks/useKeyboardHighlight';
 import { useSound } from '@/hooks/useSound';
 import { useSettingsStore } from '@/stores/useSettingsStore';
 import { calculateProgress } from '@/lib/typing-utils';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface TypingAreaProps {
   /** The text to type */
@@ -34,6 +35,10 @@ interface TypingAreaProps {
   compactKeyboard?: boolean;
   /** Locale for finger guide labels */
   locale?: 'en' | 'he';
+  /** Expected keyboard layout - if set, will detect mismatches */
+  expectedLayout?: KeyboardLayoutType;
+  /** Called when user types in wrong keyboard language */
+  onLayoutMismatch?: (detectedLayout: KeyboardLayoutType) => void;
   /** Additional CSS classes */
   className?: string;
 }
@@ -62,6 +67,8 @@ export function TypingArea({
   showFingerGuide: showFingerGuideProp,
   compactKeyboard = false,
   locale = 'en',
+  expectedLayout,
+  onLayoutMismatch,
   className = '',
 }: TypingAreaProps) {
   const t = useTranslations('practice');
@@ -112,6 +119,8 @@ export function TypingArea({
     onCharacterTyped: handleCharacterTyped,
     onReset,
     allowBackspace,
+    expectedLayout,
+    onLayoutMismatch,
   });
 
   // Keyboard highlighting

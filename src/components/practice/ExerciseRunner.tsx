@@ -3,9 +3,12 @@
 import { memo, useState, useCallback, useRef } from 'react';
 import { TypingArea } from '@/components/typing';
 import { ExerciseCompleteModal } from './ExerciseCompleteModal';
+import { KeyboardLayoutMismatchModal } from '@/components/ui/KeyboardLayoutMismatchModal';
 import { useProgressStore } from '@/stores/useProgressStore';
+import { useSettingsStore } from '@/stores/useSettingsStore';
 import type { Lesson, ExerciseResult } from '@/types/lesson';
 import type { TypingStats, LetterStats } from '@/hooks/useTypingEngine';
+import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
 interface ExerciseRunnerProps {
   lesson: Lesson;
@@ -46,9 +49,23 @@ export const ExerciseRunner = memo(function ExerciseRunner({
     errors: number;
     letterAccuracy: Record<string, LetterStats>;
   } | null>(null);
+  const [showLayoutMismatch, setShowLayoutMismatch] = useState(false);
 
   // Progress store action
   const addExerciseXp = useProgressStore((s) => s.addExerciseXp);
+
+  // Get expected keyboard layout from settings
+  const keyboardLayout = useSettingsStore((s) => s.keyboardLayout);
+
+  // Handle keyboard layout mismatch
+  const handleLayoutMismatch = useCallback((detectedLayout: KeyboardLayoutType) => {
+    // Only show modal if we haven't shown it already
+    setShowLayoutMismatch(true);
+  }, []);
+
+  const handleDismissLayoutMismatch = useCallback(() => {
+    setShowLayoutMismatch(false);
+  }, []);
 
   // Aggregate letter accuracy across all exercises
   const letterAccuracyRef = useRef<Record<string, LetterStats>>({});
@@ -170,8 +187,20 @@ export const ExerciseRunner = memo(function ExerciseRunner({
               showStats={true}
               allowBackspace={false}
               compactKeyboard={false}
+              locale={locale}
+              expectedLayout={keyboardLayout}
+              onLayoutMismatch={handleLayoutMismatch}
             />
           </div>
+        )}
+
+        {/* Keyboard layout mismatch modal */}
+        {showLayoutMismatch && (
+          <KeyboardLayoutMismatchModal
+            expectedLayout={keyboardLayout}
+            locale={locale}
+            onDismiss={handleDismissLayoutMismatch}
+          />
         )}
 
         {phase === 'result' && lastResult && (

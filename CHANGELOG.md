@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Keyboard Layout Mismatch Detection** - Detects when user types in wrong keyboard language
+  - Shows a helpful modal with instructions on how to switch keyboard layout (Alt+Shift on Windows, Cmd+Space on Mac)
+  - Pauses lesson/test until user confirms they've switched
+  - Works in lessons, exercises, and onboarding typing test
 - **Phase 16: Hebrew Keyboard Layout** - Full Hebrew typing practice support
   - **Hebrew SI-1452 Keyboard Layout** - Complete Hebrew keyboard with finger mappings
     - Home row: ש ד ג כ (left) | ח ל ך ף (right)
