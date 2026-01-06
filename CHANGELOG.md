@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **FloatingMenu Navigation** - Added missing "Games" link to the floating menu navigation
+- **Target Game UI** - Hide keyboard/hands by default for cleaner gameplay (toggle still available)
 - **Hebrew Final Form Letters** - All Hebrew text content now uses proper final letters (ך, ם, ן, ף, ץ) at word endings
   - Fixed word pools in `hebrewWords.ts` (short, medium, long words, phrases, sentences)
   - Fixed lesson content in stages 4-6 (words, sentences, paragraphs)
