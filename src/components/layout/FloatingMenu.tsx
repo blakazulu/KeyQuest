@@ -17,7 +17,6 @@ export function FloatingMenu() {
     { href: '/' as const, label: t('home'), icon: '🏠' },
     { href: '/levels' as const, label: t('levels'), icon: '🗺️' },
     { href: '/games' as const, label: t('games'), icon: '🎮' },
-    { href: '/practice/calm' as const, label: t('calmMode'), icon: '🧘' },
     { href: '/dashboard' as const, label: t('dashboard'), icon: '📊' },
     { href: '/achievements' as const, label: t('achievements'), icon: '🏆' },
     { href: '/profile' as const, label: t('profile'), icon: '👤' },
