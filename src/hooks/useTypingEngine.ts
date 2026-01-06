@@ -164,7 +164,8 @@ export function useTypingEngine({
     const correctCount = currentPosition - errors.length;
     const errorCount = errors.length;
     const accuracy = calculateAccuracy(correctCount, currentPosition);
-    const wpm = calculateWPM(currentPosition, elapsedTime);
+    // WPM based on correct characters only (errors don't count toward speed)
+    const wpm = calculateWPM(correctCount, elapsedTime);
     const netWpm = calculateNetWPM(currentPosition, errorCount, elapsedTime);
 
     return {
@@ -233,7 +234,8 @@ export function useTypingEngine({
         const elapsed = Date.now() - (finalStats.startTime ?? Date.now());
 
         onComplete?.({
-          wpm: calculateWPM(finalStats.currentPosition, elapsed),
+          // WPM based on correct characters only (errors don't count toward speed)
+          wpm: calculateWPM(correctCount, elapsed),
           netWpm: calculateNetWPM(finalStats.currentPosition, finalStats.errors.length, elapsed),
           accuracy: calculateAccuracy(correctCount, finalStats.currentPosition),
           correctCount,

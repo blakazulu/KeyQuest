@@ -10,6 +10,9 @@ import {
   isLessonUnlocked,
   isStageUnlocked,
   isStageCompleted,
+  isLessonUnlockedForLayout,
+  isStageUnlockedForLayout,
+  isStageCompletedForLayout,
   getCurrentLesson,
   getRecommendedLessons,
   getKeyMastery,
@@ -408,7 +411,7 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       recordAssessmentSession: (wpm, accuracy) => {
-        const { sessionHistory, averageAccuracy, averageWpm, achievements } = get();
+        const { sessionHistory, averageAccuracy, averageWpm } = get();
 
         // Skip if WPM is 0 (skipped assessment)
         if (wpm === 0) {
@@ -447,18 +450,22 @@ export const useProgressStore = create<ProgressState>()(
         // Update streak
         get().updateStreak();
 
-        // Check session-specific achievements (Lightning Fingers, Turbo Typer)
-        const sessionAchievements = checkSessionAchievements(wpm, accuracy, achievements);
+        // Get current layout for layout-specific achievement storage
+        const layout = useSettingsStore.getState().keyboardLayout;
+        const currentLayoutAchievements = get().layoutAchievements[layout] || {};
 
-        // Unlock session achievements
+        // Check session-specific achievements (Lightning Fingers, Turbo Typer)
+        const sessionAchievements = checkSessionAchievements(wpm, accuracy, currentLayoutAchievements);
+
+        // Unlock session achievements to layout-specific storage (not global)
         if (sessionAchievements.length > 0) {
-          const updatedAchievements = { ...get().achievements };
+          const updatedLayoutAchievements = { ...currentLayoutAchievements };
           let achievementXp = 0;
           const achievementXpEvents: XpEvent[] = [];
 
           for (const id of sessionAchievements) {
-            if (!updatedAchievements[id]?.unlocked) {
-              updatedAchievements[id] = createAchievementProgress(id);
+            if (!updatedLayoutAchievements[id]?.unlocked) {
+              updatedLayoutAchievements[id] = createAchievementProgress(id);
               const achievement = getAchievement(id);
               if (achievement) {
                 achievementXp += achievement.xpReward;
@@ -473,7 +480,12 @@ export const useProgressStore = create<ProgressState>()(
           }
 
           set({
-            achievements: updatedAchievements,
+            layoutAchievements: {
+              ...get().layoutAchievements,
+              [layout]: updatedLayoutAchievements,
+            },
+            // Also update legacy achievements for backwards compatibility
+            achievements: { ...get().achievements, ...updatedLayoutAchievements },
             totalXp: get().totalXp + achievementXp,
             pendingAchievementIds: [
               ...get().pendingAchievementIds,
@@ -627,7 +639,9 @@ export const useProgressStore = create<ProgressState>()(
         const layout = useSettingsStore.getState().keyboardLayout;
         const layoutAchievements = get().layoutAchievements[layout] || {};
         const achievement = layoutAchievements[id];
+
         if (achievement) {
+          // Achievement found in layout-specific storage
           set({
             layoutAchievements: {
               ...get().layoutAchievements,
@@ -638,23 +652,62 @@ export const useProgressStore = create<ProgressState>()(
             },
             pendingAchievementIds: get().pendingAchievementIds.filter((aid) => aid !== id),
           });
+        } else {
+          // Fallback: check global achievements (for backwards compatibility)
+          // This handles achievements that were unlocked before layout-specific storage was added
+          const globalAchievement = get().achievements[id];
+          if (globalAchievement) {
+            // Migrate to layout-specific storage and mark as seen
+            const updatedLayoutAchievements = {
+              ...layoutAchievements,
+              [id]: { ...globalAchievement, seen: true },
+            };
+            set({
+              layoutAchievements: {
+                ...get().layoutAchievements,
+                [layout]: updatedLayoutAchievements,
+              },
+              achievements: {
+                ...get().achievements,
+                [id]: { ...globalAchievement, seen: true },
+              },
+              pendingAchievementIds: get().pendingAchievementIds.filter((aid) => aid !== id),
+            });
+          } else {
+            // Achievement not found anywhere - just remove from pending list
+            // This handles edge cases where the pending list has invalid IDs
+            set({
+              pendingAchievementIds: get().pendingAchievementIds.filter((aid) => aid !== id),
+            });
+          }
         }
       },
 
       clearPendingAchievements: () => {
         const layout = useSettingsStore.getState().keyboardLayout;
         const layoutAchievements = get().layoutAchievements[layout] || {};
+        const globalAchievements = get().achievements;
         const updatedLayoutAchievements = { ...layoutAchievements };
+        const updatedGlobalAchievements = { ...globalAchievements };
+
         for (const id of get().pendingAchievementIds) {
           if (updatedLayoutAchievements[id]) {
+            // Found in layout-specific storage
             updatedLayoutAchievements[id] = { ...updatedLayoutAchievements[id], seen: true };
+          } else if (updatedGlobalAchievements[id]) {
+            // Fallback: found in global storage, migrate and mark as seen
+            const achievement = { ...updatedGlobalAchievements[id], seen: true };
+            updatedLayoutAchievements[id] = achievement;
+            updatedGlobalAchievements[id] = achievement;
           }
         }
+
         set({
           layoutAchievements: {
             ...get().layoutAchievements,
             [layout]: updatedLayoutAchievements,
           },
+          achievements: updatedGlobalAchievements,
           pendingAchievementIds: [],
         });
       },
@@ -684,14 +737,15 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       isLessonUnlocked: (lessonId: string) => {
-        // Check if unlocked via normal progression
-        if (isLessonUnlocked(lessonId, get().completedLessons)) {
+        const settings = useSettingsStore.getState();
+        const layout = settings.keyboardLayout;
+
+        // Check if unlocked via normal progression (layout-aware)
+        if (isLessonUnlockedForLayout(lessonId, get().completedLessons, layout)) {
           return true;
         }
 
         // Check if unlocked via layout-specific assessment
-        const settings = useSettingsStore.getState();
-        const layout = settings.keyboardLayout;
         const layoutAssessment = settings.getAssessmentForLayout(layout);
         if (layoutAssessment?.recommendedStage) {
           // Use layout-aware functions to check lesson
@@ -712,14 +766,16 @@ export const useProgressStore = create<ProgressState>()(
         // Stage 1 is always unlocked for any layout
         if (stageId === 1) return true;
 
-        // Check if unlocked via normal progression
-        if (isStageUnlocked(stageId, get().completedLessons)) {
+        const settings = useSettingsStore.getState();
+        const layout = settings.keyboardLayout;
+
+        // Check if unlocked via normal progression (layout-aware)
+        if (isStageUnlockedForLayout(stageId, get().completedLessons, layout)) {
           return true;
         }
 
         // Check if unlocked via layout-specific assessment
-        const settings = useSettingsStore.getState();
-        const layoutAssessment = settings.getAssessmentForLayout(settings.keyboardLayout);
+        const layoutAssessment = settings.getAssessmentForLayout(layout);
         if (layoutAssessment?.recommendedStage) {
           return stageId <= layoutAssessment.recommendedStage;
         }
@@ -728,7 +784,8 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       isStageCompleted: (stageId: number) => {
-        return isStageCompleted(stageId, get().completedLessons);
+        const layout = useSettingsStore.getState().keyboardLayout;
+        return isStageCompletedForLayout(stageId, get().completedLessons, layout);
       },
 
       getCurrentLesson: () => {

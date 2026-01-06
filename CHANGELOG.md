@@ -88,6 +88,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full WCAG accessibility with proper ARIA labels and keyboard navigation
 
 ### Fixed
+- **Achievement Modal Stuck Loop** - Fixed bug where achievement toast would get stuck in an infinite loop during onboarding
+  - `recordAssessmentSession` now writes achievements to layout-specific storage instead of global storage
+  - `markAchievementSeen` and `clearPendingAchievements` now have fallback logic for backwards compatibility
+  - Prevents achievement sound from repeatedly playing when navigating to levels page after assessment
 - **Monitor Text Overflow** - Fixed text overflow and word-breaking issues across all typing monitors
   - Added `word-break: keep-all` to prevent mid-word line breaks
   - Implemented word grouping in RaceGame, DailyChallenge, and KeyboardTest components
@@ -95,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `.calm-typing-text` CSS class for consistent calm mode styling
 - **Tower Game Scrolling** - Tower container now auto-scrolls to keep the top blocks visible as the tower grows, and scrolls back down when blocks are removed
 - **Onboarding Test Language** - Typing test now uses Hebrew text when Hebrew keyboard layout is selected, instead of always showing English
+- **Hebrew Lesson Progression** - Fixed lesson unlock logic to use layout-aware functions, allowing progression through Hebrew curriculum after completing lessons
 
 ### Added (Phase 12)
 - **Phase 12: Additional Game Modes** - 4 new typing game modes with game selection hub

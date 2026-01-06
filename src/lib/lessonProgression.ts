@@ -25,6 +25,83 @@ import {
 } from '@/data/lessons';
 import type { KeyboardLayoutType } from '@/data/keyboard-layout';
 
+// ============================================
+// Layout-aware unlock functions
+// ============================================
+
+/**
+ * Check if a lesson is unlocked for a specific keyboard layout
+ */
+export function isLessonUnlockedForLayout(
+  lessonId: string,
+  completedLessons: string[],
+  layout: KeyboardLayoutType
+): boolean {
+  const lesson = getLessonForLayout(lessonId, layout);
+  if (!lesson) return false;
+
+  // First lesson of first stage is always unlocked
+  if (lesson.stageId === 1 && lesson.lessonNumber === 1) {
+    return true;
+  }
+
+  // Check if previous lesson is completed
+  const stage = getStageForLayout(lesson.stageId, layout);
+  if (!stage) return false;
+
+  if (lesson.lessonNumber > 1) {
+    // Previous lesson in same stage must be completed
+    const prevLesson = stage.lessons.find(
+      (l) => l.lessonNumber === lesson.lessonNumber - 1
+    );
+    if (prevLesson) {
+      return completedLessons.includes(prevLesson.id);
+    }
+  } else {
+    // First lesson of a new stage - previous stage's last lesson must be completed
+    const prevStage = getStageForLayout(lesson.stageId - 1, layout);
+    if (prevStage && prevStage.lessons.length > 0) {
+      const lastLesson = prevStage.lessons[prevStage.lessons.length - 1];
+      return completedLessons.includes(lastLesson.id);
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if a stage is unlocked for a specific keyboard layout
+ */
+export function isStageUnlockedForLayout(
+  stageId: number,
+  completedLessons: string[],
+  layout: KeyboardLayoutType
+): boolean {
+  // Stage 1 is always unlocked
+  if (stageId === 1) return true;
+
+  // Previous stage's last lesson must be completed
+  const prevStage = getStageForLayout(stageId - 1, layout);
+  if (!prevStage || prevStage.lessons.length === 0) return false;
+
+  const lastLesson = prevStage.lessons[prevStage.lessons.length - 1];
+  return completedLessons.includes(lastLesson.id);
+}
+
+/**
+ * Check if a stage is completed for a specific keyboard layout
+ */
+export function isStageCompletedForLayout(
+  stageId: number,
+  completedLessons: string[],
+  layout: KeyboardLayoutType
+): boolean {
+  const stage = getStageForLayout(stageId, layout);
+  if (!stage) return false;
+
+  return stage.lessons.every((lesson) => completedLessons.includes(lesson.id));
+}
+
 /**
  * Check if a lesson is unlocked based on curriculum progress
  * Rules:
