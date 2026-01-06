@@ -82,7 +82,7 @@ export function TargetGame({ locale: propLocale }: TargetGameProps) {
   const [misses, setMisses] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [hitEffects, setHitEffects] = useState<{ id: number; x: number; y: number; points: number }[]>([]);
-  const [showHands, setShowHands] = useState(true);
+  const [showHands, setShowHands] = useState(false);
   const [lastHitLetter, setLastHitLetter] = useState<string | null>(null);
 
   // Handle keyboard verification complete
