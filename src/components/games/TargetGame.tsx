@@ -21,7 +21,7 @@ const TARGET_SPAWN_INTERVAL = 800; // New target every 800ms
 const MAX_TARGETS = 8; // Maximum targets on screen
 
 const LETTERS_ENGLISH = 'abcdefghijklmnopqrstuvwxyz'.split('');
-const LETTERS_HEBREW = 'אבגדהוזחטיכלמנסעפצקרשת'.split('');
+const LETTERS_HEBREW = 'אבגדהוזחטיכךלמםנןסעפףצץקרשת'.split(''); // Includes final forms: ך ם ן ף ץ
 
 function getLettersForLayout(layout: 'qwerty' | 'hebrew'): string[] {
   return layout === 'hebrew' ? LETTERS_HEBREW : LETTERS_ENGLISH;

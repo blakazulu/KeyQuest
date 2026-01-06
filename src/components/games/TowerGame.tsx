@@ -22,7 +22,7 @@ const LONG_WORDS_EN = ['building', 'elephant', 'mountain', 'keyboard', 'champion
 
 // Word lists by difficulty - Hebrew
 const SHORT_WORDS_HE = ['אם', 'אב', 'יד', 'גב', 'זה', 'כן', 'לא', 'מה', 'כי', 'דג'];
-const MEDIUM_WORDS_HE = ['בית', 'ספר', 'ילד', 'שמש', 'מים', 'לחם', 'שלום', 'תודה', 'בקר'];
+const MEDIUM_WORDS_HE = ['בית', 'ספר', 'ילד', 'שמש', 'מים', 'לחם', 'שלום', 'תודה', 'בוקר'];
 const LONG_WORDS_HE = ['מחשב', 'מקלדת', 'הקלדה', 'כתיבה', 'לימוד', 'תרגול', 'ניצחון'];
 
 const BLOCK_COLORS = [
