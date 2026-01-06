@@ -36,13 +36,18 @@ const translations = {
   },
 };
 
-// Test text - pangrams
-const TEST_TEXT = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.";
+// Test text - pangrams (locale-specific)
+const TEST_TEXTS = {
+  en: "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.",
+  he: "דג סקרן שט בים מאוכזב ולפתע מצא חברה. הקליטה בזק שדרת מגן עוף צחי.",
+};
 
 const TEST_DURATION = 30; // seconds
 
 export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) {
   const t = translations[locale];
+  const testText = TEST_TEXTS[locale];
+  const isRTL = locale === 'he';
 
   const [timeRemaining, setTimeRemaining] = useState(TEST_DURATION);
   const [isStarted, setIsStarted] = useState(false);
@@ -79,8 +84,8 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
 
   // Initialize with test text on mount
   useEffect(() => {
-    setTargetText(TEST_TEXT);
-  }, [setTargetText]);
+    setTargetText(testText);
+  }, [setTargetText, testText]);
 
   // Timer countdown
   useEffect(() => {
@@ -191,8 +196,8 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
 
           {/* Text display - with word grouping to prevent mid-word breaks */}
           <div
-            className="typing-text text-lg leading-relaxed text-left"
-            dir="ltr"
+            className={`typing-text text-lg leading-relaxed ${isRTL ? 'text-right' : 'text-left'}`}
+            dir={isRTL ? 'rtl' : 'ltr'}
             aria-live="polite"
           >
             {characters.length > 0 ? (
@@ -239,7 +244,7 @@ export function KeyboardTest({ locale, onComplete, onSkip }: KeyboardTestProps) 
             ) : (
               // Show the test text before engine initializes - also with word grouping
               (() => {
-                const words = TEST_TEXT.split(' ');
+                const words = testText.split(' ');
                 return words.map((word, wordIndex) => (
                   <span key={wordIndex} className="inline-block whitespace-nowrap">
                     {word.split('').map((char, charIndex) => {
