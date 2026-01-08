@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useSettingsStore } from '@/stores/useSettingsStore';
@@ -11,7 +11,7 @@ import { SettingRow } from '@/components/settings/SettingRow';
 import { FontSizeSelector } from '@/components/settings/FontSizeSelector';
 import { VolumeSlider } from '@/components/settings/VolumeSlider';
 import { LayoutSelector } from '@/components/settings/LayoutSelector';
-import { forceVersionSync, getAppVersion } from '@/components/ui/VersionCheck';
+import { getAppVersion, triggerUpdateWithPopup } from '@/components/ui/VersionCheck';
 
 // Translations
 const translations = {
@@ -200,8 +200,6 @@ export default function SettingsPage() {
   // Hydration state
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Sync state
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success'>('idle');
 
   // Settings from store
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
@@ -269,25 +267,6 @@ export default function SettingsPage() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
-
-  // Clear all caches and reload to get latest version
-  const handleSync = useCallback(async () => {
-    if (syncStatus !== 'idle') return;
-
-    setSyncStatus('syncing');
-
-    try {
-      setSyncStatus('success');
-
-      // Brief delay to show success message, then sync
-      setTimeout(() => {
-        forceVersionSync();
-      }, 1000);
-    } catch (error) {
-      console.error('Sync failed:', error);
-      setSyncStatus('idle');
-    }
-  }, [syncStatus]);
 
   // Loading state
   if (!isHydrated) {
@@ -448,35 +427,13 @@ export default function SettingsPage() {
 
         <SettingRow label={t.data.sync} description={t.data.syncDesc}>
           <button
-            onClick={handleSync}
-            disabled={syncStatus !== 'idle'}
-            className={`px-4 py-2 font-medium rounded-lg transition-colors flex items-center gap-2 ${
-              syncStatus === 'success'
-                ? 'bg-green-500 text-white'
-                : syncStatus === 'syncing'
-                ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-wait'
-                : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-            }`}
+            onClick={triggerUpdateWithPopup}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors flex items-center gap-2"
           >
-            {syncStatus === 'syncing' ? (
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-            ) : syncStatus === 'success' ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            )}
-            {syncStatus === 'syncing'
-              ? t.data.syncing
-              : syncStatus === 'success'
-              ? t.data.syncSuccess
-              : t.data.syncButton}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {t.data.syncButton}
           </button>
         </SettingRow>
       </SettingsSection>

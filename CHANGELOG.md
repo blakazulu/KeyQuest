@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-01-09
+
+### Added
+- **Automatic Version Check** - App now checks for updates on load
+  - Compares local version with server version via `/api/version` endpoint
+  - Shows update popup with progress bar when new version detected
+  - Clears service worker caches while preserving user progress
+  - Orange-themed UI with smooth animations
+- **Sync Button in Settings** - Manual cache refresh option
+  - Located in Data Management section
+  - Triggers update popup and clears cached files
+  - Preserves all user progress and settings
+
 ### Fixed
 - **FloatingMenu Navigation** - Added missing "Games" link to the floating menu navigation
 - **Target Game UI** - Hide keyboard/hands by default for cleaner gameplay (toggle still available)

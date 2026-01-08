@@ -93,46 +93,92 @@ export function VersionCheck() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // Clean, calm update screen
+  // Update screen with nice background and subtle animations
   if (isUpdating) {
     return (
-      <div className="fixed inset-0 z-[9999] bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center px-8 max-w-md">
-          {/* Simple icon */}
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-            <svg className="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden">
+        {/* Gradient background - warm orange theme */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500" />
+
+        {/* Subtle overlay pattern */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+
+        {/* Content card */}
+        <div className="relative bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-3xl shadow-2xl p-10 mx-4 max-w-md animate-fade-in-up">
+          {/* Icon with gentle pulse */}
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg animate-pulse-subtle">
+            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </div>
 
           {/* Title */}
-          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2 text-center animate-fade-in-up animation-delay-100">
             Updating KeyQuest
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-500 dark:text-gray-400 mb-8">
-            Getting the latest version...
+          <p className="text-gray-500 dark:text-gray-400 text-center mb-8 animate-fade-in-up animation-delay-200">
+            Getting the latest features...
           </p>
 
           {/* Progress bar */}
-          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-3">
+          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-3 animate-fade-in-up animation-delay-300">
             <div
-              className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
 
           {/* Progress percentage */}
-          <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
-            {Math.round(progress)}%
+          <p className="text-gray-400 dark:text-gray-500 text-sm text-center mb-6 font-medium">
+            {Math.round(progress)}% complete
           </p>
 
           {/* Reassurance */}
-          <p className="text-gray-400 dark:text-gray-500 text-xs">
-            Your progress is safely preserved
-          </p>
+          <div className="flex items-center justify-center gap-2 text-gray-400 dark:text-gray-500 text-xs animate-fade-in-up animation-delay-400">
+            <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <span>Your progress is safely preserved</span>
+          </div>
         </div>
+
+        {/* Animations */}
+        <style jsx>{`
+          @keyframes fade-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @keyframes pulse-subtle {
+            0%, 100% {
+              transform: scale(1);
+              box-shadow: 0 10px 40px -10px rgba(249, 115, 22, 0.5);
+            }
+            50% {
+              transform: scale(1.02);
+              box-shadow: 0 15px 50px -10px rgba(249, 115, 22, 0.6);
+            }
+          }
+          .animate-fade-in-up {
+            animation: fade-in-up 0.5s ease-out forwards;
+          }
+          .animate-pulse-subtle {
+            animation: pulse-subtle 2s ease-in-out infinite;
+          }
+          .animation-delay-100 { animation-delay: 0.1s; opacity: 0; }
+          .animation-delay-200 { animation-delay: 0.2s; opacity: 0; }
+          .animation-delay-300 { animation-delay: 0.3s; opacity: 0; }
+          .animation-delay-400 { animation-delay: 0.4s; opacity: 0; }
+        `}</style>
       </div>
     );
   }
@@ -156,21 +202,10 @@ export function getStoredVersion(): string | null {
 }
 
 /**
- * Force a version sync (useful for manual trigger from settings)
+ * Trigger the update popup (sets fake old version and reloads to show sync UI)
  */
-export async function forceVersionSync(): Promise<void> {
-  // 1. Unregister all service workers
-  if ('serviceWorker' in navigator) {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    await Promise.all(registrations.map(reg => reg.unregister()));
-  }
-
-  // 2. Clear all caches
-  if ('caches' in window) {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map(name => caches.delete(name)));
-  }
-
-  // 3. Reload
+export function triggerUpdateWithPopup(): void {
+  localStorage.setItem(VERSION_STORAGE_KEY, '0.0.0-sync');
   window.location.reload();
 }
+
