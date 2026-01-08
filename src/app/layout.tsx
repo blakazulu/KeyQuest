@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Baloo_2, Nunito, Heebo, Varela_Round } from 'next/font/google';
 import './globals.css';
 import { SettingsProvider } from '@/components/providers/SettingsProvider';
+import { VersionCheck } from '@/components/ui/VersionCheck';
 
 // English fonts
 // Fun layer - Logo, level titles, game modes, achievements, scores
@@ -130,6 +131,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${baloo2.variable} ${nunito.variable} ${varelaRound.variable} ${heebo.variable} font-size-medium`} suppressHydrationWarning>
       <body className="min-h-screen bg-bg font-body antialiased">
+        <VersionCheck />
         <SettingsProvider>
           {children}
         </SettingsProvider>

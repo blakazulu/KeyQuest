@@ -6,6 +6,9 @@
 
 import type { Stage, Lesson } from '@/types/lesson';
 
+// All Hebrew letters + punctuation for mastery practice
+const hebrewLettersWithPunctuation = [...'אבגדהוזחטיכךלמםנןסעפףצץקרשת'.split(''), '.', '?', '!', ','];
+
 const lessons: Lesson[] = [
   {
     id: 'he-stage-6-lesson-1',
@@ -14,7 +17,7 @@ const lessons: Lesson[] = [
     title: { en: 'Speed Building', he: 'בניית מהירות' },
     description: { en: 'Focus on typing speed with familiar words', he: 'התמקד במהירות הקלדה עם מילים מוכרות' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'hard',
     xpReward: 100,
     passingAccuracy: 80,
@@ -32,7 +35,7 @@ const lessons: Lesson[] = [
     title: { en: 'Paragraph Practice', he: 'תרגול פסקאות' },
     description: { en: 'Type longer passages of Hebrew text', he: 'הקלד קטעי טקסט ארכים יותר בעברית' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'hard',
     xpReward: 110,
     passingAccuracy: 80,
@@ -50,7 +53,7 @@ const lessons: Lesson[] = [
     title: { en: 'Real-World Texts', he: 'טקסטים מהעולם האמיתי' },
     description: { en: 'Practice with realistic everyday texts', he: 'תרגל עם טקסטים יומיומיים אמיתיים' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'hard',
     xpReward: 120,
     passingAccuracy: 80,
@@ -68,7 +71,7 @@ const lessons: Lesson[] = [
     title: { en: 'Final Challenge', he: 'האתגר האחרון' },
     description: { en: 'Put your Hebrew typing skills to the ultimate test!', he: 'שים את כישורי ההקלדה שלך במבחן האולטימטיבי!' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'expert',
     xpReward: 150,
     passingAccuracy: 85,

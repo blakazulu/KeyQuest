@@ -6,6 +6,9 @@
 
 import type { Stage, Lesson } from '@/types/lesson';
 
+// All Hebrew letters for practice
+const hebrewLetters = 'אבגדהוזחטיכךלמםנןסעפףצץקרשת'.split('');
+
 const lessons: Lesson[] = [
   {
     id: 'he-stage-4-lesson-1',
@@ -14,7 +17,7 @@ const lessons: Lesson[] = [
     title: { en: 'Two-Letter Words', he: 'מילים בשתי אותיות' },
     description: { en: 'Practice simple two-letter Hebrew words', he: 'תרגל מילים פשוטות בשתי אותיות' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLetters,
     difficulty: 'easy',
     xpReward: 60,
     passingAccuracy: 75,
@@ -32,7 +35,7 @@ const lessons: Lesson[] = [
     title: { en: 'Three-Letter Words', he: 'מילים בשלוש אותיות' },
     description: { en: 'Practice three-letter Hebrew words', he: 'תרגל מילים בשלוש אותיות' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLetters,
     difficulty: 'easy',
     xpReward: 65,
     passingAccuracy: 75,
@@ -50,7 +53,7 @@ const lessons: Lesson[] = [
     title: { en: 'Common Words', he: 'מילים נפוצות' },
     description: { en: 'Practice the most common Hebrew words', he: 'תרגל את המילים הנפוצות ביותר' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLetters,
     difficulty: 'medium',
     xpReward: 70,
     passingAccuracy: 75,
@@ -68,7 +71,7 @@ const lessons: Lesson[] = [
     title: { en: 'Word Pairs', he: 'זוגות מילים' },
     description: { en: 'Practice word combinations', he: 'תרגל צירופי מילים' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLetters,
     difficulty: 'medium',
     xpReward: 70,
     passingAccuracy: 75,
@@ -86,7 +89,7 @@ const lessons: Lesson[] = [
     title: { en: 'Mixed Words Practice', he: 'תרגול מילים מעורב' },
     description: { en: 'Random word practice for fluency', he: 'תרגול מילים אקראי לשטף' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLetters,
     difficulty: 'medium',
     xpReward: 75,
     passingAccuracy: 80,

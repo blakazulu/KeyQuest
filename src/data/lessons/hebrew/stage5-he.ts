@@ -6,6 +6,9 @@
 
 import type { Stage, Lesson } from '@/types/lesson';
 
+// All Hebrew letters + punctuation for sentence practice
+const hebrewLettersWithPunctuation = [...'אבגדהוזחטיכךלמםנןסעפףצץקרשת'.split(''), '.', '?', '!'];
+
 const lessons: Lesson[] = [
   {
     id: 'he-stage-5-lesson-1',
@@ -14,7 +17,7 @@ const lessons: Lesson[] = [
     title: { en: 'Simple Sentences', he: 'משפטים פשוטים' },
     description: { en: 'Practice typing simple Hebrew sentences', he: 'תרגל הקלדת משפטים פשוטים בעברית' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'medium',
     xpReward: 80,
     passingAccuracy: 75,
@@ -32,7 +35,7 @@ const lessons: Lesson[] = [
     title: { en: 'Question Sentences', he: 'משפטי שאלה' },
     description: { en: 'Practice typing questions in Hebrew', he: 'תרגל הקלדת שאלות בעברית' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'medium',
     xpReward: 80,
     passingAccuracy: 75,
@@ -50,7 +53,7 @@ const lessons: Lesson[] = [
     title: { en: 'Daily Conversation', he: 'שיחה יומיומית' },
     description: { en: 'Practice everyday conversation phrases', he: 'תרגל ביטויי שיחה יומיומיים' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'medium',
     xpReward: 85,
     passingAccuracy: 75,
@@ -68,7 +71,7 @@ const lessons: Lesson[] = [
     title: { en: 'Longer Sentences', he: 'משפטים ארכים' },
     description: { en: 'Practice typing longer Hebrew sentences', he: 'תרגל הקלדת משפטים ארכים יותר' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'medium',
     xpReward: 90,
     passingAccuracy: 75,
@@ -86,7 +89,7 @@ const lessons: Lesson[] = [
     title: { en: 'Mixed Sentences', he: 'משפטים מעורבים' },
     description: { en: 'Practice a variety of sentence types', he: 'תרגל מגוון סוגי משפטים' },
     newKeys: [],
-    practiceKeys: [],
+    practiceKeys: hebrewLettersWithPunctuation,
     difficulty: 'hard',
     xpReward: 100,
     passingAccuracy: 80,
