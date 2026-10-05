@@ -131,7 +131,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${baloo2.variable} ${nunito.variable} ${varelaRound.variable} ${heebo.variable} font-size-medium`} suppressHydrationWarning>
-      <head><link rel="stylesheet" href="/shayach-layout.css" /><Script src="/shayach-config.js" strategy="beforeInteractive" /></head>
+      <head><Script src="/shayach-config.js" strategy="beforeInteractive" /></head>
       <body className="min-h-screen bg-bg font-body antialiased">
         <VersionCheck />
         <SettingsProvider>
